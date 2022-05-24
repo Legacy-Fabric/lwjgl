@@ -172,14 +172,23 @@
 			<fileset dir="${lwjgl.lib}/windows">
 				<patternset refid="lwjgl-windows-lwjgl.fileset"/>
 			</fileset>
+			<fileset dir="${lwjgl.bin}/lwjgl">
+				<patternset refid="lwjgl-windows-lwjgl.fileset"/>
+			</fileset>
 		</jar>
 		<jar destfile="${lwjgl.dstMaven}/lwjgl-platform-natives-linux.jar" taskname="lwjgl-platform-natives-linux.jar">
 			<fileset dir="${lwjgl.lib}/linux">
 				<patternset refid="lwjgl-linux-lwjgl.fileset"/>
 			</fileset>
+			<fileset dir="${lwjgl.bin}/lwjgl">
+				<patternset refid="lwjgl-linux-lwjgl.fileset"/>
+			</fileset>
 		</jar>
 		<jar destfile="${lwjgl.dstMaven}/lwjgl-platform-natives-osx.jar" taskname="lwjgl-platform-natives-osx.jar">
 			<fileset dir="${lwjgl.lib}/macosx">
+				<patternset refid="lwjgl-macosx-lwjgl.fileset"/>
+			</fileset>
+			<fileset dir="${lwjgl.bin}/lwjgl">
 				<patternset refid="lwjgl-macosx-lwjgl.fileset"/>
 			</fileset>
 		</jar>
@@ -191,7 +200,7 @@
 				<include name="*.pom" />
 			</fileset>
 			<filterset>
-      			<filter token="VERSION" value="${lwjgl-maven-version}"/>
+      			<filter token="VERSION" value="${lwjgl.version}"/>
 				<filter token="JINPUTVERSION" value="${jinput.version}"/>
     		</filterset>	
 		</copy>
