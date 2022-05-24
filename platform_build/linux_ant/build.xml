@@ -40,20 +40,12 @@
 		<property name="linker_flags64" value="${version_script_flags64} -shared -O2 -Wall -o ${libname64} ${libs64}"/>
 
     	<condition property="build.32bit.only">
-    		<not>
-	    		<or>
-					<equals arg1="${hwplatform}" arg2="x86_64"/>
-					<equals arg1="${hwplatform}" arg2="i86pc"/>
-				</or>
-    		</not>
+			<equals arg1="${os.arch}" arg2="i386"/>
     	</condition>
 
     	<!-- On linux, the 64 bit jre doesn't have the 32 bit libs -->
     	<condition property="build.64bit.only">
-    		<and>
-    			<os name="Linux"/>
-    			<equals arg1="${hwplatform}" arg2="x86_64"/>
-    		</and>
+			<equals arg1="${os.arch}" arg2="amd64"/>
     	</condition>
 
     	<antcall target="compile32"/>
@@ -63,7 +55,7 @@
     <target name="compile32" unless="build.64bit.only">
     	<mkdir dir="x32"/>
     	<apply dir="x32" executable="gcc" skipemptyfilesets="true" failonerror="true" parallel="true">
-			<arg line="${cflags32} ${cflags_pthread}"/>
+			<arg line="-m32 ${cflags32} ${cflags_pthread}"/>
 			<arg value="-I${java.home}/include"/>
 			<arg value="-I${java.home}/include/linux"/>
 			<arg value="-I${java.home}/../include"/>
@@ -85,7 +77,7 @@
 	    </apply>
 		<apply dir="." parallel="true" executable="gcc" failonerror="true">
 			<srcfile/>
-			<arg line="${linker_flags32}"/>
+			<arg line="-m32 ${linker_flags32}"/>
 			<fileset dir="x32" includes="*.o"/>
 		</apply>
 		<apply dir="." parallel="true" executable="strip" failonerror="true">
