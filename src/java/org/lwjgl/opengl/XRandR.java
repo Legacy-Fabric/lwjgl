@@ -146,6 +146,7 @@ public class XRandR {
 			LWJGLUtil.log("Exception in XRandR.populate(): " + e.getMessage());
 			screens.clear();
 			current = new Screen[0];
+			throw new RuntimeException(e);
 		}
 	}
 

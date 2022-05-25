@@ -43,6 +43,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteOrder;
@@ -210,9 +211,25 @@ final class LinuxDisplay implements DisplayImplementation {
 		return result;
 	}
 
+	private static String findXrandr() {
+		for (String path : System.getenv("PATH").split(File.pathSeparator)) {
+			File file = new File(path, "xrandr");
+			if (file.isFile() && file.canExecute()) {
+				return file.getAbsolutePath();
+			}
+		}
+
+		return null;
+	}
+
 	private static boolean isXrandrSupported() {
 		if (Display.getPrivilegedBoolean("LWJGL_DISABLE_XRANDR"))
 			return false;
+
+		if (findXrandr() == null) {
+			return false;
+		}
+
 		lockAWT();
 		try {
 			incDisplay();
