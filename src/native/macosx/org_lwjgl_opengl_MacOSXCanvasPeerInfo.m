@@ -53,54 +53,40 @@ JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_MacOSXCanvasPeerInfo_nInitHandle
 	
 	MacOSXPeerInfo *peer_info = (MacOSXPeerInfo *)(*env)->GetDirectBufferAddress(env, peer_info_handle);
 	AWTSurfaceLock *surface = (AWTSurfaceLock *)(*env)->GetDirectBufferAddress(env, lock_buffer_handle);
-	JAWT_MacOSXDrawingSurfaceInfo *macosx_dsi = (JAWT_MacOSXDrawingSurfaceInfo *)surface->dsi->platformInfo;
-	
-	// force CALayer usage or check if CALayer is supported (i.e. on Java 5 and Java 6)
-	if(forceCALayer || (surface->awt.version & 0x80000000)) { //JAWT_MACOSX_USE_CALAYER) {
-		
-		if (macosx_dsi != NULL) {
-			
-			if (window_handle == NULL) {
-				window_handle = newJavaManagedByteBuffer(env, sizeof(MacOSXWindowInfo));
-				if (window_handle == NULL) {
-					throwException(env, "Could not create handle buffer");
-				}
-			} else if (peer_info->window_info->window != nil) {
-				return window_handle;
-			}
-			
-			if (peer_info->isCALayer) {
-				[peer_info->glLayer release];
-			}
-			
-			peer_info->glLayer = [GLLayer new];
-			
-			peer_info->glLayer->macosx_dsi = macosx_dsi;
-			peer_info->window_info = (MacOSXWindowInfo *)(*env)->GetDirectBufferAddress(env, window_handle);
-			peer_info->glLayer->window_info = peer_info->window_info;
-			peer_info->glLayer->autoResizable = autoResizable;
+	JAWT_DrawingSurfaceInfo *macosx_dsi = (JAWT_DrawingSurfaceInfo *)surface->dsi->platformInfo;
 
-			/* we set bounds as requested w/ frame function */
-                        peer_info->glLayer.frame = CGRectMake(x, y, surface->dsi->bounds.width, surface->dsi->bounds.height);
-			
-			[peer_info->glLayer performSelectorOnMainThread:@selector(createWindow:) withObject:peer_info->pixel_format waitUntilDone:YES];
-			
-			peer_info->isCALayer = true;
-			peer_info->isWindowed = true;
-			peer_info->parent = nil;
-			
-			[pool release];
-			return window_handle;
+	// force CALayer usage or check if CALayer is supported (i.e. on Java 5 and Java 6)
+	if (window_handle == NULL) {
+		window_handle = newJavaManagedByteBuffer(env, sizeof(MacOSXWindowInfo));
+		if (window_handle == NULL) {
+			throwException(env, "Could not create handle buffer");
 		}
+	} else if (peer_info->window_info->window != nil) {
+		return window_handle;
 	}
-	
-	// no CALayer support, fallback to using legacy method of getting the NSView of an AWT Canvas
-	peer_info->parent = macosx_dsi->cocoaViewRef;
-	peer_info->isCALayer = false;
+
+	if (peer_info->isCALayer) {
+		[peer_info->glLayer release];
+	}
+
+	peer_info->glLayer = [GLLayer new];
+
+	peer_info->glLayer->macosx_dsi = macosx_dsi;
+	peer_info->window_info = (MacOSXWindowInfo *)(*env)->GetDirectBufferAddress(env, window_handle);
+	peer_info->glLayer->window_info = peer_info->window_info;
+	peer_info->glLayer->autoResizable = autoResizable;
+
+	/* we set bounds as requested w/ frame function */
+				peer_info->glLayer.frame = CGRectMake(x, y, surface->dsi->bounds.width, surface->dsi->bounds.height);
+
+	[peer_info->glLayer performSelectorOnMainThread:@selector(createWindow:) withObject:peer_info->pixel_format waitUntilDone:YES];
+
+	peer_info->isCALayer = true;
 	peer_info->isWindowed = true;
-	
+	peer_info->parent = nil;
+
 	[pool release];
-	return NULL;
+	return window_handle;
 }
 
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXCanvasPeerInfo_nSetLayerPosition

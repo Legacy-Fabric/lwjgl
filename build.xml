@@ -447,7 +447,7 @@
 		<copy todir="${lwjgl.lib}/linux">
 			<fileset dir="${lwjgl.bin}/lwjgl" includes="liblwjgl*.so"/>
 		</copy>
-		<!-- headless issues <version-check platform="linux"/> -->
+		<!-- fails on x32 <version-check platform="linux"/> -->
 	</target>
 
 	<!-- Compiles LWJGL on FreeBSD platforms -->

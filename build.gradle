@@ -3,10 +3,7 @@ plugins {
 }
 
 ant.importBuild('build.xml') { String oldTargetName ->
-    if (oldTargetName == "build"
-            || oldTargetName == "javadoc"
-            || oldTargetName == "clean") return "ant_" + oldTargetName
-    return oldTargetName
+    return "a-" + oldTargetName
 }
 
 

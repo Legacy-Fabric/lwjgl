@@ -39,11 +39,7 @@
  */
 
 #include <jni.h>
-#ifdef __MACH__
-#include <JavaVM/jawt_md.h>
-#else
 #include <jawt_md.h>
-#endif
 #include "org_lwjgl_opengl_AWTSurfaceLock.h"
 #include "awt_tools.h"
 #include "common_tools.h"
@@ -59,15 +55,15 @@ JNIEXPORT jboolean JNICALL Java_org_lwjgl_opengl_AWTSurfaceLock_lockAndInitHandl
 	JAWT_DrawingSurface* ds;
 	JAWT_DrawingSurfaceInfo *dsi;
 	AWTSurfaceLock *awt_lock = (AWTSurfaceLock *)(*env)->GetDirectBufferAddress(env, lock_buffer_handle);
-    
+
 	jboolean result = JNI_FALSE;
-	
+
 	#ifdef __MACH__
 	// try get JAWT with JAWT_MACOSX_USE_CALAYER Opt In
 	awt.version = JAWT_VERSION_1_4 | 0x80000000;//JAWT_MACOSX_USE_CALAYER;
 	result = JAWT_GetAWT(env, &awt);
 	#endif
-	
+
 	if (result == JNI_FALSE) {
 		// now try without CALAYER
 		awt.version = JAWT_VERSION_1_4;
@@ -108,4 +104,3 @@ JNIEXPORT void JNICALL Java_org_lwjgl_opengl_AWTSurfaceLock_nUnlock
 	awt_lock->ds->Unlock(awt_lock->ds);
 	awt_lock->awt.FreeDrawingSurface(awt_lock->ds);
 }
-
