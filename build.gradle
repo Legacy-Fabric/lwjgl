@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+ant.importBuild('build.xml') { String oldTargetName ->
+    if (oldTargetName == "build"
+            || oldTargetName == "javadoc"
+            || oldTargetName == "clean") return "ant_" + oldTargetName
+    return oldTargetName
+}
+
+
+
+//sourceSets {
+//    main {
+//        java {
+//            srcDirs = [ ant.properties['src.dir'] ]
+////            destinationDirectory.set(file(ant.properties['classes.dir']))
+//        }
+//    }
+//}
+//
+//compileJava.dependsOn 'prepare'
+//tasks.named('package') { dependsOn = [ 'compileJava' ] }
+//assemble.dependsOn = [ 'package' ]
