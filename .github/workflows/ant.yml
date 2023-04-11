@@ -30,8 +30,12 @@ jobs:
           arch: ${{ matrix.arch }}
     - if: matrix.os == 'macos-latest'
       run: sudo xcode-select -s /Applications/Xcode_11.7.app/Contents/Developer
-    - name: Build natives
-      run: ant generate-all compile_native
+    - if: matrix.os == 'windows-latest'
+      name: Build natives
+      run: gradlew generate-all compile_native
+    - if: matrix.os != 'windows-latest'
+      name: Build natives
+      run: ./gradlew generate-all compile_native
     - if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
       with:
@@ -60,7 +64,7 @@ jobs:
           name: natives
           path: bin/lwjgl
       - name: Build
-        run: ant generate-all maven-full
+        run: ./gradlew generate-all maven-full
       - uses: actions/upload-artifact@v3
         with:
           name: maven
