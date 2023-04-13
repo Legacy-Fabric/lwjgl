@@ -480,7 +480,9 @@
 	<!-- Compiles LWJGL on Mac platforms -->
 	<target name="-compile_native_macosx" if="lwjgl.platform.macosx">
 		<ant antfile="platform_build/macosx_ant/build.xml" inheritAll="false"/>
-		<copy file="${lwjgl.bin}/lwjgl/liblwjgl.dylib" todir="${lwjgl.lib}/macosx"/>
+		<copy todir="${lwjgl.lib}/macosx">
+			<fileset dir="${lwjgl.bin}/lwjgl" includes="liblwjgl*.dylib"/>
+		</copy>
 		<version-check platform="macosx"/>
 	</target>
 
