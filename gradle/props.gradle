@@ -1,0 +1,227 @@
+final def proparties = new HashMap();
+
+proparties["build.sysclasspath"] = "last"
+
+// build-definitions.xml
+proparties["lwjgl.src"] = file("src")
+proparties["lwjgl.src.native"] = file(proparties["lwjgl.src"].toString() + "/native")
+proparties["lwjgl.src.headers"] = file(proparties["lwjgl.src.native"].toString() + "/common")
+proparties["lwjgl.src.templates"] = file(proparties["lwjgl.src"].toString() + "/templates")
+proparties["lwjgl.bin"] = file("bin")
+proparties["lwjgl.lib"] = file("libs")
+proparties["lwjgl.dist"] = file("dist")
+proparties["lwjgl.docs"] = file("doc")
+proparties["lwjgl.temp"] = file("temp")
+proparties["lwjgl.res"] = file("res")
+proparties["lwjgl.version"] = "2.9.4-babric.2"
+proparties["lwjgl.web"] = file("www")
+
+proparties["lwjgl.src.templates.al"] = file(proparties["lwjgl.src.templates"].toString() + "/org/lwjgl/openal")
+proparties["lwjgl.src.templates.gl"] = file(proparties["lwjgl.src.templates"].toString() + "/org/lwjgl/opengl")
+proparties["lwjgl.src.templates.gles"] = file(proparties["lwjgl.src.templates"].toString() + "/org/lwjgl/opengles")
+proparties["lwjgl.src.templates.cl"] = file(proparties["lwjgl.src.templates"].toString() + "/org/lwjgl/opencl")
+
+proparties["openal-template-pattern"] = "AL*.java,EFX*.java"
+proparties["opengl-template-pattern"] = "GL*.java,ARB*.java,EXT*.java,KHR*.java,AMD*.java,APPLE*.java,ATI*.java,NV*.java,NVX*.java,HP*.java,IBM*.java,SUN*.java,SGIS*.java,GREMEDY*.java,INTEL*.java"
+proparties["opengles-template-pattern"] = "GLES*.java,ARB*.java,EXT*.java,KHR*.java,AMD*.java,ANGLE*.java,APPLE*.java,ARM*.java,DMP*.java,IMG*.java,NV*.java,OES*.java,QCOM*.java,VIV*.java"
+proparties["opencl-template-pattern-extensions"] = "KHR*.java,EXT*.java,APPLE*.java,AMD*.java,INTEL*.java,NV*.java"
+proparties["opencl-template-pattern"] = "CL*.java," + proparties["opencl-template-pattern-extensions"]
+
+proparties["lwjgl.package.pattern"] = copySpec {
+    include "org/**/*"
+    exclude "org/lwjgl/opengles/**"
+    exclude "org/lwjgl/d3d/**"
+    exclude "org/lwjgl/test/**"
+    exclude "org/lwjgl/util/**"
+    exclude "org/lwjgl/examples/**"
+}
+proparties["lwjgl.fileset"] = fileTree(proparties["lwjgl.bin"]) {tr ->
+    proparties["lwjgl.package.pattern"].includes.forEach {tr.include(it)}
+    proparties["lwjgl.package.pattern"].excludes.forEach {tr.exclude(it)}
+}
+proparties["lwjgl.package.dependencies.pattern"] = copySpec {
+    include "org/lwjgl/opengles/ContextAttribs*.*"
+}
+proparties["lwjgl.fileset.dependencies"] = fileTree(proparties["lwjgl.bin"]) {tr ->
+    proparties["lwjgl.package.dependencies.pattern"].includes.forEach {tr.include(it)}
+    proparties["lwjgl.package.dependencies.pattern"].excludes.forEach {tr.exclude(it)}
+}
+
+proparties["lwjgl_util_applet.package.pattern"] = copySpec {
+    exclude "**.*"
+    include "org/lwjgl/util/applet/**"
+}
+proparties["lwjgl_util_applet.fileset"] = fileTree(proparties["lwjgl.bin"]) {tr ->
+    proparties["lwjgl_util_applet.package.pattern"].includes.forEach {tr.include(it)}
+    proparties["lwjgl_util_applet.package.pattern"].excludes.forEach {tr.exclude(it)}
+}
+
+proparties["lwjgl_test.fileset"] = fileTree(proparties["lwjgl.bin"]) {
+    exclude "**.*"
+    include "org/lwjgl/test/**"
+    exclude "org/lwjgl/test/opengles/**"
+    include "org/lwjgl/examples/**"
+}
+
+proparties["lwjgl_test_extra.fileset"] = fileTree(proparties["lwjgl.src"].toString() + "/java") {
+    exclude "**.*"
+    include "org/lwjgl/test/opengl/shaders/*.fp"
+    include "org/lwjgl/test/opengl/shaders/*.vp"
+    include "org/lwjgl/test/opengl/shaders/*.vsh"
+    include "org/lwjgl/test/opengl/shaders/*.fsh"
+    include "org/lwjgl/test/opencl/gl/*.cl"
+}
+
+proparties["lwjgl_test_es.fileset"] = fileTree(proparties["lwjgl.bin"]) {
+    exclude "**.*"
+    include "org/lwjgl/test/**"
+    exclude "org/lwjgl/test/opengl/**"
+    exclude "org/lwjgl/test/*.*"
+}
+
+proparties["lwjgl_util.package.pattern"] = copySpec {
+    exclude "**.*"
+    exclude "org/lwjgl/util/generator/**"
+    exclude "org/lwjgl/util/applet/**"
+    include "org/lwjgl/util/**"
+}
+proparties["lwjgl_util.fileset"] = fileTree(proparties["lwjgl.bin"]) {tr ->
+    proparties["lwjgl_util.package.pattern"].includes.forEach {tr.include(it)}
+    proparties["lwjgl_util.package.pattern"].excludes.forEach {tr.exclude(it)}
+}
+
+proparties["lwjgl_applet.fileset"] = fileTree(proparties["lwjgl.bin"]) {
+    exclude "**.*"
+    include "org/lwjgl/test/applet/**"
+    include "org/lwjgl/test/opengl/awt/AWTGearsCanvas.class"
+}
+
+proparties["lwjgl.javadoc.fileset"] = fileTree(proparties["lwjgl.src"]) {
+    include "**/*.java"
+    exclude "native/**"
+    exclude "templates/**"
+    exclude "java/org/lwjgl/test/**"
+    exclude "java/org/lwjgl/examples/**"
+    exclude "java/org/lwjgl/util/generator/**"
+}
+
+proparties["lwjgl-docs.fileset"] = copySpec {
+    include "CREDITS"
+    include "LICENSE"
+    include "README"
+    include "lwjgl_hidden_switches.text"
+    include "3rdparty/*"
+}
+
+proparties["lwjgl-windows-lwjgl.fileset"] = copySpec {
+    include "lwjgl*.dll"
+    include "OpenAL*.dll"
+}
+proparties["lwjgl-windows-jinput.fileset"] = copySpec {
+    include "jinput-dx8*.dll"
+    include "jinput-raw*.dll"
+}
+proparties["lwjgl-windows.fileset"] = copySpec {tr ->
+    proparties["lwjgl-windows-lwjgl.fileset"].includes.forEach {tr.include(it)}
+    proparties["lwjgl-windows-lwjgl.fileset"].excludes.forEach {tr.exclude(it)}
+    proparties["lwjgl-windows-jinput.fileset"].includes.forEach {tr.include(it)}
+    proparties["lwjgl-windows-jinput.fileset"].excludes.forEach {tr.exclude(it)}
+}
+
+proparties["lwjgl-linux-lwjgl.fileset"] = copySpec {
+    include "liblwjgl*.so"
+    include "libopenal*.so"
+}
+proparties["lwjgl-linux-jinput.fileset"] = copySpec {
+    include "libjinput-linux*.so"
+}
+proparties["lwjgl-linux.fileset"] = copySpec {tr ->
+    proparties["lwjgl-linux-lwjgl.fileset"].includes.forEach {tr.include(it)}
+    proparties["lwjgl-linux-lwjgl.fileset"].excludes.forEach {tr.exclude(it)}
+    proparties["lwjgl-linux-jinput.fileset"].includes.forEach {tr.include(it)}
+    proparties["lwjgl-linux-jinput.fileset"].excludes.forEach {tr.exclude(it)}
+}
+
+proparties["lwjgl-macosx-lwjgl.fileset"] = copySpec {
+    include "liblwjgl*.dylib"
+    include "openal*.dylib"
+}
+proparties["lwjgl-macosx-jinput.fileset"] = copySpec {
+    include "libjinput-osx*.dylib"
+}
+proparties["lwjgl-macosx.fileset"] = copySpec {tr ->
+    proparties["lwjgl-macosx-lwjgl.fileset"].includes.forEach {tr.include(it)}
+    proparties["lwjgl-macosx-lwjgl.fileset"].excludes.forEach {tr.exclude(it)}
+    proparties["lwjgl-macosx-jinput.fileset"].includes.forEach {tr.include(it)}
+    proparties["lwjgl-macosx-jinput.fileset"].excludes.forEach {tr.exclude(it)}
+}
+
+proparties["lwjgl-solaris.fileset"] = copySpec {
+    include "liblwjgl*.so"
+    include "libopenal*.so"
+}
+
+proparties["lwjgl.source.fileset"] = fileTree(".") {
+    include "build.xml"
+    include "src/**"
+    include "platform_build/**/*"
+}
+
+proparties["lwjgl_base"] = copySpec {
+    include "**"
+    exclude "res/ILtest.*"
+    exclude "res/Missing_you.mod"
+    exclude "res/phero*.*"
+}
+
+proparties["lwjgl_optional"] = copySpec {
+    include "res/**"
+    exclude "res/logo/**"
+    exclude "res/spaceinvaders/**"
+    exclude "res/*.wav"
+    exclude "res/*.xpm"
+    include "doc/CREDITS"
+    include "doc/LICENSE"
+    include "doc/README"
+}
+
+proparties["lwjgl_applet"] = copySpec {
+    include "applet/**"
+    exclude "applet/appletviewer.policy"
+    exclude "applet/lwjglkeystore"
+}
+
+//<uptodate property="lwjgl.main.built" targetfile="${lwjgl.lib}/windows/lwjgl.dll" >
+//	    <srcfiles dir= "${lwjgl.src.native}/common" includes="*.c*"/>
+//	    <srcfiles dir= "${lwjgl.src.native}/windows" includes="*.c"/>
+//	</uptodate>
+
+// build-maven.xml
+proparties["lwjgl.src.java"] = file(proparties["lwjgl.src"].toString() + "/java")
+proparties["lwjgl.src.generated"] = file(proparties["lwjgl.src"].toString() + "/generated")
+proparties["lwjgl.maven"] = file("maven")
+proparties["lwjgl.dstMaven"] = file(proparties["lwjgl.temp"].toString() + "/maven")
+proparties["jinput.version"] = "2.0.5"
+
+proparties["lwjgl-sources.manual.fileset"] = fileTree(proparties["lwjgl.src.java"]) {tr->
+    proparties["lwjgl.package.pattern"].includes.forEach {tr.include(it)}
+    proparties["lwjgl.package.pattern"].excludes.forEach {tr.exclude(it)}
+    proparties["lwjgl.package.dependencies.pattern"].includes.forEach {tr.include(it)}
+    proparties["lwjgl.package.dependencies.pattern"].excludes.forEach {tr.exclude(it)}
+}
+
+proparties["lwjgl-sources.generated.fileset"] = fileTree(proparties["lwjgl.src.generated"]) {
+    include "**/*"
+}
+
+proparties["lwjgl_util_applet-sources.fileset"] = fileTree(proparties["lwjgl.src.java"]) {tr->
+    proparties["lwjgl_util_applet.package.pattern"].includes.forEach {tr.include(it)}
+    proparties["lwjgl_util_applet.package.pattern"].excludes.forEach {tr.exclude(it)}
+}
+
+proparties["lwjgl_util-sources.fileset"] = fileTree(proparties["lwjgl.src.java"]) {tr->
+    proparties["lwjgl_util.package.pattern"].includes.forEach {tr.include(it)}
+    proparties["lwjgl_util.package.pattern"].excludes.forEach {tr.exclude(it)}
+}
+
+project.setProperty("praps", proparties)

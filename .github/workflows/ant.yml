@@ -30,10 +30,10 @@ jobs:
           arch: ${{ matrix.arch }}
     - if: matrix.os == 'windows-latest'
       name: Build natives
-      run: .\gradlew.bat a-generate-all a-compile_native --info
+      run: .\gradlew.bat a-generate-all a-compile_native --info --stacktrace
     - if: matrix.os != 'windows-latest'
       name: Build natives
-      run: ./gradlew a-generate-all a-compile_native --info
+      run: ./gradlew a-generate-all a-compile_native --info --stacktrace
     - if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
       with:
@@ -62,7 +62,7 @@ jobs:
           name: natives
           path: bin/lwjgl
       - name: Build
-        run: ./gradlew a-generate-all a-maven-full --info
+        run: ./gradlew maven-full --info --stacktrace
       - uses: actions/upload-artifact@v3
         with:
           name: maven

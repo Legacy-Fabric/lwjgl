@@ -121,10 +121,8 @@
 	<!-- Files to include in windows package -->
 	<patternset id="lwjgl-windows.fileset">
 		<patternset id="lwjgl-windows-lwjgl.fileset">
-			<include name="lwjgl.dll" />
-			<include name="lwjgl64.dll" />
-			<include name="OpenAL32.dll" />
-			<include name="OpenAL64.dll" />
+			<include name="lwjgl*.dll" />
+			<include name="OpenAL*.dll" />
 		</patternset>
 		<patternset id="lwjgl-windows-jinput.fileset">
 	    	<include name="jinput-dx8*.dll" />
@@ -139,20 +137,18 @@
 			<include name="libopenal*.so" />
 		</patternset>
 		<patternset id="lwjgl-linux-jinput.fileset">
-			<include name="libjinput-linux.so" />
-			<include name="libjinput-linux64.so" />
+			<include name="libjinput-linux*.so" />
 		</patternset>
 	</patternset>
 
 	<!-- Files to include in mac os x package -->
 	<patternset id="lwjgl-macosx.fileset">
 		<patternset id="lwjgl-macosx-lwjgl.fileset">
-			<include name="liblwjgl.dylib" />
-			<include name="openal.dylib" />
+			<include name="liblwjgl*.dylib" />
+			<include name="openal*.dylib" />
 		</patternset>
 		<patternset id="lwjgl-macosx-jinput.fileset">
-		    <include name="libjinput-osx.dylib" />
-		    <include name="libjinput-osx-legacy.dylib" />
+		    <include name="libjinput-osx*.dylib" />
 		</patternset>
 	</patternset>
 
