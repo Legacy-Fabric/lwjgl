@@ -72,7 +72,6 @@
 <!--	</target>-->
 
 	<target name="maven-full">
-		<antcall target="clean-java" />
 		<antcall target="-initialize" />
 		
 		<antcall target="generate-all" />
