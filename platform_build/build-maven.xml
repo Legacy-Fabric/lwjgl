@@ -31,7 +31,7 @@
         <antcall target="maven"/>
 	</target>
 	
-	<target name="maven" depends="-fixmavenversion"> <!-- Added as dependency because using antcall creates a new project scope -->
+	<target name="maven"> <!-- Added as dependency because using antcall creates a new project scope -->
 		<delete dir="${lwjgl.dstMaven}" quiet="true" failonerror="false" taskname="cleaning maven dist" />
 		<mkdir dir="${lwjgl.dstMaven}"   taskname="initialiazing temp maven folder" />
 		<antcall target="-copylwjgljars" />
