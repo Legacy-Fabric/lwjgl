@@ -1,7 +1,7 @@
 def proparties = project.praps
 
 tasks.register('copylwjgljars', Copy) {
-    dependsOn "a-compile", "a--createjars"
+    dependsOn "compile", "-createjars"
     from(proparties['lwjgl.temp'].toString() + "/jar/") {
         include "lwjgl.jar", "lwjgl_util.jar", "lwjgl_util_applet.jar"
     }
@@ -19,7 +19,7 @@ tasks.register("copymavenpoms", Copy) {
 
     into(proparties['lwjgl.dstMaven'])
 
-// <filterset>
+//          <filterset>
 //      			<filter token="VERSION" value="${lwjgl.version}"/>
 //				<filter token="JINPUTVERSION" value="${jinput.version}"/>
 //    		</filterset>
@@ -28,6 +28,8 @@ tasks.register("copymavenpoms", Copy) {
 for (final def os in ["windows", "linux", "osx"]) {
     tasks.register("createmavennativejars_${os}", Jar) {
         it.description = "lwjgl-platform-natives-${os}.jar"
+
+        it.dependsOn "compile"
 
         it.from("${proparties['lwjgl.lib']}/${os}") {tr->
             def praps = proparties["lwjgl-${os.replace("osx", "macosx")}-lwjgl.fileset"]
@@ -48,6 +50,7 @@ for (final def os in ["windows", "linux", "osx"]) {
 
 tasks.register("createmavennativejars") {
     mustRunAfter "createmavenjavadocs"
+    dependsOn "compile"
     for (final def os in ["windows", "linux", "osx"]) {
         dependsOn("createmavennativejars_${os}")
         outputs.file(tasks.named("createmavennativejars_${os}").get().outputs)
@@ -244,13 +247,13 @@ tasks.register("maven_clean") {
 tasks.register("maven") {
     description = "Added as dependency because using antcall creates a new project scope"
 
-    dependsOn "a-compile"
-    dependsOn "a--createjars"
+    dependsOn "compile"
+    dependsOn "-createjars"
     dependsOn "maven_clean"
     dependsOn("copylwjgljars", "createmavensourcejars", "createmavenjavadocs",
             "createmavennativejars", "copymavenpoms", "copymaventdist")
 }
 
 tasks.register("maven-full") {
-    dependsOn("a--initialize", "a-generate-all", "a-compile", "a--createjars", "maven")
+    dependsOn("a--initialize", "a-generate-all", "compile", "-createjars", "maven")
 }

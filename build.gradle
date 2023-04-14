@@ -15,7 +15,11 @@ def ported = [
         "-createmavensourcejars",
         "-createmavenjavadocs",
         "maven",
-        "maven-full"
+        "maven-full",
+        "-createjars",
+        "-createdebugjars",
+        "compile_native",
+        "compile"
 ]
 
 ant.importBuild('build.xml') { String oldTargetName ->
@@ -27,12 +31,183 @@ apply from:"gradle/props.gradle"
 
 def proparties = project.praps
 
+tasks.register("createjars_lwjgl", Jar) {
+    dependsOn "compile"
+    from proparties["lwjgl.fileset"]
+    from proparties["lwjgl.fileset.dependencies"]
+
+    manifest {
+        attributes(
+                "Sealed": true
+        )
+    }
+
+    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+    archiveFileName = "lwjgl.jar"
+}
+
+tasks.register("createjars_lwjgl_util_applet", Jar) {
+    dependsOn "compile"
+    from(proparties["lwjgl.res"]) {
+        include "applet*"
+    }
+    from proparties["lwjgl_util_applet.fileset"]
+
+    manifest {
+        attributes(
+                "Sealed": true,
+                "Trusted-Library": true,
+                "Permissions": "all-permissions",
+                "Codebase": "*",
+                "Caller-Allowable-Codebase": "*",
+                "Application-Library-Allowable-Codebase": "*"
+        )
+    }
+
+    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+    archiveFileName = "lwjgl_util_applet.jar"
+}
+
+tasks.register("createjars_lwjgl_test", Jar) {
+    dependsOn "compile"
+    from proparties["lwjgl_test.fileset"]
+    from proparties["lwjgl_test_extra.fileset"]
+
+    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+    archiveFileName = "lwjgl_test.jar"
+}
+
+tasks.register("createjars_lwjgl_util", Jar) {
+    dependsOn "compile"
+    from proparties["lwjgl_util.fileset"]
+
+    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+    archiveFileName = "lwjgl_util.jar"
+}
+
+tasks.register("-createjars") {
+    dependsOn "compile", "createjars_lwjgl", "createjars_lwjgl_util_applet", "createjars_lwjgl_test", "createjars_lwjgl_util"
+}
+
+tasks.register("-createdebugjars", Jar) {
+    dependsOn "compile"
+    from proparties["lwjgl.fileset"]
+    from proparties["lwjgl.fileset.dependencies"]
+
+    manifest {
+        attributes(
+                "Sealed": true
+        )
+    }
+
+    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+    archiveFileName = "lwjgl-debug.jar"
+}
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+tasks.register("compile_native") {
+    description = "Compiles the native files"
+    dependsOn "a--initialize", "compile", "a-touch-version", "a-version-mismatch"
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        dependsOn("a--compile_native_win32")
+    }
+
+    if (Os.isName("linux")) {
+        dependsOn("a--compile_native_linux")
+    }
+
+    if (Os.isName("freebsd")) {
+        dependsOn("a--compile_native_freebsd")
+    }
+
+    if (Os.isName("openbsd")) {
+        dependsOn("a--compile_native_openbsd")
+    }
+
+    if (Os.isName("sunos")) {
+        dependsOn("a--compile_native_solaris")
+    }
+
+    if (Os.isName("mac os x")) {
+        dependsOn("a--compile_native_macosx")
+    }
+}
+
+for(final def os in ["win32", "linux", "freebsd", "openbsd", "solaris", "macosx"]) {
+    tasks.named("a--compile_native_${os}").get().dependsOn "a--initialize", "compile", "a-touch-version", "a-version-mismatch"
+}
+
+tasks.register("compile_test", JavaCompile) {
+    dependsOn("a--initialize", "compile_core")
+
+    destinationDirectory.set(proparties["lwjgl.bin"])
+
+    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
+        include "org/lwjgl/test/**"
+    }
+
+    classpath = files(proparties["lwjgl.bin"])
+}
+
+tasks.register("compile_examples", JavaCompile) {
+    dependsOn("a--initialize", "compile_core", "compile_test")
+
+    destinationDirectory.set(proparties["lwjgl.bin"])
+
+    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
+        include "org/lwjgl/examples/**"
+    }
+
+    classpath = files(proparties["lwjgl.bin"])
+}
+
+tasks.register("compile_core", JavaCompile) {
+    dependsOn("a--initialize")
+
+    destinationDirectory.set(proparties["lwjgl.bin"])
+
+    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
+        include "org/lwjgl/*.java"
+        include "org/lwjgl/input/**"
+        include "org/lwjgl/opengl/**"
+        include "org/lwjgl/opengles/**"
+        include "org/lwjgl/openal/**"
+        include "org/lwjgl/opencl/**"
+        include "org/lwjgl/util/**"
+        exclude "org/lwjgl/util/generator/**"
+    }, fileTree(proparties["lwjgl.src"].toString() + "/generated/") {
+        include "org/lwjgl/*.java"
+        include "org/lwjgl/input/**"
+        include "org/lwjgl/opengl/**"
+        include "org/lwjgl/opengles/**"
+        include "org/lwjgl/openal/**"
+        include "org/lwjgl/opencl/**"
+        include "org/lwjgl/util/**"
+        exclude "org/lwjgl/util/generator/**"
+    }
+
+    classpath = files(
+            proparties["lwjgl.lib"].toString() + "/jinput.jar",
+            proparties["lwjgl.lib"].toString() + "/AppleJavaExtensions.jar",
+            proparties["lwjgl.lib"].toString() + "/asm-debug-all.jar"
+    )
+
+    options.getHeaderOutputDirectory().set(proparties["lwjgl.src.native"])
+}
+
+tasks.register("compile") {
+    description = "Compiles the java source code"
+    dependsOn "a--initialize", "compile_core", "compile_test", "compile_examples"
+}
+
 apply from:"gradle/clean.gradle"
 apply from:"gradle/maven.gradle"
 
 tasks.withType(JavaCompile).configureEach {
-    targetCompatibility = 1.8
-    sourceCompatibility = 1.8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_8
     it.options.encoding = "UTF-8"
     if (JavaVersion.current().isJava9Compatible()) it.options.release = 8
 }
