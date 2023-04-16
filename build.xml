@@ -3,10 +3,8 @@
 	<property name="build.sysclasspath" value="last" />
 
 	<import file="platform_build/build-definitions.xml"/>
-	<import file="platform_build/build-generator.xml"/>
 	<import file="platform_build/build-applet.xml"/>
 	<import file="platform_build/build-webstart.xml"/>
-	<import file="platform_build/build-maven.xml"/>
 	<import file="eclipse-update/org.lwjgl.build/build-updatesite.xml"/>
 
 	<!-- ================================================================== -->
@@ -17,26 +15,6 @@
 	<!-- ================================================================== -->
 	<!-- Initialize build			 										-->
 	<!-- ================================================================== -->
-	<target name="-initialize">
-		<mkdir dir="${lwjgl.bin}"                   taskname="initialiazing bin folder" />
-		<mkdir dir="${lwjgl.bin}/lwjgl"             taskname="initialiazing native bin folder" />
-		<mkdir dir="${lwjgl.bin}/lwjgles"           taskname="initialiazing native OpenGL ES bin folder"/>
-		<mkdir dir="${lwjgl.lib}"                   taskname="initialiazing lib folder" />
-		<mkdir dir="${lwjgl.dist}"                  taskname="initialiazing dist folder" />
-		<mkdir dir="${lwjgl.docs}/javadoc"          taskname="initialiazing docs folder" />
-		<mkdir dir="${lwjgl.res}"                   taskname="initialiazing res folder" />
-		<mkdir dir="${lwjgl.temp}"                  taskname="initialiazing temp folder" />
-		<mkdir dir="${lwjgl.temp}/jar"              taskname="initialiazing temp/jar folder" />
-		<mkdir dir="${lwjgl.temp}/doc"              taskname="initialiazing temp/doc folder" />
-		<mkdir dir="${lwjgl.temp}/res"              taskname="initialiazing temp/res folder" />
-		<mkdir dir="${lwjgl.temp}/native"           taskname="initialiazing temp/native folder" />
-		<mkdir dir="${lwjgl.temp}/native/windows"   taskname="initialiazing temp/windows folder" />
-		<mkdir dir="${lwjgl.temp}/native/linux"     taskname="initialiazing temp/linux folder" />
-		<mkdir dir="${lwjgl.temp}/native/freebsd"   taskname="initialiazing temp/freebsd folder" />
-		<mkdir dir="${lwjgl.temp}/native/openbsd"   taskname="initialiazing temp/openbsd folder" />
-		<mkdir dir="${lwjgl.temp}/native/macosx"    taskname="initialiazing temp/macosx folder" />
-		<mkdir dir="${lwjgl.temp}/native/solaris"   taskname="initialiazing temp/solaris folder" />
-	</target>
 
 	<!-- Creates a distribution of LWJGL -->
 	<target name="release" description="Creates a distribution of LWJGL using supplied native binaries">
@@ -494,4 +472,67 @@
 			<globmapper from="lwjgl-${lwjgl.version}/native/*" to="*"/>
 		</unzip>
 	</target>
+
+	<!-- ********************************************************************************
+		*********************************************************************************
+										OPENGL
+		*********************************************************************************
+		****************************************************************************  -->
+
+	<!-- Generate OpenGL references -->
+	<target name="generate-opengl-references" depends="generators" description="Generates java and native source for GL">
+		<javac destdir="${lwjgl.bin}" source="1.8" target="1.8" srcdir="${lwjgl.src.templates.gl}" fork="true" taskname="processor">
+			<compilerarg value="-proc:only"/>
+			<compilerarg value="-processor"/>
+			<compilerarg value="org.lwjgl.util.generator.opengl.GLReferencesGeneratorProcessor"/>
+			<compilerarg value="-cp"/>
+			<compilerarg path="${lwjgl.src}/java:${lwjgl.src.templates}:${lwjgl.bin}:${java.class.path}"/>
+			<compilerarg value="-s"/>
+			<compilerarg path="${lwjgl.src}/generated"/>
+			<src>
+				<fileset dir="${lwjgl.src.templates.gl}">
+					<include name="${opengl-template-pattern}"/>
+				</fileset>
+			</src>
+		</javac>
+	</target>
+
+	<!-- Generate OpenGL context capabilities -->
+	<target name="generate-opengl-capabilities" depends="generators" description="Generates java and native source for GL">
+		<javac destdir="${lwjgl.bin}" source="1.8" target="1.8" srcdir="${lwjgl.src.templates.gl}" fork="true" taskname="processor">
+			<compilerarg value="-proc:only"/>
+			<compilerarg value="-processor"/>
+			<compilerarg value="org.lwjgl.util.generator.opengl.GLGeneratorProcessor"/>
+			<compilerarg value="-cp"/>
+			<compilerarg path="${lwjgl.src}/java:${lwjgl.src.templates}:${lwjgl.bin}:${java.class.path}"/>
+			<compilerarg value="-s"/>
+			<compilerarg path="${lwjgl.src}/generated"/>
+			<compilerarg value="-Acontextspecific"/>
+			<src>
+				<fileset dir="${lwjgl.src.templates.gl}">
+					<include name="${opengl-template-pattern}"/>
+				</fileset>
+			</src>
+		</javac>
+	</target>
+
+	<!--	&lt;!&ndash; Generate OpenGL context capabilities [DEBUG] &ndash;&gt;-->
+	<!--	<target name="generate-opengl-capabilities-debug" depends="generators" description="Generates debug java and native source for GL">-->
+	<!--        <javac destdir="${lwjgl.bin}" source="1.8" target="1.8" srcdir="${lwjgl.src.templates.gl}" fork="true" taskname="processor">-->
+	<!--            <compilerarg value="-proc:only"/>-->
+	<!--            <compilerarg value="-processor"/>-->
+	<!--            <compilerarg value="org.lwjgl.util.generator.opengl.GLGeneratorProcessor"/>-->
+	<!--            <compilerarg value="-cp"/>-->
+	<!--            <compilerarg path="${lwjgl.src}/java:${lwjgl.src.templates}:${lwjgl.bin}:${java.class.path}"/>-->
+	<!--            <compilerarg value="-s"/>-->
+	<!--            <compilerarg path="${lwjgl.src}/generated"/>-->
+	<!--            <compilerarg value="-Ageneratechecks"/>-->
+	<!--            <compilerarg value="-Acontextspecific"/>-->
+	<!--            <src> -->
+	<!--                <fileset dir="${lwjgl.src.templates.gl}">-->
+	<!--                    <include name="${opengl-template-pattern}"/>-->
+	<!--                </fileset>-->
+	<!--            </src>-->
+	<!--        </javac>-->
+	<!--	</target>-->
 </project>

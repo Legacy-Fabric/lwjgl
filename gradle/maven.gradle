@@ -59,6 +59,7 @@ tasks.register("createmavennativejars") {
 
 tasks.register("createmavensourcejars_lwjgl", Jar) {
     description = "lwjgl-sources.jar"
+    dependsOn "generate-all"
 
     from proparties['lwjgl-sources.manual.fileset']
     from proparties['lwjgl-sources.generated.fileset']
@@ -69,6 +70,7 @@ tasks.register("createmavensourcejars_lwjgl", Jar) {
 
 tasks.register("createmavensourcejars_lwjgl_util_applet", Jar) {
     description = "lwjgl_util_applet-sources.jar"
+    dependsOn "generate-all"
 
     from proparties['lwjgl_util_applet-sources.fileset']
 
@@ -78,6 +80,7 @@ tasks.register("createmavensourcejars_lwjgl_util_applet", Jar) {
 
 tasks.register("createmavensourcejars_lwjgl_util", Jar) {
     description = "lwjgl_util-sources.jar"
+    dependsOn "generate-all"
 
     from proparties['lwjgl_util-sources.fileset']
 
@@ -255,5 +258,5 @@ tasks.register("maven") {
 }
 
 tasks.register("maven-full") {
-    dependsOn("a--initialize", "a-generate-all", "compile", "-createjars", "maven")
+    dependsOn("-initialize", "generate-all", "compile", "-createjars", "maven")
 }

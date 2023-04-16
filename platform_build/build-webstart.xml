@@ -4,7 +4,7 @@
 		    <param name="keystore" value="applet/lwjglkeystore"/>
 			<param name="alias" value="lwjgl"/>			
 			<param name="password" value="123456"/>			
-		  </antcall>
+	  	</antcall>
 	</target>
 	
 	<target name="webstart_demo-release">
@@ -14,7 +14,7 @@
 		    <param name="keystore" value="signing/lwjgl.jks"/>
 			<param name="alias" value="lwjgl"/>
 			<param name="password" value="${sign.pwd}"/>
-		  </antcall>
+	  	</antcall>
 	</target>	
 	
 	<!-- Create webstart demo and extension from release files -->
@@ -166,13 +166,13 @@
 		
 		<!-- copy over extension jnlp file -->
 		<copy todir="${lwjgl.temp}/webstart/${lwjgl.version}">
-    	<fileset dir="${lwjgl.web}/webstart">
-    		<include name="extension.jnlp"/>
-    	</fileset>
-    	<filterset>
-      	<filter token="LWJGL_VERSION" value="${lwjgl.version}"/>
-    	</filterset>
-  	</copy>
+			<fileset dir="${lwjgl.web}/webstart">
+				<include name="extension.jnlp"/>
+			</fileset>
+			<filterset>
+				<filter token="LWJGL_VERSION" value="${lwjgl.version}"/>
+			</filterset>
+		</copy>
 		
 		<!-- nuke extracted dir -->
 		<delete dir="${lwjgl.temp}/webstart/temp"/>
