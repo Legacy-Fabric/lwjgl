@@ -3,9 +3,6 @@
 	<property name="build.sysclasspath" value="last" />
 
 	<import file="platform_build/build-definitions.xml"/>
-	<import file="platform_build/build-applet.xml"/>
-	<import file="platform_build/build-webstart.xml"/>
-	<import file="eclipse-update/org.lwjgl.build/build-updatesite.xml"/>
 
 	<!-- ================================================================== -->
 	<!-- Everything below this line is targets.								-->
@@ -419,13 +416,6 @@
 			<param name="input" value="${input}"/>
 			<param name="output" value="${output}"/>
 		</antcall>
-	</target>
-
-	<target name="applettest" depends="applet">
-		<exec executable="appletviewer">
-			<arg value="-J-Djava.security.policy=applet/appletviewer.policy"/>
-			<arg path="applet/applet.html"/>
-		</exec>
 	</target>
 
 	<target name="runtest" depends="all">
