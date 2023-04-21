@@ -1,5 +1,7 @@
 def proparties = project.praps
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 tasks.register("createjars_lwjgl", Jar) {
     dependsOn "compile"
     from proparties["lwjgl.fileset"]
@@ -73,18 +75,18 @@ tasks.register("-createdebugjars", Jar) {
     archiveFileName = "lwjgl-debug.jar"
 }
 
-import org.apache.tools.ant.taskdefs.condition.Os
+def ENV = System.getenv()
 
 tasks.register("compile_native") {
     description = "Compiles the native files"
-    dependsOn "-initialize", "compile", "a-touch-version", "a-version-mismatch"
+    dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
 
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        dependsOn("a--compile_native_win32")
+        dependsOn "link_win32"
     }
 
     if (Os.isName("linux")) {
-        dependsOn("a--compile_native_linux")
+        dependsOn("linux_natives_strip")
     }
 
     if (Os.isName("freebsd")) {
@@ -100,12 +102,29 @@ tasks.register("compile_native") {
     }
 
     if (Os.isName("mac os x")) {
-        dependsOn("a--compile_native_macosx")
+        dependsOn("macosx_natives_lipo")
     }
 }
 
-for(final def os in ["win32", "linux", "freebsd", "openbsd", "solaris", "macosx"]) {
-    tasks.named("a--compile_native_${os}").get().dependsOn "-initialize", "compile", "a-touch-version", "a-version-mismatch"
+tasks.register("compile_native_es") {
+    description = "Compiles the native files"
+    dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        dependsOn "a--compile_native_win32_es"
+    }
+
+    if (Os.isName("linux")) {
+        dependsOn "a--compile_native_linux_es"
+    }
+}
+
+for(final def os in ["linux", "freebsd", "openbsd", "solaris"]) {
+    tasks.named("a--compile_native_${os}").get().dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
+}
+
+for(final def os in ["win32", "linux"]) {
+    tasks.named("a--compile_native_${os}_es").get().dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
 }
 
 tasks.register("compile_test", JavaCompile) {
@@ -168,9 +187,4 @@ tasks.register("compile_core", JavaCompile) {
     )
 
     options.getHeaderOutputDirectory().set(proparties["lwjgl.src.native"])
-}
-
-tasks.register("compile") {
-    description = "Compiles the java source code"
-    dependsOn "-initialize", "compile_core", "compile_test", "compile_examples"
 }

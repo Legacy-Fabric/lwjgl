@@ -38,8 +38,19 @@ def ported = [
         "generate-opencl-debug",
         "generate-opencl-capabilities",
         "generate-opencl-capabilities-debug",
-        "generators"
+        "generators",
+        "compile_native_es",
+        "all",
+        "jars",
+        "jars_es",
+        "jars_NoDEP",
+        "touch-version",
+        "-distribution_javadoc",
+        "-distribution_source",
+        "-distribute"
 ]
+
+def ENV = System.getenv()
 
 ant.importBuild('build.xml') { String oldTargetName ->
     if (ported.contains(oldTargetName)) return oldTargetName
@@ -52,24 +63,27 @@ def proparties = project.praps
 
 tasks.register("-initialize") {
     description = "Initialize build"
-    mkdir(proparties["lwjgl.bin"])
-    mkdir(proparties["lwjgl.bin"].toString() + "/lwjgl")
-    mkdir(proparties["lwjgl.bin"].toString() + "/lwjgles")
-    mkdir(proparties["lwjgl.lib"])
-    mkdir(proparties["lwjgl.dist"])
-    mkdir(proparties["lwjgl.docs"].toString() + "/javadoc")
-    mkdir(proparties["lwjgl.res"])
-    mkdir(proparties["lwjgl.temp"])
-    mkdir(proparties["lwjgl.temp"].toString() + "/jar")
-    mkdir(proparties["lwjgl.temp"].toString() + "/doc")
-    mkdir(proparties["lwjgl.temp"].toString() + "/res")
-    mkdir(proparties["lwjgl.temp"].toString() + "/native")
-    mkdir(proparties["lwjgl.temp"].toString() + "/native/windows")
-    mkdir(proparties["lwjgl.temp"].toString() + "/native/linux")
-    mkdir(proparties["lwjgl.temp"].toString() + "/native/freebsd")
-    mkdir(proparties["lwjgl.temp"].toString() + "/native/openbsd")
-    mkdir(proparties["lwjgl.temp"].toString() + "/native/macosx")
-    mkdir(proparties["lwjgl.temp"].toString() + "/native/solaris")
+
+    doFirst {
+        mkdir(proparties["lwjgl.bin"])
+        mkdir(proparties["lwjgl.bin"].toString() + "/lwjgl")
+        mkdir(proparties["lwjgl.bin"].toString() + "/lwjgles")
+        mkdir(proparties["lwjgl.lib"])
+        mkdir(proparties["lwjgl.dist"])
+        mkdir(proparties["lwjgl.docs"].toString() + "/javadoc")
+        mkdir(proparties["lwjgl.res"])
+        mkdir(proparties["lwjgl.temp"])
+        mkdir(proparties["lwjgl.temp"].toString() + "/jar")
+        mkdir(proparties["lwjgl.temp"].toString() + "/doc")
+        mkdir(proparties["lwjgl.temp"].toString() + "/res")
+        mkdir(proparties["lwjgl.temp"].toString() + "/native")
+        mkdir(proparties["lwjgl.temp"].toString() + "/native/windows")
+        mkdir(proparties["lwjgl.temp"].toString() + "/native/linux")
+        mkdir(proparties["lwjgl.temp"].toString() + "/native/freebsd")
+        mkdir(proparties["lwjgl.temp"].toString() + "/native/openbsd")
+        mkdir(proparties["lwjgl.temp"].toString() + "/native/macosx")
+        mkdir(proparties["lwjgl.temp"].toString() + "/native/solaris")
+    }
 }
 
 apply from:"gradle/generator.gradle"
@@ -77,9 +91,121 @@ apply from:"gradle/compile.gradle"
 apply from:"gradle/clean.gradle"
 apply from:"gradle/maven.gradle"
 
+tasks.register("touch-version") {
+    dependsOn "compile"
+
+    doFirst {
+        for (final def a in [
+                "windows/org_lwjgl_opengl_Display.c",
+                "linux/org_lwjgl_opengl_Display.c",
+                "macosx/org_lwjgl_opengl_Display.m"
+        ]) {
+            file(proparties["lwjgl.src.native"].toString() + "/" + a).createNewFile()
+        }
+    }
+}
+
+tasks.named("a-version-mismatch").get().dependsOn "touch-version"
+
+tasks.register("compile") {
+    description = "Compiles the java source code"
+    dependsOn "-initialize", "compile_core", "compile_test", "compile_examples"
+}
+
+tasks.register("all") {
+    description = "Creates the Java archives and the natives for the current platform"
+    dependsOn "jars", "compile_native"
+}
+
+// Create ONLY the jar archives
+tasks.register("jars") {
+    description = "Creates the Java archives ONLY and places them in libs/"
+    dependsOn "-initialize", "generate-all", "compile", "-createjars", "-jars_NoDEP"
+}
+
+// Create ONLY the jar archives for the ES build
+tasks.register("jars_es") {
+    description = "Creates the Java archives ONLY for the ES build and places them in libs/"
+    dependsOn "-initialize", "generate-all", "compile", "-createjars_es", "-jars_NoDEP"
+}
+
+tasks.register("-jars_NoDEP", Copy) {
+    from(proparties["lwjgl.temp"].toString() + "/jar") {
+        include "*.jar"
+    }
+
+    into("libs/")
+}
+
+tasks.register("-distribution_javadoc", Zip) {
+    description = "Creates a versioned distribution of javadocs"
+
+    destinationDirectory.set(proparties["lwjgl.dist"])
+
+    from(proparties["lwjgl.docs"]) {
+        include "javadoc/**"
+    }
+    archiveFileName = "lwjgl-docs-" + proparties["lwjgl.version"] + ".zip"
+}
+
+tasks.register("-distribution_source", Zip) {
+    description = "Creates a versioned distribution of the source code"
+
+    destinationDirectory.set(proparties["lwjgl.dist"])
+    archiveFileName = "lwjgl-source-" + proparties["lwjgl.version"] + ".zip"
+
+    from proparties["lwjgl.source.fileset"]
+}
+
+tasks.register("-distribute") {
+    description = "Distributes files"
+    dependsOn "-distribute_base"
+}
+
+tasks.register("-distribute_del", Delete) {
+    delete(fileTree(proparties["lwjgl.temp"].toString() + "/native") {
+        include "**/*"
+    })
+}
+
+tasks.register("-distribute_jar", Copy) {
+    destinationDir = file(proparties["lwjgl.temp"].toString() + "/jar")
+
+    from(proparties["lwjgl.lib"]) {
+        include "*.jar"
+    }
+}
+
+tasks.register("-distribute_base", Zip) {
+    destinationDirectory.set(proparties["lwjgl.dist"])
+    archiveFileName = "lwjgl-" + proparties["lwjgl.version"] + ".zip"
+
+    from(proparties["lwjgl.temp"]) {
+        include "**/lwjgl-" + proparties["lwjgl.version"] + "*/**"
+        with proparties["lwjgl_base"]
+    }
+}
+
+for (final def os in ["windows", "linux", "freebsd", "openbsd", "macosx", "solaris"]) {
+    tasks.register("-distribute_${os}", Copy) {
+        dependsOn "-distribute_del"
+        destinationDir = file(proparties["lwjgl.temp"].toString() + "/native/${os}")
+
+        from proparties["lwjgl.bin"].toString() + "/${os}"
+        with proparties["lwjgl-${os}.fileset"]
+    }
+
+    tasks.named("-distribute").get().dependsOn "-distribute_${os}"
+    tasks.named("-distribute_base").get().dependsOn "-distribute_${os}"
+}
+
 tasks.withType(JavaCompile).configureEach {
     targetCompatibility = JavaVersion.VERSION_1_8
     sourceCompatibility = JavaVersion.VERSION_1_8
     it.options.encoding = "UTF-8"
     if (JavaVersion.current().isJava9Compatible()) it.options.release = 8
 }
+
+apply from:"gradle/windows.gradle"
+apply from:"gradle/macosx.gradle"
+apply from:"gradle/linux.gradle"

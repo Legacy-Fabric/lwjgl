@@ -6,54 +6,164 @@ jobs:
   build-natives:
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-latest, macos-latest]
-        arch: [x64, x86]
-        exclude:
-          - os: macos-latest
+        include:
+          - os: windows-latest
             arch: x86
+            java_arch: x86
+            msvc_arch: amd64_x86
+          - os: windows-latest
+            arch: x64
+            java_arch: x64
+            msvc_arch: amd64
+          - os: windows-latest
+            arch: arm64
+            java_arch: x64
+            msvc_arch: amd64_arm64
+            extra_java: 17
+          - os: macos-latest
+            arch: x64
+            java_arch: x64
+          - os: macos-latest
+            arch: arm64
+            java_arch: x64
+            extra_java: 8
+          - os: ubuntu-20.04
+            arch: i386
+            java_arch: x64
+            linux_arch: i386
+            packages: gcc-multilib
+            extra_java: 8
+          - os: ubuntu-20.04
+            arch: amd64
+            java_arch: x64
+          - os: ubuntu-20.04
+            arch: aarch64
+            java_arch: x64
+            linux_arch: arm64
+            packages: gcc-aarch64-linux-gnu libc6-dev-arm64-cross g++-aarch64-linux-gnu
+            ports: true
+            extra_java: 8
+#          - os: ubuntu-20.04
+#            arch: ppc64le
+#            java_arch: x64
+#            linux_arch: ppc64el
+#            packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross g++-powerpc64le-linux-gnu
+#            ports: true
+#            extra_java: 8
+          - os: ubuntu-22.04
+            arch: riscv64
+            java_arch: x64
+            linux_arch: riscv64
+            packages: gcc-riscv64-linux-gnu libc6-dev-riscv64-cross g++-riscv64-linux-gnu
+            ports: true
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v3
-    - name: Set up ${{ matrix.arch }} JDK 8
+    - if: (matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04') && matrix.ports
+      run: |
+        sudo sed -i 's/deb http/deb [arch=amd64,i386] http/' /etc/apt/sources.list
+        sudo grep "ubuntu.com/ubuntu" /etc/apt/sources.list | sudo tee /etc/apt/sources.list.d/ports.list
+        sudo sed -i 's/amd64,i386/arm64,ppc64el,riscv64/' /etc/apt/sources.list.d/ports.list
+        sudo sed -i 's#http://.*/ubuntu#http://ports.ubuntu.com/ubuntu-ports#' /etc/apt/sources.list.d/ports.list
+    - if: (matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04') && matrix.linux_arch
+      run: |
+        sudo dpkg --add-architecture ${{ matrix.linux_arch }} && sudo apt-get clean && sudo apt-get update
+        sudo apt-get install ${{ matrix.packages }} libx11-dev:${{ matrix.linux_arch }} libxrandr-dev:${{ matrix.linux_arch }} libxext-dev:${{ matrix.linux_arch }} libxcursor-dev:${{ matrix.linux_arch }} libxxf86vm-dev:${{ matrix.linux_arch }}
+    - if: matrix.arch == 'riscv64'
+      run: sudo apt-get install openjdk-11-jdk:${{ matrix.linux_arch }}
+    - if: matrix.extra_java
+      name: Set up ${{ matrix.arch }} zulu JDK ${{ matrix.extra_java }}
       uses: actions/setup-java@v3
       with:
-        java-version: 8
+        java-version: ${{ matrix.extra_java }}
         distribution: zulu
         architecture: ${{ matrix.arch }}
-    - if: matrix.os != 'windows-latest'
-      name: Set up x64 JDK 8
+    - name: Set up ${{ matrix.java_arch }} zulu JDK 8
       uses: actions/setup-java@v3
       with:
         java-version: 8
         distribution: zulu
-        architecture: x64
-    - if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'x64'
+        architecture: ${{ matrix.java_arch }}
+    - if: (matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04') && matrix.arch == 'amd64'
       run: sudo apt install libx11-dev libxrandr-dev libxext-dev libxcursor-dev libxxf86vm-dev
-    - if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'x86'
-      run: sudo dpkg --add-architecture i386 && sudo apt update && sudo apt install gcc-multilib libx11-dev:i386 libxrandr-dev:i386 libxext-dev:i386 libxcursor-dev:i386 libxxf86vm-dev:i386
     - if: matrix.os == 'windows-latest'
       uses: ilammy/msvc-dev-cmd@v1
       with:
-          arch: ${{ matrix.arch }}
+          arch: ${{ matrix.msvc_arch }}
     - if: matrix.os == 'windows-latest'
       name: Build natives
-      run: .\gradlew.bat generate-all compile_native --info --stacktrace
-    - if: matrix.os != 'windows-latest'
-      name: Build natives
-      run: ./gradlew generate-all compile_native --info --stacktrace
+      run: .\gradlew.bat generate-all compile_native --stacktrace
       env:
         ARCHITECTURE: ${{ matrix.arch }}
+    - if: matrix.os != 'windows-latest'
+      name: Build natives
+      run: ./gradlew generate-all compile_native --stacktrace
+      env:
+        ARCHITECTURE: ${{ matrix.arch }}
+        TARGET_JAVA: /usr/lib/jvm/java-11-openjdk-${{ matrix.arch }}
     - uses: actions/upload-artifact@v3
       with:
         name: natives
         path: |
           bin/lwjgl/lwjgl*.dll
           bin/lwjgl/liblwjgl*.so
-          bin/lwjgl/liblwjgl.dylib
+          bin/lwjgl/liblwjgl*.dylib
 
+  build_debian:
+    strategy:
+      matrix:
+        include:
+          - arch: armhf
+            image: oldstable-backports
+            packages: gcc-arm-linux-gnueabihf libc6-dev-armhf-cross g++-arm-linux-gnueabihf
+          - arch: armel
+            image: stable-backports
+            packages: gcc-arm-linux-gnueabi libc6-dev-armel-cross g++-arm-linux-gnueabi
+#          - arch: riscv64
+#            image: sid
+#            packages: gcc-riscv64-linux-gnu libc6-dev-riscv64-cross g++-riscv64-linux-gnu
+#          - arch: powerpc
+#            image: sid
+#            packages: gcc-powerpc-linux-gnu libc6-dev-powerpc-cross g++-powerpc-linux-gnu
+#          - arch: ppc64
+#            image: sid
+#            packages: gcc-powerpc64-linux-gnu libc6-dev-ppc64-cross g++-powerpc64-linux-gnu
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    container:
+      image: debian:${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v3
+      - if: matrix.image == 'sid'
+        run: |
+          apt-get clean && apt-get update && apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install debian-ports-archive-keyring
+          echo "deb http://ftp.ports.debian.org/debian-ports unstable main" > /etc/apt/sources.list
+          echo "deb http://ftp.ports.debian.org/debian-ports unreleased main" > /etc/apt/sources.list
+          echo "deb http://ftp.ports.debian.org/debian-ports experimental main" > /etc/apt/sources.list
+      - run: dpkg --add-architecture ${{ matrix.arch }} && apt-get clean && apt-get update
+      - run: apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install ${{ matrix.packages }}
+      - run: apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install libx11-dev:${{ matrix.arch }} libxrandr-dev:${{ matrix.arch }} libxext-dev:${{ matrix.arch }} libxcursor-dev:${{ matrix.arch }} libxxf86vm-dev:${{ matrix.arch }}
+      - run: apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install openjdk-11-jdk:${{ matrix.arch }}
+      - name: Set up x64 zulu JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: zulu
+          architecture: x64
+      - name: Build natives
+        run: ./gradlew generate-all compile_native --stacktrace
+        env:
+          ARCHITECTURE: ${{ matrix.arch }}
+          TARGET_JAVA: /usr/lib/jvm/java-11-openjdk-${{ matrix.arch }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: natives
+          path: |
+            bin/lwjgl/liblwjgl*.so
   build:
     runs-on: ubuntu-latest
-    needs: build-natives
+    needs: [build-natives, build_debian]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -67,7 +177,7 @@ jobs:
           name: natives
           path: bin/lwjgl
       - name: Build
-        run: ./gradlew maven-full --info --stacktrace
+        run: ./gradlew maven-full --stacktrace
       - uses: actions/upload-artifact@v3
         with:
           name: maven

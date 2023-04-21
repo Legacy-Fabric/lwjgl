@@ -252,6 +252,7 @@ tasks.register("generate-opengl-debug", JavaCompile) {
 //    ]
 //}
 
+tasks.named("generate-opengl-capabilities").get().dependsOn("generators")
 tasks.named("generate-opengl-capabilities").get().dependsOn("generate-opengl")
 
 tasks.register("generate-opengl-capabilities-debug", JavaCompile) {
@@ -310,6 +311,7 @@ tasks.register("generate-opengl-capabilities-debug", JavaCompile) {
 //    ]
 //}
 
+tasks.named("generate-opengl-references").get().dependsOn("generators")
 tasks.named("generate-opengl-references").get().dependsOn("generate-opengl-capabilities")
 
 tasks.register("generate-opengles", JavaCompile) {

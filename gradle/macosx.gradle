@@ -1,0 +1,214 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+def ENV = System.getenv()
+
+def Native = "../../src/native"
+def Native_2 = "src/native"
+def java_home = ENV.JAVA_HOME + "/jre"
+
+if (ENV.ARCHITECTURE) {
+    if (ENV.ARCHITECTURE == "arm64") {
+        java_home = ENV.JAVA_HOME_8_ARM64 + "/jre"
+    }
+}
+
+def javavmroot = java_home + "/.."
+
+def target_arch = ENV.ARCHITECTURE ? ENV.ARCHITECTURE : System.getProperty("os.arch")
+
+def macos_arch = "x86_64"
+
+if (target_arch == "arm64" || target_arch == "aarch64") {
+    macos_arch = "arm64"
+}
+
+def macos_target = "10.9"
+if (target_arch == "arm64" || target_arch == "aarch64") {
+    macos_target = "11.0"
+}
+
+def developer_path;
+
+try {
+    def developer_path_pros = Os.isName("mac os x") ? "xcode-select -print-path".execute() : null
+
+    if (developer_path_pros == null || developer_path_pros.exitValue() != 0) {
+        developer_path = "/Developer"
+    } else {
+        developer_path = developer_path_pros.text.trim()
+    }
+} catch (ignored) {
+    developer_path = "/Developer"
+}
+
+
+
+def sdk_path = "Platforms/MacOSX.platform/Developer/SDKs"
+
+def sdkroot = "${developer_path}/${sdk_path}/MacOSX.sdk"
+
+def compiler = "clang"
+
+def workdir = "bin/lwjgl"
+def workdirX = "${workdir}/${macos_arch}"
+
+def final_name = "liblwjgl.dylib"
+if (target_arch == "arm64" || target_arch == "aarch64") {
+    final_name = "liblwjgl-arm64.dylib"
+}
+
+def temp_name = "liblwjgl-x86_64.dylib"
+if (target_arch == "arm64" || target_arch == "aarch64") {
+    temp_name = "liblwjgl-arm64.dylib"
+}
+
+tasks.register("macosx_natives_echo") {
+    dependsOn "a-version-mismatch"
+    doFirst {
+        println("Compiler: ${compiler}" +
+                "\nMac OS SDK: ${sdkroot}" +
+                "\nMacOS Version Target: ${macos_target}" +
+                "\nJava Home/JavaVM.framework: ${javavmroot}" +
+                "\nOS arch: ${System.getProperty("os.arch")}" +
+                "\nTarget arch ${target_arch}"
+        )
+        mkdir(workdirX)
+    }
+}
+
+tasks.register("macosx_natives_compile", Exec) {
+    dependsOn "macosx_natives_echo"
+    workingDir(workdirX)
+
+    doFirst {
+        args(
+                "-isysroot",
+                sdkroot,
+                "-arch",
+                macos_arch,
+                "-mmacosx-version-min=${macos_target}",
+                "-ObjC",
+                "-O2",
+                "-Wall",
+                "-Wunused",
+                "-c",
+                "-fPIC"
+        )
+
+        def inputs = [
+                "${javavmroot}/include",
+                "${javavmroot}/include/darwin",
+                "../${Native}",
+                "../${Native}/common",
+                "../${Native}/common/opengl",
+                "../${Native}/macosx"
+        ]
+
+        inputs.each {args("-I" + it)}
+
+        for (final def part in [
+                "macosx", "common", "common/opengl", "generated/openal", "generated/opencl", "generated/opengl"
+        ]) {
+            fileTree(Native_2 + "/" + part) {
+                include "*.c", "*.m"
+            }.files.each {args(it.toString())}
+        }
+    }
+
+    executable(compiler)
+}
+
+tasks.register("macosx_natives_symbols", Exec) {
+    dependsOn "macosx_natives_compile"
+    workingDir(workdir)
+
+    executable("sh")
+
+    args(
+            "../../platform_build/macosx_ant/build-symbol-list",
+            macos_arch
+    )
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    doLast {
+        file(workdir + "/lwjgl.symbols").write(standardOutput.toString())
+    }
+}
+
+tasks.register("macosx_natives_link", Exec) {
+    dependsOn "macosx_natives_symbols"
+
+    def jdk_lib = "${java_home}/../Libraries"
+    if (file("${java_home}/lib/libjawt.dylib").exists()) {
+        jdk_lib = "${java_home}/lib"
+    }
+
+    workingDir(workdirX)
+    executable(compiler)
+
+    doFirst {
+        args(
+                "-isysroot",
+                sdkroot,
+                "-arch",
+                macos_arch,
+                "-mmacosx-version-min=${macos_target}",
+                "-exported_symbols_list",
+                "../lwjgl.symbols",
+                "-dynamiclib",
+                "-o",
+                temp_name,
+                "-framework",
+                "Foundation",
+                "-weak_framework",
+                "AppKit",
+                "-framework",
+                "Carbon",
+                "-framework",
+                "OpenGL",
+                "-framework",
+                "QuartzCore",
+                "-L${jdk_lib}",
+                "-ljawt"
+        )
+
+        fileTree(workdirX) {
+            include "*.o"
+        }.files.each {args(it.toString())}
+    }
+}
+
+tasks.register("macosx_natives_strip", Exec) {
+    dependsOn "macosx_natives_link"
+    workingDir(workdirX)
+    executable("strip")
+
+    doFirst {
+        args(
+                "-S",
+                "-X"
+        )
+
+        fileTree(workdirX) {
+            include temp_name
+        }.files.each {args(it.toString())}
+    }
+}
+
+tasks.register("macosx_natives_lipo", Exec) {
+    dependsOn "macosx_natives_strip"
+    workingDir(workdir)
+    executable("lipo")
+
+    doFirst {
+        args("-create")
+
+        fileTree(workdirX) {
+            include temp_name
+        }.files.each {args(it.toString())}
+
+        args("-output", final_name)
+    }
+}

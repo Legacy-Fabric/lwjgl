@@ -1,0 +1,127 @@
+def ENV = System.getenv()
+
+def Native = "../../src/native"
+def Native_2 = "src/native"
+def java_home = ENV.JAVA_HOME + "/jre"
+
+if (ENV.ARCHITECTURE == "arm64") {
+    java_home = ENV.JAVA_HOME_17_ARM64 + "/jre"
+}
+
+def sdkhome = ENV.VCToolsInstallDir ? ENV.VCToolsInstallDir : ENV.MSVC
+def sdkhomelib = sdkhome + "/lib/x64"
+
+if (ENV.ARCHITECTURE) {
+    if (ENV.ARCHITECTURE == "x86") {
+        sdkhomelib = sdkhome + "/lib"
+    } else if (ENV.ARCHITECTURE == "arm64") {
+        sdkhomelib = sdkhome + "/lib/arm64"
+    }
+} else {
+    if (System.getProperty("os.arch") == "x86") {
+        sdkhomelib = sdkhome + "/lib"
+    } else if (System.getProperty("os.arch") == "arm64") {
+        sdkhomelib = sdkhome + "/lib/arm64"
+    }
+}
+
+def dllname = "lwjgl64.dll"
+
+if (ENV.ARCHITECTURE) {
+    if (ENV.ARCHITECTURE == "x86") {
+        dllname = "lwjgl.dll"
+    } else if (ENV.ARCHITECTURE == "arm64") {
+        dllname = "lwjgl-arm64.dll"
+    }
+} else {
+    if (System.getProperty("os.arch") == "x86") {
+        dllname = "lwjgl.dll"
+    } else if (System.getProperty("os.arch") == "arm64") {
+        dllname = "lwjgl-arm64.dll"
+    }
+}
+
+def libss = "Kernel32.lib ole32.lib OpenGL32.Lib Version.lib user32.lib Gdi32.lib Advapi32.lib jawt.lib delayimp.lib winmm.lib Comctl32.lib"
+
+tasks.register("compile_win32", Exec) {
+    dependsOn "a-version-mismatch"
+    executable("cl")
+
+    doFirst {
+        args("/c", "/W2", "/EHsc", "/Ox", "/Gy",
+                "/MT", "/MP", "/nologo")
+
+        def iss = [
+                "${sdkhome}/include",
+                "${java_home}/include",
+                "${java_home}/include/win32",
+                "${java_home}/../include",
+                "${java_home}/../include/win32",
+                "${Native}",
+                "${Native}/common",
+                "${Native}/common/opengl",
+                "${Native}/windows",
+                "${Native}/windows/opengl"
+        ]
+
+        iss.each {args("/I" + it.replace("/", "\\"))}
+
+        for (final def aaa in [
+                "common", "common/opengl", "generated/openal",
+                "generated/opencl", "generated/opengl", "windows",
+                "windows/opengl"
+        ]) {
+            fileTree("${Native_2}/${aaa}") {
+                include "*.c"
+            }.files.each {File fil -> args(fil.toString())}
+        }
+
+        println("SDK: ${sdkhomelib}" +
+                "\nDLLName: ${dllname}" +
+                "\nJava Home: ${java_home}" +
+                "\nOS arch: ${System.getProperty("os.arch")}" +
+                "\nTarget arch ${ENV.ARCHITECTURE ? ENV.ARCHITECTURE : System.getProperty("os.arch")}"
+        )
+    }
+
+    workingDir("bin/lwjgl")
+}
+
+tasks.register("link_win32", Exec) {
+    dependsOn "compile_win32"
+    executable("cl")
+
+    doFirst {
+        args(
+                "/LD", "/nologo"
+        )
+
+        fileTree("bin/lwjgl") {
+            include "*.obj"
+        }.files.each {args(it.toString())}
+
+        args(
+                "/Fe${dllname}", "/link",
+                "/LIBPATH:${java_home}\\lib",
+                "/LIBPATH:${java_home}\\..\\lib",
+                "/LIBPATH:${sdkhomelib}",
+                "/OPT:REF",
+                "/OPT:ICF",
+                "/DLL",
+                "/DELAYLOAD:jawt.dll"
+        )
+
+        libss.split(" ").each {args(it)}
+
+        println("Args:")
+        args.each {println(it)}
+    }
+
+    workingDir("bin/lwjgl")
+}
+
+tasks.register("clean_win32", Delete) {
+    from fileTree("bin/lwjgl") {
+        include "*.obj", "*.dll", "*.exp", "*.lib"
+    }
+}

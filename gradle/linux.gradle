@@ -1,0 +1,216 @@
+def ENV = System.getenv()
+
+def Native = "../../src/native"
+def Native_2 = "src/native"
+
+def target_arch = ENV.ARCHITECTURE ? ENV.ARCHITECTURE : System.getProperty("os.arch")
+
+def linux_arch = "amd64"
+if (target_arch == "x86" || target_arch == "i386") {
+    linux_arch = "i386"
+} else if (target_arch == "arm32hf" || target_arch == "armhf" || target_arch == "aarch32hf") {
+    linux_arch = "armhf"
+} else if (target_arch == "arm64" || target_arch == "aarch64") {
+    linux_arch = "aarch64"
+} else if (target_arch == "ppc64el" || target_arch == "powerpc64le" || target_arch == "ppc64le" || target_arch == "powerpc64el") {
+    linux_arch = "ppc64el"
+} else if (target_arch == "riscv64") {
+    linux_arch = "riscv64"
+} else if (target_arch == "armel" || target_arch == "arm" || target_arch == "arm32" || target_arch == "aarch32") {
+    linux_arch = "armel"
+} else if (target_arch == "powerpc" || target_arch == "ppc") {
+    linux_arch = "powerpc"
+} else if (target_arch == "ppc64" || target_arch == "powerpc64") {
+    linux_arch = "ppc64"
+}
+
+def libname = "liblwjgl64.so"
+
+if (linux_arch == "i386") {
+    libname = "liblwjgl.so"
+} else if (linux_arch != "amd64") {
+    libname = "liblwjgl-${linux_arch}.so"
+}
+
+def java_home = ENV.JAVA_HOME + "/jre"
+if (ENV.ARCHITECTURE && linux_arch != "amd64") {
+    if (linux_arch == "armhf" || linux_arch == "riscv64"
+            || linux_arch == "armel" || linux_arch == "riscv64"
+            || linux_arch == "powerpc" || linux_arch == "ppc64") {
+        java_home = ENV.TARGET_JAVA
+    } else if (linux_arch == "aarch64") {
+        java_home = ENV.JAVA_HOME_8_AARCH64 + "/jre"
+    } else if (linux_arch == "i386") {
+        java_home = ENV.JAVA_HOME_8_I386 + "/jre"
+    } else if (linux_arch == "ppc64el") {
+        java_home = ENV.JAVA_HOME_8_PPC64LE + "/jre"
+    }
+}
+
+def libs = []
+
+if (linux_arch == "amd64") {
+    libs += [
+            "-L/usr/X11R6/lib64",
+            "-L/usr/X11/lib64"
+    ]
+} else {
+    libs += [
+            "-L/usr/X11R6/lib",
+            "-L/usr/X11/lib"
+    ]
+}
+
+def java_in_arch = linux_arch
+
+if (java_in_arch == "ppc64el") {
+    java_in_arch = "ppc64el"
+}
+
+libs += [
+        "-lm",
+        "-lX11",
+        "-lXext",
+        "-lXcursor",
+        "-lXrandr",
+        "-lXxf86vm",
+        "-lpthread",
+        "-L${java_home}/lib",
+        "-L${java_home}/lib/${java_in_arch}",
+        "-ljawt"
+]
+
+def cflags = [
+        "-O2"
+]
+
+cflags += [
+        "-Wall",
+        "-c",
+        "-fPIC",
+        "-std=c99",
+        "-Wunused"
+]
+
+def version_script_flags = [
+//        "-Wl,--version-script='${Native}/linux/lwjgl.map"
+]
+
+def linker_flags = version_script_flags + [
+        "-shared", "-O2", "-Wall", "-o", libname
+] + libs
+
+def compiler = "gcc"
+def stripper = "strip"
+
+if (ENV.ARCHITECTURE) {
+    def thepart;
+    switch (linux_arch) {
+        case "armhf":
+            thepart = "arm-linux-gnueabihf"
+            break
+        case "armel":
+            thepart = "arm-linux-gnueabi"
+            break
+        case "aarch64":
+            thepart = "aarch64-linux-gnu"
+            break
+        case "ppc64el":
+            thepart = "powerpc64le-linux-gnu"
+            break
+        case "riscv64":
+            thepart = "riscv64-linux-gnu"
+            break
+        case "powerpc":
+            thepart = "powerpc-linux-gnu"
+            break
+        case "ppc64":
+            thepart = "powerpc-linux-gnu"
+            break
+        default:
+            thepart = ""
+            break
+    }
+
+    if (!thepart.isEmpty()) {
+        compiler = "${thepart}-${compiler}"
+        stripper = "${thepart}-${stripper}"
+    }
+}
+
+def workdir = "bin/lwjgl"
+def workdirX = "${workdir}/${linux_arch}"
+
+def cflags_pthread = ["-pthread"]
+
+tasks.register("linux_natives_init") {
+    dependsOn "a-version-mismatch"
+    doFirst {
+        println(
+                "Compiler: ${compiler}" +
+                "\nJava Home: ${java_home}" +
+                "\nOS arch: ${System.getProperty("os.arch")}" +
+                "\nTarget arch ${linux_arch}"
+        )
+        mkdir(workdirX)
+    }
+}
+
+tasks.register("linux_natives_compile", Exec) {
+    dependsOn "linux_natives_init"
+    workingDir(workdirX)
+    executable(compiler)
+
+    if (linux_arch == "i386") {
+        args("-m32")
+    }
+
+    cflags.each {args(it)}
+    cflags_pthread.each {args(it)}
+
+    ["${java_home}/include", "${java_home}/include/linux", "${java_home}/../include",
+     "${java_home}/../include/linux", "${java_home}/../include/solaris", "../${Native}",
+     "../${Native}/common", "../${Native}/common/opengl", "../${Native}/linux",
+     "../${Native}/linux/opengl"].each {
+        args("-I" + it)
+    }
+
+    doFirst {
+        ["common", "common/opengl", "generated/openal",
+         "generated/opencl", "generated/opengl", "linux", "linux/opengl"].each {
+            fileTree(Native_2 + "/" + it) {
+                include "*.c"
+            }.files.each {args(it.toString())}
+        }
+    }
+}
+
+tasks.register("linux_natives_link", Exec) {
+    dependsOn "linux_natives_compile"
+    workingDir(workdir)
+    executable(compiler)
+
+    doFirst {
+        fileTree(workdirX) {
+            include "*.o"
+        }.files.each {args(it.toString())}
+
+        if (linux_arch == "i386") {
+            args("-m32")
+        }
+
+        linker_flags.each {args(it)}
+    }
+}
+
+tasks.register("linux_natives_strip", Exec) {
+    dependsOn "linux_natives_link"
+    workingDir(workdir)
+    executable(stripper)
+
+    doFirst {
+        fileTree(workdir) {
+            include libname
+        }.files.each {args(it.toString())}
+    }
+}
