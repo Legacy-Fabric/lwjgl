@@ -26,25 +26,25 @@ tasks.register("copymavenpoms", Copy) {
 }
 
 for (final def os in ["windows", "linux", "osx"]) {
-    tasks.register("createmavennativejars_${os}", Jar) {
-        it.description = "lwjgl-platform-natives-${os}.jar"
+    tasks.register("createmavennativejars_${os}", Jar) {et ->
+        et.description = "lwjgl-platform-natives-${os}.jar"
 
-        it.dependsOn "compile"
+        et.dependsOn "compile"
 
-        it.from("${proparties['lwjgl.lib']}/${os}") {tr->
-            def praps = proparties["lwjgl-${os.replace("osx", "macosx")}-lwjgl.fileset"]
-            praps.includes.forEach {tr.include it}
-            praps.excludes.forEach {tr.exclude it}
+        def praps = proparties["lwjgl-${os.replace("osx", "macosx")}-lwjgl.fileset"]
+
+        et.from("${proparties['lwjgl.lib']}/${os}") {tr->
+            praps.includes.forEach {aa -> tr.include aa}
+            praps.excludes.forEach {aa -> tr.exclude aa}
         }
 
-        it.from("${proparties['lwjgl.bin'].toString()}/lwjgl") {tr->
-            def praps = proparties["lwjgl-${os.replace("osx", "macosx")}-lwjgl.fileset"]
-            praps.includes.forEach {tr.include it}
-            praps.excludes.forEach {tr.exclude it}
+        et.from("${proparties['lwjgl.bin'].toString()}/lwjgl") {tr->
+            praps.includes.forEach {aa -> tr.include aa}
+            praps.excludes.forEach {aa -> tr.exclude aa}
         }
 
-        it.destinationDirectory = proparties['lwjgl.dstMaven']
-        it.archiveFileName = "lwjgl-platform-natives-${os}.jar"
+        et.destinationDirectory = proparties['lwjgl.dstMaven']
+        et.archiveFileName = "lwjgl-platform-natives-${os}.jar"
     }
 }
 
@@ -232,7 +232,7 @@ tasks.register("createmavenjavadocs") {
 }
 
 tasks.register("copymaventdist", Zip) {
-    dependsOn "copylwjgljars", "createmavensourcejars", "createmavenjavadocs", "copymavenpoms"
+    dependsOn "copylwjgljars", "createmavensourcejars", "createmavenjavadocs", "createmavennativejars", "copymavenpoms"
 
     from(proparties["lwjgl.temp"]) {
         include "maven/**"
@@ -252,7 +252,7 @@ tasks.register("maven") {
 
     dependsOn "compile"
     dependsOn "-createjars"
-    dependsOn "maven_clean"
+//    dependsOn "maven_clean"
     dependsOn("copylwjgljars", "createmavensourcejars", "createmavenjavadocs",
             "createmavennativejars", "copymavenpoms", "copymaventdist")
 }

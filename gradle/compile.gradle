@@ -119,7 +119,7 @@ tasks.register("compile_native_es") {
     }
 }
 
-for(final def os in ["linux", "freebsd", "openbsd", "solaris"]) {
+for(final def os in ["freebsd", "openbsd", "solaris"]) {
     tasks.named("a--compile_native_${os}").get().dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
 }
 

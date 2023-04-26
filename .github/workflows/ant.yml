@@ -120,9 +120,6 @@ jobs:
           - arch: armel
             image: stable-backports
             packages: gcc-arm-linux-gnueabi libc6-dev-armel-cross g++-arm-linux-gnueabi
-#          - arch: riscv64
-#            image: sid
-#            packages: gcc-riscv64-linux-gnu libc6-dev-riscv64-cross g++-riscv64-linux-gnu
 #          - arch: powerpc
 #            image: sid
 #            packages: gcc-powerpc-linux-gnu libc6-dev-powerpc-cross g++-powerpc-linux-gnu
