@@ -1,3 +1,5 @@
+version = rootProject.version
+
 sourceSets {
     common {
         resources {
@@ -24,4 +26,43 @@ sourceSets {
             srcDir "lwjgl-platform/src/generated/c"
         }
     }
+}
+
+tasks.register("linuxNativeJar", Jar) {
+    dependsOn ":compile"
+    from fileTree("../bin/lwjgl") {
+        include "liblwjgl*.so"
+    }
+    from fileTree("libs/linux") {
+        include "libopenal*.so"
+    }
+    archiveClassifier.set("natives-linux")
+    destinationDirectory.set(file("../temp/maven"))
+    archiveBaseName.set("lwjgl-platform")
+}
+
+tasks.register("macosxNativeJar", Jar) {
+    dependsOn ":compile"
+    from fileTree("../bin/lwjgl") {
+        include "liblwjgl*.dylib"
+    }
+    from fileTree("libs/macosx") {
+        include "openal*.dylib"
+    }
+    archiveClassifier.set("natives-macosx")
+    destinationDirectory.set(file("../temp/maven"))
+    archiveBaseName.set("lwjgl-platform")
+}
+
+tasks.register("windowsNativeJar", Jar) {
+    dependsOn ":compile"
+    from fileTree("../bin/lwjgl") {
+        include "lwjgl*.dll"
+    }
+    from fileTree("libs/windows") {
+        include "OpenAL*.dll"
+    }
+    archiveClassifier.set("natives-windows")
+    destinationDirectory.set(file("../temp/maven"))
+    archiveBaseName.set("lwjgl-platform")
 }

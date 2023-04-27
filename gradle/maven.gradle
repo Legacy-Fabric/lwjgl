@@ -25,36 +25,9 @@ tasks.register("copymavenpoms", Copy) {
 //    		</filterset>
 }
 
-for (final def os in ["windows", "linux", "osx"]) {
-    tasks.register("createmavennativejars_${os}", Jar) {et ->
-        et.description = "lwjgl-platform-natives-${os}.jar"
-
-        et.dependsOn "compile"
-
-        def praps = proparties["lwjgl-${os.replace("osx", "macosx")}-lwjgl.fileset"]
-
-        et.from("${proparties['lwjgl.lib']}/${os}") {tr->
-            praps.includes.forEach {aa -> tr.include aa}
-            praps.excludes.forEach {aa -> tr.exclude aa}
-        }
-
-        et.from("${proparties['lwjgl.bin'].toString()}/lwjgl") {tr->
-            praps.includes.forEach {aa -> tr.include aa}
-            praps.excludes.forEach {aa -> tr.exclude aa}
-        }
-
-        et.destinationDirectory = proparties['lwjgl.dstMaven']
-        et.archiveFileName = "lwjgl-platform-natives-${os}.jar"
-    }
-}
-
 tasks.register("createmavennativejars") {
     mustRunAfter "createmavenjavadocs"
-    dependsOn "compile"
-    for (final def os in ["windows", "linux", "osx"]) {
-        dependsOn("createmavennativejars_${os}")
-        outputs.file(tasks.named("createmavennativejars_${os}").get().outputs)
-    }
+    dependsOn "compile", ":lwjgl-platform:linuxNativeJar", ":lwjgl-platform:macosxNativeJar", ":lwjgl-platform:windowsNativeJar"
 }
 
 tasks.register("createmavensourcejars_lwjgl", Jar) {
