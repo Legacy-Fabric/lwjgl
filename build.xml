@@ -136,21 +136,21 @@
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
-		<loadfile srcfile="${lwjgl.src.native}/org_lwjgl_WindowsSysImplementation.h" property="lwjgl.native.windows.version">
+		<loadfile srcfile="${natives_generated}/org_lwjgl_WindowsSysImplementation.h" property="lwjgl.native.windows.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="#define org_lwjgl_WindowsSysImplementation_JNI_VERSION"/>
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
-		<loadfile srcfile="${lwjgl.src.native}/org_lwjgl_LinuxSysImplementation.h" property="lwjgl.native.linux.version">
+		<loadfile srcfile="${natives_generated}/org_lwjgl_LinuxSysImplementation.h" property="lwjgl.native.linux.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="#define org_lwjgl_LinuxSysImplementation_JNI_VERSION"/>
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
-		<loadfile srcfile="${lwjgl.src.native}/org_lwjgl_MacOSXSysImplementation.h" property="lwjgl.native.macosx.version">
+		<loadfile srcfile="${natives_generated}/org_lwjgl_MacOSXSysImplementation.h" property="lwjgl.native.macosx.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="#define org_lwjgl_MacOSXSysImplementation_JNI_VERSION"/>

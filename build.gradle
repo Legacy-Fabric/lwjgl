@@ -100,7 +100,7 @@ tasks.register("touch-version") {
                 "linux/org_lwjgl_opengl_Display.c",
                 "macosx/org_lwjgl_opengl_Display.m"
         ]) {
-            file(proparties["lwjgl.src.native"].toString() + "/" + a).createNewFile()
+            file("lwjgl-platform/src/${a.split("/")[0]}/c/" + a).createNewFile()
         }
     }
 }

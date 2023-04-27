@@ -29,11 +29,11 @@ tasks.register("generate-debug") {
 }
 
 tasks.register("generators_init") {
-    mkdir("${proparties["lwjgl.src"]}/generated/")
-    mkdir("${proparties["lwjgl.src.native"]}/generated/openal")
-    mkdir("${proparties["lwjgl.src.native"]}/generated/opengl")
-    mkdir("${proparties["lwjgl.src.native"]}/generated/opengles")
-    mkdir("${proparties["lwjgl.src.native"]}/generated/opencl")
+    mkdir("${proparties["natives_generated"]}/generated")
+    mkdir("${proparties["natives_generated"]}/generated/openal")
+    mkdir("${proparties["natives_generated"]}/generated/opengl")
+    mkdir("${proparties["natives_generated"]}/generated/opengles")
+    mkdir("${proparties["natives_generated"]}/generated/opencl")
     mkdir(proparties["lwjgl.bin"])
 }
 

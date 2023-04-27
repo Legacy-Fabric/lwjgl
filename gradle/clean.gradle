@@ -9,7 +9,7 @@ tasks.register('clean-generated', Delete) {
 tasks.register('clean-generated-native', Delete) {
     description = "Deletes the generated native source"
     dependsOn("clean-generated")
-    delete proparties['lwjgl.src.native'].toString() + "/generated"
+    delete proparties['natives_generated']
 }
 
 // Cleans up any non-native files created during the execution of this script

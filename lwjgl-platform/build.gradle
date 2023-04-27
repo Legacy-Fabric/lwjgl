@@ -9,9 +9,9 @@ sourceSets {
             srcDir "lwjgl-platform/src/linux/c"
         }
     }
-    macos {
+    macosx {
         resources {
-            srcDir "lwjgl-platform/src/macos/c"
+            srcDir "lwjgl-platform/src/macosx/c"
         }
     }
     windows {

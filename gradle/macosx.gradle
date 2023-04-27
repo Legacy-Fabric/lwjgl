@@ -2,8 +2,10 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 def ENV = System.getenv()
 
-def Native = "../../src/native"
-def Native_2 = "src/native"
+def getNativeFolder(String name, String fold) {
+    return file("lwjgl-platform/src/" + name + "/c/" + fold).toString()
+}
+
 def java_home = ENV.JAVA_HOME + "/jre"
 
 if (ENV.ARCHITECTURE) {
@@ -98,20 +100,27 @@ tasks.register("macosx_natives_compile", Exec) {
         def inputs = [
                 "${javavmroot}/include",
                 "${javavmroot}/include/darwin",
-                "../${Native}",
-                "../${Native}/common",
-                "../${Native}/common/opengl",
-                "../${Native}/macosx"
+                getNativeFolder("generated", "."),
+                getNativeFolder("common", "common"),
+                getNativeFolder("common", "common/opengl"),
+                getNativeFolder("macosx", "macosx")
         ]
 
         inputs.each {args("-I" + it)}
 
-        for (final def part in [
-                "macosx", "common", "common/opengl", "generated/openal", "generated/opencl", "generated/opengl"
-        ]) {
-            fileTree(Native_2 + "/" + part) {
-                include "*.c", "*.m"
-            }.files.each {args(it.toString())}
+        def folders = project(":lwjgl-platform").sourceSets.common.resources.srcDirs +
+                project(":lwjgl-platform").sourceSets.macosx.resources.srcDirs +
+                project(":lwjgl-platform").sourceSets.generated.resources.srcDirs
+
+        folders.each {
+            if (it.toString().contains("lwjgl-platform/src")) {
+                ["common", "common/opengl", "generated/openal",
+                 "generated/opencl", "generated/opengl", "macosx"].each {et ->
+                    fileTree(it.toString() + "/" + et) {
+                        include "*.c", "*.m"
+                    }.files.each {args(it.toString())}
+                }
+            }
         }
     }
 

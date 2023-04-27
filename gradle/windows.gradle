@@ -1,7 +1,9 @@
 def ENV = System.getenv()
 
-def Native = "../../src/native"
-def Native_2 = "src/native"
+def getNativeFolder(String name, String fold) {
+    return file("lwjgl-platform/src/" + name + "/c/" + fold).toString()
+}
+
 def java_home = ENV.JAVA_HOME + "/jre"
 
 if (ENV.ARCHITECTURE == "arm64") {
@@ -57,23 +59,30 @@ tasks.register("compile_win32", Exec) {
                 "${java_home}/include/win32",
                 "${java_home}/../include",
                 "${java_home}/../include/win32",
-                "${Native}",
-                "${Native}/common",
-                "${Native}/common/opengl",
-                "${Native}/windows",
-                "${Native}/windows/opengl"
+                getNativeFolder("generated", "."),
+                getNativeFolder("common", "common"),
+                getNativeFolder("common", "common/opengl"),
+                getNativeFolder("windows", "windows"),
+                getNativeFolder("windows", "windows/opengl")
         ]
 
-        iss.each {args("/I" + it.replace("/", "\\"))}
+        iss.each {
+            args("/I" + it.replace("/", "\\"))
+        }
 
-        for (final def aaa in [
-                "common", "common/opengl", "generated/openal",
-                "generated/opencl", "generated/opengl", "windows",
-                "windows/opengl"
-        ]) {
-            fileTree("${Native_2}/${aaa}") {
-                include "*.c"
-            }.files.each {File fil -> args(fil.toString())}
+        def folders = project(":lwjgl-platform").sourceSets.common.resources.srcDirs +
+                project(":lwjgl-platform").sourceSets.windows.resources.srcDirs +
+                project(":lwjgl-platform").sourceSets.generated.resources.srcDirs
+
+        folders.each {
+            if (it.toString().contains("lwjgl-platform\\src")) {
+                ["common", "common/opengl", "generated/openal",
+                 "generated/opencl", "generated/opengl", "windows", "windows/opengl"].each {et ->
+                    fileTree(it.toString() + "/" + et) {
+                        include "*.c"
+                    }.files.each {args(it.toString())}
+                }
+            }
         }
 
         println("SDK: ${sdkhomelib}" +

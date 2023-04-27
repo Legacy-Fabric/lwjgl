@@ -4,6 +4,7 @@
 	<!-- ================================================================== -->
 	<property name="lwjgl.src" 					location="src" />
 	<property name="lwjgl.src.native" 			location="${lwjgl.src}/native" />
+	<property name="natives_generated" location="lwjgl-platform/src/generated/c"/>
 	<property name="lwjgl.src.headers" 			location="${lwjgl.src.native}/common" />
 	<property name="lwjgl.src.templates"		location="${lwjgl.src}/templates" />
 	<property name="lwjgl.bin" 					location="bin" />
