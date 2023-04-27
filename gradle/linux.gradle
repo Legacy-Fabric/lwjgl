@@ -1,7 +1,11 @@
 def ENV = System.getenv()
 
-def Native = "../../src/native"
+def Native = "../../lwjgl-platform/src"
 def Native_2 = "src/native"
+
+def getNativeFolder(String name, String fold) {
+    return "../../lwjgl-platform/src/" + name + "/c/" + fold
+}
 
 def target_arch = ENV.ARCHITECTURE ? ENV.ARCHITECTURE : System.getProperty("os.arch")
 
@@ -169,17 +173,30 @@ tasks.register("linux_natives_compile", Exec) {
     cflags_pthread.each {args(it)}
 
     ["${java_home}/include", "${java_home}/include/linux", "${java_home}/../include",
-     "${java_home}/../include/linux", "${java_home}/../include/solaris", "../${Native}",
-     "../${Native}/common", "../${Native}/common/opengl", "../${Native}/linux",
-     "../${Native}/linux/opengl"].each {
+     "${java_home}/../include/linux", "${java_home}/../include/solaris",
+     getNativeFolder("generated", "."),
+     getNativeFolder("common", "common"),
+     getNativeFolder("common", "common/opengl"),
+     getNativeFolder("linux", "linux"),
+     getNativeFolder("linux", "linux/opengl")
+    ].each {
         args("-I" + it)
     }
 
     doFirst {
-        ["common", "common/opengl", "generated/openal",
-         "generated/opencl", "generated/opengl", "linux", "linux/opengl"].each {
-            fileTree(Native_2 + "/" + it) {
-                include "*.c"
+//        ["common", "common/opengl", "generated/openal",
+//         "generated/opencl", "generated/opengl", "linux", "linux/opengl"].each {
+//            fileTree(Native_2 + "/" + it) {
+//                include "*.c"
+//            }.files.each {args(it.toString())}
+//        }
+        def folders = [] + project(":lwjgl-platform").sourceSets.common.resources.srcDirs +
+                project(":lwjgl-platform").sourceSets.linux.resources.srcDirs +
+                project(":lwjgl-platform").sourceSets.generated.resources.srcDirs
+
+        folders.each {
+            fileTree(it) {
+                include "**.c"
             }.files.each {args(it.toString())}
         }
     }

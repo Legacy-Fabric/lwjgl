@@ -1,1 +1,3 @@
-rootProject.name = "lwjgl"
+rootProject.name = "lwjgl-parent"
+
+include "lwjgl-platform"

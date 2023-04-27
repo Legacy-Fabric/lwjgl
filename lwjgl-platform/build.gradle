@@ -1,0 +1,27 @@
+sourceSets {
+    common {
+        resources {
+            srcDir "lwjgl-platform/src/common/c"
+        }
+    }
+    linux {
+        resources {
+            srcDir "lwjgl-platform/src/linux/c"
+        }
+    }
+    macos {
+        resources {
+            srcDir "lwjgl-platform/src/macos/c"
+        }
+    }
+    windows {
+        resources {
+            srcDir "lwjgl-platform/src/windows/c"
+        }
+    }
+    generated {
+        resources {
+            srcDir "lwjgl-platform/src/generated/c"
+        }
+    }
+}

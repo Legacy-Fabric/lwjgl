@@ -186,5 +186,5 @@ tasks.register("compile_core", JavaCompile) {
             proparties["lwjgl.lib"].toString() + "/asm-debug-all.jar"
     )
 
-    options.getHeaderOutputDirectory().set(proparties["lwjgl.src.native"])
+    options.getHeaderOutputDirectory().set(proparties["natives_generated"])
 }

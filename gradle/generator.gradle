@@ -42,7 +42,7 @@ tasks.register("generators_compile", JavaCompile) {
     
     destinationDirectory.set(proparties["lwjgl.bin"])
     options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
-    options.headerOutputDirectory = proparties["lwjgl.src.native"]
+    options.headerOutputDirectory = proparties["natives_generated"]
 
     classpath = files(
             "${proparties["lwjgl.src"]}/java"
@@ -64,7 +64,7 @@ tasks.register("generators_helper", JavaCompile) {
     
     destinationDirectory.set(proparties["lwjgl.bin"])
     options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
-    options.headerOutputDirectory = proparties["lwjgl.src.native"]
+    options.headerOutputDirectory = proparties["natives_generated"]
 
     classpath = files(
             "${proparties["lwjgl.src"]}/java"
@@ -122,7 +122,7 @@ tasks.register("generate-openal", JavaCompile) {
             "-processor",
             "org.lwjgl.util.generator.GeneratorProcessor",
             "-d",
-            "${proparties["lwjgl.src.native"]}/generated/openal",
+            "${proparties["natives_generated"]}/generated/openal",
             "-Atypemap=org.lwjgl.util.generator.openal.ALTypeMap",
             "-Abinpath=" + proparties["lwjgl.bin"].toString()
     ]
@@ -152,7 +152,7 @@ tasks.register("generate-openal-debug", JavaCompile) {
             "-processor",
             "org.lwjgl.util.generator.GeneratorProcessor",
             "-d",
-            "${proparties["lwjgl.src.native"]}/generated/openal",
+            "${proparties["natives_generated"]}/generated/openal",
             "-Atypemap=org.lwjgl.util.generator.openal.ALTypeMap",
             "-Abinpath=" + proparties["lwjgl.bin"].toString(),
             "-Ageneratechecks"
@@ -184,7 +184,7 @@ tasks.register("generate-opengl", JavaCompile) {
             "-processor",
             "org.lwjgl.util.generator.GeneratorProcessor",
             "-d",
-            "${proparties["lwjgl.src.native"]}/generated/opengl",
+            "${proparties["natives_generated"]}/generated/opengl",
             "-Atypemap=org.lwjgl.util.generator.opengl.GLTypeMap",
             "-Abinpath=" + proparties["lwjgl.bin"].toString(),
             "-Acontextspecific"
@@ -216,7 +216,7 @@ tasks.register("generate-opengl-debug", JavaCompile) {
             "-processor",
             "org.lwjgl.util.generator.GeneratorProcessor",
             "-d",
-            "${proparties["lwjgl.src.native"]}/generated/opengl",
+            "${proparties["natives_generated"]}/generated/opengl",
             "-Atypemap=org.lwjgl.util.generator.opengl.GLTypeMap",
             "-Abinpath=" + proparties["lwjgl.bin"].toString(),
             "-Acontextspecific",
@@ -339,7 +339,7 @@ tasks.register("generate-opengles", JavaCompile) {
             "-processor",
             "org.lwjgl.util.generator.GeneratorProcessor",
             "-d",
-            "${proparties["lwjgl.src.native"]}/generated/opengles",
+            "${proparties["natives_generated"]}/generated/opengles",
             "-Atypemap=org.lwjgl.util.generator.opengl.GLESTypeMap",
             "-Abinpath=" + proparties["lwjgl.bin"].toString()
     ]
@@ -370,7 +370,7 @@ tasks.register("generate-opengles-debug", JavaCompile) {
             "-processor",
             "org.lwjgl.util.generator.GeneratorProcessor",
             "-d",
-            "${proparties["lwjgl.src.native"]}/generated/opengles",
+            "${proparties["natives_generated"]}/generated/opengles",
             "-Atypemap=org.lwjgl.util.generator.opengl.GLESTypeMap",
             "-Abinpath=" + proparties["lwjgl.bin"].toString(),
             "-Ageneratechecks"
@@ -457,7 +457,7 @@ tasks.register("generate-opencl", JavaCompile) {
             "-processor",
             "org.lwjgl.util.generator.GeneratorProcessor",
             "-d",
-            "${proparties["lwjgl.src.native"]}/generated/opencl",
+            "${proparties["natives_generated"]}/generated/opencl",
             "-Atypemap=org.lwjgl.util.generator.opencl.CLTypeMap",
             "-Abinpath=" + proparties["lwjgl.bin"].toString(),
             "-Acontextspecific"
@@ -489,7 +489,7 @@ tasks.register("generate-opencl-debug", JavaCompile) {
             "-processor",
             "org.lwjgl.util.generator.GeneratorProcessor",
             "-d",
-            "${proparties["lwjgl.src.native"]}/generated/opencl",
+            "${proparties["natives_generated"]}/generated/opencl",
             "-Atypemap=org.lwjgl.util.generator.opencl.CLTypeMap",
             "-Abinpath=" + proparties["lwjgl.bin"].toString(),
             "-Acontextspecific",

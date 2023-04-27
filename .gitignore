@@ -8,18 +8,15 @@
 /doc/javadoc
 /libs
 /src/generated
-/src/native/generated
-/src/native/common/Debug
-/src/native/common/Release
-/src/native/windows/Debug
-/src/native/windows/Release
+/lwjgl-platform/src/generated/c
+/lwjgl-platform/src/common/c/common/Debug
+/lwjgl-platform/src/common/c/common/Release
+/lwjgl-platform/src/windows/c/windows/Debug
+/lwjgl-platform/src/windows/c/windows/Release
 /temp
-/src/native/org_lwjgl_*.h
-/src/native/*/org_lwjgl_*.h
-/src/native/*/*/org_lwjgl_*.h
-/src/native/linux/org_lwjgl_opengl_Display.c
+/lwjgl-platform/src/linux/c/linux/org_lwjgl_opengl_Display.c
 
-nbproject/project.xml
+/nbproject/project.xml
 /nbproject/private/
 
 # Gradle
@@ -41,10 +38,10 @@ nbproject/project.xml
 *.iws
 
 # Build artifacts
-build/
-jars/
-out/
-classes/
+/build/
+/jars/
+/out/
+/classes/
 
 # Debug artifacts
 run
