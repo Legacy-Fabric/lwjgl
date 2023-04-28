@@ -1,4 +1,6 @@
-version = rootProject.version
+plugins {
+    id "c"
+}
 
 sourceSets {
     common {

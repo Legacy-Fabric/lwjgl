@@ -1,0 +1,8 @@
+plugins {
+    id "java"
+}
+
+dependencies {
+    implementation(project(":lwjgl"))
+    implementation(project(":lwjgl_util"))
+}
