@@ -2,7 +2,41 @@ plugins {
     id "java"
 }
 
+sourceSets {
+    openal {
+        java
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+    opencl {
+        java
+    }
+    opengl {
+        java
+    }
+    opengles {
+        java
+    }
+}
+
 dependencies {
     implementation(project(":lwjgl-common"))
     implementation(project(":generator"))
+    annotationProcessor(project(":generator"))
+}
+
+compileOpenalJava {
+    options.annotationProcessorPath = files(project(":lwjgl-common").sourceSets.main.output, project(":generator").sourceSets.main.output)
+    options.generatedSourceOutputDirectory.set(file("../lwjgl/src/generated/java/"))
+
+    options.compilerArgs += [
+            "-proc:only",
+            "-g:none",
+            "-processor",
+            "org.lwjgl.util.generator.GeneratorProcessor",
+            "-d",
+            file("../lwjgl-platform/src/generated/c/generated/openal").toString(),
+            "-Atypemap=org.lwjgl.util.generator.openal.ALTypeMap",
+            "-Abinpath=" + project(":generator").sourceSets.main.output.classesDirs[0]
+    ]
 }

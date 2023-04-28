@@ -2,10 +2,21 @@ plugins {
     id "java"
 }
 
-repositories {
-    mavenCentral()
+sourceSets {
+    generated {
+        java
+    }
 }
 
 dependencies {
+    implementation(files("../libs/AppleJavaExtensions.jar"))
+    implementation(files("../libs/asm-debug-all.jar"))
+    implementation(project(":lwjgl-common"))
     implementation("net.java.jinput:jinput:2.0.5")
+}
+
+compileJava {
+    options.getHeaderOutputDirectory().set(file("../lwjgl-platform/src/generated/c/"))
+
+    source project(":lwjgl-common").sourceSets.main.java, sourceSets.generated.java
 }

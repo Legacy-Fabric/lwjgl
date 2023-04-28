@@ -44,7 +44,6 @@ import org.lwjgl.util.WaveData;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
 
 /**
  * <br>

@@ -36,7 +36,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLUtessellator;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
 
 public class TessellationTest {
 	private GLUtessellator tesselator;

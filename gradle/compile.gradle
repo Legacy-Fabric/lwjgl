@@ -17,27 +17,27 @@ tasks.register("createjars_lwjgl", Jar) {
     archiveFileName = "lwjgl.jar"
 }
 
-tasks.register("createjars_lwjgl_util_applet", Jar) {
-    dependsOn "compile"
-    from(proparties["lwjgl.res"]) {
-        include "applet*"
-    }
-    from proparties["lwjgl_util_applet.fileset"]
-
-    manifest {
-        attributes(
-                "Sealed": true,
-                "Trusted-Library": true,
-                "Permissions": "all-permissions",
-                "Codebase": "*",
-                "Caller-Allowable-Codebase": "*",
-                "Application-Library-Allowable-Codebase": "*"
-        )
-    }
-
-    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
-    archiveFileName = "lwjgl_util_applet.jar"
-}
+//tasks.register("createjars_lwjgl_util_applet", Jar) {
+//    dependsOn "compile"
+//    from(proparties["lwjgl.res"]) {
+//        include "applet*"
+//    }
+//    from proparties["lwjgl_util_applet.fileset"]
+//
+//    manifest {
+//        attributes(
+//                "Sealed": true,
+//                "Trusted-Library": true,
+//                "Permissions": "all-permissions",
+//                "Codebase": "*",
+//                "Caller-Allowable-Codebase": "*",
+//                "Application-Library-Allowable-Codebase": "*"
+//        )
+//    }
+//
+//    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+//    archiveFileName = "lwjgl_util_applet.jar"
+//}
 
 tasks.register("createjars_lwjgl_test", Jar) {
     dependsOn "compile"
@@ -127,64 +127,64 @@ for(final def os in ["win32", "linux"]) {
     tasks.named("a--compile_native_${os}_es").get().dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
 }
 
-tasks.register("compile_test", JavaCompile) {
-    dependsOn("-initialize", "compile_core")
+//tasks.register("compile_test", JavaCompile) {
+//    dependsOn("-initialize", "compile_core")
+//
+//    destinationDirectory.set(proparties["lwjgl.bin"])
+//
+//    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
+//        include "org/lwjgl/test/**"
+//    }
+//
+//    options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
+//
+//    classpath = files(proparties["lwjgl.bin"])
+//}
+//
+//tasks.register("compile_examples", JavaCompile) {
+//    dependsOn("-initialize", "compile_core", "compile_test")
+//
+//    destinationDirectory.set(proparties["lwjgl.bin"])
+//
+//    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
+//        include "org/lwjgl/examples/**"
+//    }
+//
+//    options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
+//
+//    classpath = files(proparties["lwjgl.bin"])
+//}
 
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
-        include "org/lwjgl/test/**"
-    }
-
-    options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
-
-    classpath = files(proparties["lwjgl.bin"])
-}
-
-tasks.register("compile_examples", JavaCompile) {
-    dependsOn("-initialize", "compile_core", "compile_test")
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
-        include "org/lwjgl/examples/**"
-    }
-
-    options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
-
-    classpath = files(proparties["lwjgl.bin"])
-}
-
-tasks.register("compile_core", JavaCompile) {
-    dependsOn("-initialize", "generate-all")
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
-        include "org/lwjgl/*.java"
-        include "org/lwjgl/input/**"
-        include "org/lwjgl/opengl/**"
-        include "org/lwjgl/opengles/**"
-        include "org/lwjgl/openal/**"
-        include "org/lwjgl/opencl/**"
-        include "org/lwjgl/util/**"
-        exclude "org/lwjgl/util/generator/**"
-    }, fileTree(proparties["lwjgl.src"].toString() + "/generated/") {
-        include "org/lwjgl/*.java"
-        include "org/lwjgl/input/**"
-        include "org/lwjgl/opengl/**"
-        include "org/lwjgl/opengles/**"
-        include "org/lwjgl/openal/**"
-        include "org/lwjgl/opencl/**"
-        include "org/lwjgl/util/**"
-        exclude "org/lwjgl/util/generator/**"
-    }
-
-    classpath = files(
-            proparties["lwjgl.lib"].toString() + "/jinput.jar",
-            proparties["lwjgl.lib"].toString() + "/AppleJavaExtensions.jar",
-            proparties["lwjgl.lib"].toString() + "/asm-debug-all.jar"
-    )
-
-    options.getHeaderOutputDirectory().set(proparties["natives_generated"])
-}
+//tasks.register("compile_core", JavaCompile) {
+//    dependsOn("-initialize", "generate-all")
+//
+//    destinationDirectory.set(proparties["lwjgl.bin"])
+//
+//    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
+//        include "org/lwjgl/*.java"
+//        include "org/lwjgl/input/**"
+//        include "org/lwjgl/opengl/**"
+//        include "org/lwjgl/opengles/**"
+//        include "org/lwjgl/openal/**"
+//        include "org/lwjgl/opencl/**"
+//        include "org/lwjgl/util/**"
+//        exclude "org/lwjgl/util/generator/**"
+//    }, fileTree(proparties["lwjgl.src"].toString() + "/generated/") {
+//        include "org/lwjgl/*.java"
+//        include "org/lwjgl/input/**"
+//        include "org/lwjgl/opengl/**"
+//        include "org/lwjgl/opengles/**"
+//        include "org/lwjgl/openal/**"
+//        include "org/lwjgl/opencl/**"
+//        include "org/lwjgl/util/**"
+//        exclude "org/lwjgl/util/generator/**"
+//    }
+//
+//    classpath = files(
+//            proparties["lwjgl.lib"].toString() + "/jinput.jar",
+//            proparties["lwjgl.lib"].toString() + "/AppleJavaExtensions.jar",
+//            proparties["lwjgl.lib"].toString() + "/asm-debug-all.jar"
+//    )
+//
+//    options.getHeaderOutputDirectory().set(proparties["natives_generated"])
+//}

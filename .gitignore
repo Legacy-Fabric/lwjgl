@@ -38,7 +38,7 @@
 *.iws
 
 # Build artifacts
-/build/
+build/
 /jars/
 /out/
 /classes/

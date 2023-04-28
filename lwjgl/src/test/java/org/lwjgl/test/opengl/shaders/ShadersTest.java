@@ -49,7 +49,6 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.util.glu.Sphere;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
 
 public final class ShadersTest {
 

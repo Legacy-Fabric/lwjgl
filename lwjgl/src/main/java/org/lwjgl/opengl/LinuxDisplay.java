@@ -50,7 +50,6 @@ import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.lang.reflect.InvocationTargetException;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;

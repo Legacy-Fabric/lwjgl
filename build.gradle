@@ -212,6 +212,12 @@ apply from:"gradle/windows.gradle"
 apply from:"gradle/macosx.gradle"
 apply from:"gradle/linux.gradle"
 
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
 subprojects {
     version = rootProject.version
 }

@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":lwjgl-common"))
     implementation(project(":lwjgl"))
     implementation(project(":lwjgl_util"))
 }

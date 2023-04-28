@@ -39,8 +39,6 @@ import org.lwjgl.util.mapped.MappedSet2;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import static org.lwjgl.util.mapped.MappedObject.*;
-
 /** @author Riven */
 @SuppressWarnings("static-access")
 public class MappedObjectTests3 {

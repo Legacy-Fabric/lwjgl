@@ -1,0 +1,14 @@
+plugins {
+    id "java"
+}
+
+sourceSets {
+    generated {
+        java
+    }
+}
+
+dependencies {
+    implementation(project(":lwjgl-common"))
+    implementation(project(":lwjgl"))
+}

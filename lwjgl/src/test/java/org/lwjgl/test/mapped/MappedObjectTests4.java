@@ -34,7 +34,6 @@ package org.lwjgl.test.mapped;
 import org.lwjgl.MemoryUtil;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.mapped.*;
 
 import java.io.File;
 import java.lang.reflect.Field;

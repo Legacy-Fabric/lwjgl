@@ -35,7 +35,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.opengles.*;
 
 import static org.lwjgl.opengles.EGL.*;
 import static org.lwjgl.opengles.GLES20.*;

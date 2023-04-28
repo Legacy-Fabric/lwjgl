@@ -36,8 +36,6 @@ import org.lwjgl.MemoryUtil;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import static org.lwjgl.util.mapped.MappedHelper.*;
-
 /** @author Riven */
 @SuppressWarnings("static-access")
 public class MappedObjectBench {

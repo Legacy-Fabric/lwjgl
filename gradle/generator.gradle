@@ -98,35 +98,35 @@ tasks.register("generators") {
     dependsOn "generators_init", "generators_compile", "generators_helper"
 }
 
-tasks.register("generate-openal", JavaCompile) {
-    dependsOn "generators"
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java",
-            proparties["lwjgl.src.templates"],
-            proparties["lwjgl.bin"]
-    )
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source(fileTree(proparties["lwjgl.src.templates.al"]) {
-        include proparties["openal-template-pattern"].split(",")
-    })
-
-    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src.templates.al"])
-    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            "${proparties["natives_generated"]}/generated/openal",
-            "-Atypemap=org.lwjgl.util.generator.openal.ALTypeMap",
-            "-Abinpath=" + proparties["lwjgl.bin"].toString()
-    ]
-}
+//tasks.register("generate-openal", JavaCompile) {
+//    dependsOn "generators"
+//
+//    classpath = files(
+//            "${proparties["lwjgl.src"]}/java",
+//            proparties["lwjgl.src.templates"],
+//            proparties["lwjgl.bin"]
+//    )
+//
+//    destinationDirectory.set(proparties["lwjgl.bin"])
+//
+//    source(fileTree(proparties["lwjgl.src.templates.al"]) {
+//        include proparties["openal-template-pattern"].split(",")
+//    })
+//
+//    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
+//    options.sourcepath = files(proparties["lwjgl.src.templates.al"])
+//    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
+//    options.compilerArgs += [
+//            "-proc:only",
+//            "-g:none",
+//            "-processor",
+//            "org.lwjgl.util.generator.GeneratorProcessor",
+//            "-d",
+//            "${proparties["natives_generated"]}/generated/openal",
+//            "-Atypemap=org.lwjgl.util.generator.openal.ALTypeMap",
+//            "-Abinpath=" + proparties["lwjgl.bin"].toString()
+//    ]
+//}
 
 tasks.register("generate-openal-debug", JavaCompile) {
     dependsOn "generators"

@@ -56,7 +56,6 @@ import org.lwjgl.opengl.GLContext;
 import static org.lwjgl.opengl.ARBBufferObject.*;
 import static org.lwjgl.opengl.ARBVertexBufferObject.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
 
 public final class VBOIndexTest {
 
