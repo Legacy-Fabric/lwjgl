@@ -3,13 +3,13 @@ def proparties = project.praps
 tasks.register("generate-all") {
     description = "Generates java and native source"
     dependsOn (
-            "generate-openal",
-            "generate-opengl",
+            ":lwjgl-templates:generateOpenal",
+            ":lwjgl-templates:generateOpengl",
             "generate-opengl-capabilities",
             "generate-opengl-references",
-            "generate-opengles",
+            ":lwjgl-templates:generateOpengles",
             "generate-opengles-capabilities",
-            "generate-opencl",
+            ":lwjgl-templates:generateOpencl",
             "generate-opencl-capabilities"
     )
 }
@@ -17,211 +17,15 @@ tasks.register("generate-all") {
 tasks.register("generate-debug") {
     description = "Generates java and native source with debug functionality"
     dependsOn (
-            "generate-openal-debug",
-            "generate-opengl-debug",
+            ":lwjgl-templates:generateOpenalDebug",
+            ":lwjgl-templates:generateOpenglDebug",
             "generate-opengl-capabilities-debug",
             "generate-opengl-references",
-            "generate-opengles-debug",
+            ":lwjgl-templates:generateOpenglesDebug",
             "generate-opengles-capabilities-debug",
-            "generate-opencl-debug",
+            ":lwjgl-templates:generateOpenclDebug",
             "generate-opencl-capabilities-debug"
     )
-}
-
-tasks.register("generators_init") {
-    mkdir("${proparties["natives_generated"]}/generated")
-    mkdir("${proparties["natives_generated"]}/generated/openal")
-    mkdir("${proparties["natives_generated"]}/generated/opengl")
-    mkdir("${proparties["natives_generated"]}/generated/opengles")
-    mkdir("${proparties["natives_generated"]}/generated/opencl")
-    mkdir(proparties["lwjgl.bin"])
-}
-
-tasks.register("generators_compile", JavaCompile) {
-    dependsOn "generators_init"
-    
-    destinationDirectory.set(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
-    options.headerOutputDirectory = proparties["natives_generated"]
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java"
-    )
-    
-    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
-        include "org/lwjgl/util/generator/**.java",
-                "org/lwjgl/util/generator/openal/**.java",
-                "org/lwjgl/util/generator/opengl/**.java",
-                "org/lwjgl/util/generator/opengles/**.java",
-                "org/lwjgl/util/generator/opencl/**.java"
-    }
-    
-    options.compilerArgs += ["-Xlint:none"]
-}
-
-tasks.register("generators_helper", JavaCompile) {
-    dependsOn "generators_compile"
-    
-    destinationDirectory.set(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
-    options.headerOutputDirectory = proparties["natives_generated"]
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java"
-    )
-    
-    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
-        include "org/lwjgl/PointerWrapper.java",
-                "org/lwjgl/PointerBuffer.java",
-
-                "org/lwjgl/opengl/GLSync.java",
-                "org/lwjgl/opengl/AMDDebugOutputCallback.java",
-                "org/lwjgl/opengl/ARBDebugOutputCallback.java",
-                "org/lwjgl/opengl/KHRDebugCallback.java",
-
-                "org/lwjgl/opengles/EGLImageOES.java",
-                "org/lwjgl/opengles/KHRDebugCallback.java",
-
-                "org/lwjgl/opencl/CLPlatform.java",
-                "org/lwjgl/opencl/CLDevice.java",
-                "org/lwjgl/opencl/CLContext.java",
-                "org/lwjgl/opencl/CLCommandQueue.java",
-                "org/lwjgl/opencl/CLMem.java",
-                "org/lwjgl/opencl/CL*Callback.java",
-                "org/lwjgl/opencl/CLNativeKernel.java",
-                "org/lwjgl/opencl/CLFunctionAddress.java"
-    }
-}
-
-tasks.register("generators") {
-    description = "Compiles the native method generators"
-    dependsOn "generators_init", "generators_compile", "generators_helper"
-}
-
-//tasks.register("generate-openal", JavaCompile) {
-//    dependsOn "generators"
-//
-//    classpath = files(
-//            "${proparties["lwjgl.src"]}/java",
-//            proparties["lwjgl.src.templates"],
-//            proparties["lwjgl.bin"]
-//    )
-//
-//    destinationDirectory.set(proparties["lwjgl.bin"])
-//
-//    source(fileTree(proparties["lwjgl.src.templates.al"]) {
-//        include proparties["openal-template-pattern"].split(",")
-//    })
-//
-//    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-//    options.sourcepath = files(proparties["lwjgl.src.templates.al"])
-//    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-//    options.compilerArgs += [
-//            "-proc:only",
-//            "-g:none",
-//            "-processor",
-//            "org.lwjgl.util.generator.GeneratorProcessor",
-//            "-d",
-//            "${proparties["natives_generated"]}/generated/openal",
-//            "-Atypemap=org.lwjgl.util.generator.openal.ALTypeMap",
-//            "-Abinpath=" + proparties["lwjgl.bin"].toString()
-//    ]
-//}
-
-tasks.register("generate-openal-debug", JavaCompile) {
-    dependsOn "generators"
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java",
-            proparties["lwjgl.src.templates"],
-            proparties["lwjgl.bin"]
-    )
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source(fileTree(proparties["lwjgl.src.templates.al"]) {
-        include proparties["openal-template-pattern"].split(",")
-    })
-
-    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src.templates.al"])
-    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            "${proparties["natives_generated"]}/generated/openal",
-            "-Atypemap=org.lwjgl.util.generator.openal.ALTypeMap",
-            "-Abinpath=" + proparties["lwjgl.bin"].toString(),
-            "-Ageneratechecks"
-    ]
-}
-
-tasks.register("generate-opengl", JavaCompile) {
-    dependsOn "generators", "generate-openal"
-    description = "Generates java and native source for GL"
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java",
-            proparties["lwjgl.src.templates"],
-            proparties["lwjgl.bin"]
-    )
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source(fileTree(proparties["lwjgl.src.templates.gl"]) {
-        include proparties["opengl-template-pattern"].split(",")
-    })
-
-    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src.templates.gl"])
-    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            "${proparties["natives_generated"]}/generated/opengl",
-            "-Atypemap=org.lwjgl.util.generator.opengl.GLTypeMap",
-            "-Abinpath=" + proparties["lwjgl.bin"].toString(),
-            "-Acontextspecific"
-    ]
-}
-
-tasks.register("generate-opengl-debug", JavaCompile) {
-    dependsOn "generators", "generate-openal-debug"
-    description = "Generates debug java and native source for GL"
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java",
-            proparties["lwjgl.src.templates"],
-            proparties["lwjgl.bin"]
-    )
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source(fileTree(proparties["lwjgl.src.templates.gl"]) {
-        include proparties["opengl-template-pattern"].split(",")
-    })
-
-    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src.templates.gl"])
-    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            "${proparties["natives_generated"]}/generated/opengl",
-            "-Atypemap=org.lwjgl.util.generator.opengl.GLTypeMap",
-            "-Abinpath=" + proparties["lwjgl.bin"].toString(),
-            "-Acontextspecific",
-            "-Ageneratechecks"
-    ]
 }
 
 //tasks.register("generate-opengl-capabilities", JavaCompile) {
@@ -314,69 +118,6 @@ tasks.register("generate-opengl-capabilities-debug", JavaCompile) {
 tasks.named("generate-opengl-references").get().dependsOn("generators")
 tasks.named("generate-opengl-references").get().dependsOn("generate-opengl-capabilities")
 
-tasks.register("generate-opengles", JavaCompile) {
-    dependsOn "generators", "generate-opengl-references"
-    description = "Generates java and native source for GL ES"
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java",
-            proparties["lwjgl.src.templates"],
-            proparties["lwjgl.bin"]
-    )
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source(fileTree(proparties["lwjgl.src.templates.gles"]) {
-        include proparties["opengles-template-pattern"].split(",")
-    })
-
-    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src.templates.gles"])
-    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            "${proparties["natives_generated"]}/generated/opengles",
-            "-Atypemap=org.lwjgl.util.generator.opengl.GLESTypeMap",
-            "-Abinpath=" + proparties["lwjgl.bin"].toString()
-    ]
-}
-
-tasks.register("generate-opengles-debug", JavaCompile) {
-    dependsOn "generators", "generate-opengl-references"
-    description = "Generates java and native source for GL ES"
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java",
-            proparties["lwjgl.src.templates"],
-            proparties["lwjgl.bin"]
-    )
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source(fileTree(proparties["lwjgl.src.templates.gles"]) {
-        include proparties["opengles-template-pattern"].split(",")
-    })
-
-    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src.templates.gles"])
-    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            "${proparties["natives_generated"]}/generated/opengles",
-            "-Atypemap=org.lwjgl.util.generator.opengl.GLESTypeMap",
-            "-Abinpath=" + proparties["lwjgl.bin"].toString(),
-            "-Ageneratechecks"
-    ]
-}
-
 tasks.register("generate-opengles-capabilities", JavaCompile) {
     dependsOn "generators", "generate-opengles"
     description = "Generates java and native source for GL ES"
@@ -428,71 +169,6 @@ tasks.register("generate-opengles-capabilities-debug", JavaCompile) {
             "-g:none",
             "-processor",
             "org.lwjgl.util.generator.opengl.GLESGeneratorProcessor",
-            "-Ageneratechecks"
-    ]
-}
-
-tasks.register("generate-opencl", JavaCompile) {
-    dependsOn "generators", "generate-opengles-capabilities"
-    description = "Generates java and native source for CL"
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java",
-            proparties["lwjgl.src.templates"],
-            proparties["lwjgl.bin"]
-    )
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source(fileTree(proparties["lwjgl.src.templates.cl"]) {
-        include proparties["opencl-template-pattern"].split(",")
-    })
-
-    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src.templates.cl"])
-    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            "${proparties["natives_generated"]}/generated/opencl",
-            "-Atypemap=org.lwjgl.util.generator.opencl.CLTypeMap",
-            "-Abinpath=" + proparties["lwjgl.bin"].toString(),
-            "-Acontextspecific"
-    ]
-}
-
-tasks.register("generate-opencl-debug", JavaCompile) {
-    dependsOn "generators", "generate-opengles-capabilities-debug"
-    description = "Generates debug java and native source for CL"
-
-    classpath = files(
-            "${proparties["lwjgl.src"]}/java",
-            proparties["lwjgl.src.templates"],
-            proparties["lwjgl.bin"]
-    )
-
-    destinationDirectory.set(proparties["lwjgl.bin"])
-
-    source(fileTree(proparties["lwjgl.src.templates.cl"]) {
-        include proparties["opencl-template-pattern"].split(",")
-    })
-
-    options.annotationProcessorPath = files(proparties["lwjgl.bin"])
-    options.sourcepath = files(proparties["lwjgl.src.templates.cl"])
-    options.generatedSourceOutputDirectory = file("${proparties["lwjgl.src"]}/generated")
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            "${proparties["natives_generated"]}/generated/opencl",
-            "-Atypemap=org.lwjgl.util.generator.opencl.CLTypeMap",
-            "-Abinpath=" + proparties["lwjgl.bin"].toString(),
-            "-Acontextspecific",
             "-Ageneratechecks"
     ]
 }

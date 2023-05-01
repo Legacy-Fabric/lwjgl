@@ -45,10 +45,11 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.ElementKindVisitor6;
+import javax.lang.model.util.ElementKindVisitor8;
 import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
+import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 
 /**
@@ -57,7 +58,7 @@ import javax.tools.StandardLocation;
  * @author elias_naur <elias_naur@users.sourceforge.net>
  * @version $Revision$ $Id$
  */
-public class GeneratorVisitor extends ElementKindVisitor6<Void, Void> {
+public class GeneratorVisitor extends ElementKindVisitor8<Void, Void> {
 
 	private final ProcessingEnvironment env;
 	private final TypeMap               type_map;
@@ -249,7 +250,9 @@ public class GeneratorVisitor extends ElementKindVisitor6<Void, Void> {
 		}
 		String qualified_interface_name = Utils.getQualifiedClassName(d);
 		String qualified_native_name = Utils.getNativeQualifiedName(qualified_interface_name) + ".c";
-		PrintWriter native_writer = new PrintWriter(env.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", qualified_native_name).openWriter());
+		final FileObject resource = env.getFiler().createResource(StandardLocation.NATIVE_HEADER_OUTPUT, "", qualified_native_name);
+		new File(resource.toUri()).getParentFile().mkdirs();
+		PrintWriter native_writer = new PrintWriter(resource.openWriter());
 		native_writer.println("/* MACHINE GENERATED FILE, DO NOT EDIT */");
 		native_writer.println();
 		native_writer.println("#include <jni.h>");
@@ -280,19 +283,20 @@ public class GeneratorVisitor extends ElementKindVisitor6<Void, Void> {
 
 	@Override
 	public Void visitTypeAsInterface(TypeElement e, Void p) {
-		final File input = new File("src/templates/" + e.getQualifiedName().toString().replace('.', '/') + ".java");
-		final File outputJava = new File("src/generated/" + env.getElementUtils().getPackageOf(e).getQualifiedName().toString().replace('.', '/'), Utils.getSimpleClassName(e) + ".java");
+//		final File input = new File("src/templates/" + e.getQualifiedName().toString().replace('.', '/') + ".java");
 
 		PrintWriter java_writer = null;
 		try {
+			final JavaFileObject outputJava = env.getFiler().createSourceFile(
+					env.getElementUtils().getPackageOf(e).getQualifiedName().toString() + "." + Utils.getSimpleClassName(e));
+			final File outputJavaFile = new File(outputJava.toUri());
+
 			final Collection<? extends ExecutableElement> methods = Utils.getMethods(e);
 			if ( methods.isEmpty() && Utils.getFields(e).isEmpty() ) {
 				return DEFAULT_VALUE;
 			}
 
-			// Skip this class if the output exists and the input has not been modified.
-			if ( outputJava.exists() && Math.max(input.lastModified(), generatorLM) < outputJava.lastModified() )
-				return DEFAULT_VALUE;
+			if (outputJavaFile.exists()) return DEFAULT_VALUE;
 
 			//env.getMessager().printMessage(Kind.NOTE, "methods count : " + Utils.getMethods(e).size() + " fields count : " + Utils.getFields(e).size(), e);
 			for ( final ExecutableElement method : methods ) {
@@ -300,8 +304,8 @@ public class GeneratorVisitor extends ElementKindVisitor6<Void, Void> {
 			}
 
 			// TODO: Back-port LWJGL 3's generation file handling (generate in-memory and avoid touching files if nothing has changed)
-			outputJava.getParentFile().mkdirs();
-			generateJavaSource(e, new PrintWriter(new java.io.FileWriter(outputJava)));
+			outputJavaFile.getParentFile().mkdirs();
+			generateJavaSource(e, new PrintWriter(outputJava.openWriter()));
 
 			if ( methods.size() > 0 ) {
 				boolean noNative = true;
@@ -326,7 +330,7 @@ public class GeneratorVisitor extends ElementKindVisitor6<Void, Void> {
 		} catch (Exception ex) {
 			// If anything goes wrong mid-gen, delete output to allow regen next time we run.
 			if ( java_writer != null ) java_writer.close();
-			if ( outputJava.exists() ) outputJava.delete();
+//			if ( outputJava.exists() ) outputJava.delete();
 
 			throw new RuntimeException(ex);
 		}

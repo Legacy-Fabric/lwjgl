@@ -10,12 +10,18 @@ sourceSets {
     }
     opencl {
         java
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
     }
     opengl {
         java
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
     }
     opengles {
         java
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
     }
 }
 
@@ -25,18 +31,48 @@ dependencies {
     annotationProcessor(project(":generator"))
 }
 
-compileOpenalJava {
-    options.annotationProcessorPath = files(project(":lwjgl-common").sourceSets.main.output, project(":generator").sourceSets.main.output)
-    options.generatedSourceOutputDirectory.set(file("../lwjgl/src/generated/java/"))
+abstract class GeneratorJavaCompile extends JavaCompile {
+    @Inject
+    public GeneratorJavaCompile(String component, boolean debug, String typeClassName, String packaje) {
+        options.annotationProcessorPath = project.files(project.project(":lwjgl-common").sourceSets.main.output, project.project(":generator").sourceSets.main.output)
+        options.generatedSourceOutputDirectory.set(project.file("../lwjgl/src/generated/java/"))
+        options.headerOutputDirectory.set(project.file("../lwjgl-platform/src/generated/c/generated/$component"))
 
-    options.compilerArgs += [
-            "-proc:only",
-            "-g:none",
-            "-processor",
-            "org.lwjgl.util.generator.GeneratorProcessor",
-            "-d",
-            file("../lwjgl-platform/src/generated/c/generated/openal").toString(),
-            "-Atypemap=org.lwjgl.util.generator.openal.ALTypeMap",
-            "-Abinpath=" + project(":generator").sourceSets.main.output.classesDirs[0]
-    ]
+        options.compilerArgs += [
+                "-proc:only",
+                "-g:none",
+                "-processor",
+                "org.lwjgl.util.generator.GeneratorProcessor",
+                "-Atypemap=org.lwjgl.util.generator.${packaje != null && !packaje.isEmpty() ? packaje : component}.${typeClassName}",
+                "-Abinpath=" + project.project(":generator").sourceSets.main.output.classesDirs[0]
+        ]
+
+        if (component == "opengl" || component == "opencl") {
+            options.compilerArgs.add("-Acontextspecific")
+        }
+
+        if (debug) {
+            options.compilerArgs.add("-Ageneratechecks")
+        }
+
+        classpath = project.sourceSets.named(component).get().compileClasspath
+
+        source(project.sourceSets.named(component).get().java)
+
+        destinationDirectory.set(project.sourceSets.named(component).get().output.classesDirs[0])
+
+        options.failOnError = false
+    }
 }
+
+tasks.register("generateOpenal", GeneratorJavaCompile, "openal", false, "ALTypeMap", "")
+tasks.register("generateOpenalDebug", GeneratorJavaCompile, "openal", true, "ALTypeMap", "")
+
+tasks.register("generateOpengl", GeneratorJavaCompile, "opengl", false, "GLTypeMap", "")
+tasks.register("generateOpenglDebug", GeneratorJavaCompile, "opengl", true, "GLTypeMap", "")
+
+tasks.register("generateOpengles", GeneratorJavaCompile, "opengles", false, "GLESTypeMap", "opengl")
+tasks.register("generateOpenglesDebug", GeneratorJavaCompile, "opengles", true, "GLESTypeMap", "opengl")
+
+tasks.register("generateOpencl", GeneratorJavaCompile, "opencl", false, "CLTypeMap", "")
+tasks.register("generateOpenclDebug", GeneratorJavaCompile, "opencl", true, "CLTypeMap", "")

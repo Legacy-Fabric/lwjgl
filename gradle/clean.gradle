@@ -3,7 +3,7 @@ def proparties = project.praps
 // clean the generated files
 tasks.register('clean-generated', Delete) {
     description = "Deletes the generated java source"
-    delete proparties['lwjgl.src.generated']
+    delete file("lwjgl/src/generated/java")
 }
 
 tasks.register('clean-generated-native', Delete) {
