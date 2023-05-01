@@ -115,42 +115,42 @@
 <!--	</target>-->
 
 	<target name="version-mismatch">
-		<loadfile srcfile="${lwjgl.src}/java/org/lwjgl/WindowsSysImplementation.java" property="lwjgl.java.windows.version">
+		<loadfile srcfile="lwjgl/src/main/java/org/lwjgl/WindowsSysImplementation.java" property="lwjgl.java.windows.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="JNI_VERSION ="/>
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
-		<loadfile srcfile="${lwjgl.src}/java/org/lwjgl/LinuxSysImplementation.java" property="lwjgl.java.linux.version">
+		<loadfile srcfile="lwjgl/src/main/java/org/lwjgl/LinuxSysImplementation.java" property="lwjgl.java.linux.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="JNI_VERSION ="/>
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
-		<loadfile srcfile="${lwjgl.src}/java/org/lwjgl/MacOSXSysImplementation.java" property="lwjgl.java.macosx.version">
+		<loadfile srcfile="lwjgl/src/main/java/org/lwjgl/MacOSXSysImplementation.java" property="lwjgl.java.macosx.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="JNI_VERSION ="/>
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
-		<loadfile srcfile="${natives_generated}/org_lwjgl_WindowsSysImplementation.h" property="lwjgl.native.windows.version">
+		<loadfile srcfile="lwjgl-platform/src/generated/c/org_lwjgl_WindowsSysImplementation.h" property="lwjgl.native.windows.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="#define org_lwjgl_WindowsSysImplementation_JNI_VERSION"/>
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
-		<loadfile srcfile="${natives_generated}/org_lwjgl_LinuxSysImplementation.h" property="lwjgl.native.linux.version">
+		<loadfile srcfile="lwjgl-platform/src/generated/c/org_lwjgl_LinuxSysImplementation.h" property="lwjgl.native.linux.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="#define org_lwjgl_LinuxSysImplementation_JNI_VERSION"/>
 				</tokenfilter>
 			</filterchain>
 		</loadfile>
-		<loadfile srcfile="${natives_generated}/org_lwjgl_MacOSXSysImplementation.h" property="lwjgl.native.macosx.version">
+		<loadfile srcfile="lwjgl-platform/src/generated/c/org_lwjgl_MacOSXSysImplementation.h" property="lwjgl.native.macosx.version">
 			<filterchain>
 				<tokenfilter>
 	    		<containsstring contains="#define org_lwjgl_MacOSXSysImplementation_JNI_VERSION"/>

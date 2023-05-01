@@ -91,14 +91,8 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
           arch: ${{ matrix.msvc_arch }}
-    - if: matrix.os == 'windows-latest'
-      name: Build natives
-      run: .\gradlew.bat generate-all compile_native --stacktrace
-      env:
-        ARCHITECTURE: ${{ matrix.arch }}
-    - if: matrix.os != 'windows-latest'
-      name: Build natives
-      run: ./gradlew generate-all compile_native --stacktrace
+    - name: Build natives
+      run: ./gradlew compile_native --stacktrace
       env:
         ARCHITECTURE: ${{ matrix.arch }}
         TARGET_JAVA: /usr/lib/jvm/java-11-openjdk-${{ matrix.arch }}
@@ -149,7 +143,7 @@ jobs:
           distribution: zulu
           architecture: x64
       - name: Build natives
-        run: ./gradlew generate-all compile_native --stacktrace
+        run: ./gradlew compile_native --stacktrace
         env:
           ARCHITECTURE: ${{ matrix.arch }}
           TARGET_JAVA: /usr/lib/jvm/java-11-openjdk-${{ matrix.arch }}

@@ -31,7 +31,7 @@ sourceSets {
 }
 
 tasks.register("linuxNativeJar", Jar) {
-    dependsOn ":lwjgl-templates:generateAll", ":compile"
+    dependsOn ":lwjgl:compileJava"
     from fileTree("../bin/lwjgl") {
         include "liblwjgl*.so"
     }
@@ -44,7 +44,7 @@ tasks.register("linuxNativeJar", Jar) {
 }
 
 tasks.register("macosxNativeJar", Jar) {
-    dependsOn ":lwjgl-templates:generateAll", ":compile"
+    dependsOn ":lwjgl:compileJava"
     from fileTree("../bin/lwjgl") {
         include "liblwjgl*.dylib"
     }
@@ -57,7 +57,7 @@ tasks.register("macosxNativeJar", Jar) {
 }
 
 tasks.register("windowsNativeJar", Jar) {
-    dependsOn ":lwjgl-templates:generateAll", ":compile"
+    dependsOn ":lwjgl:compileJava"
     from fileTree("../bin/lwjgl") {
         include "lwjgl*.dll"
     }

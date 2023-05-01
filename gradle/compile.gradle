@@ -2,21 +2,6 @@ def proparties = project.praps
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-//tasks.register("createjars_lwjgl", Jar) {
-//    dependsOn "compile"
-//    from proparties["lwjgl.fileset"]
-//    from proparties["lwjgl.fileset.dependencies"]
-//
-//    manifest {
-//        attributes(
-//                "Sealed": true
-//        )
-//    }
-//
-//    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
-//    archiveFileName = "lwjgl.jar"
-//}
-
 //tasks.register("createjars_lwjgl_util_applet", Jar) {
 //    dependsOn "compile"
 //    from(proparties["lwjgl.res"]) {
@@ -48,14 +33,6 @@ tasks.register("createjars_lwjgl_test", Jar) {
     archiveFileName = "lwjgl_test.jar"
 }
 
-//tasks.register("createjars_lwjgl_util", Jar) {
-//    dependsOn "compile"
-//    from proparties["lwjgl_util.fileset"]
-//
-//    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
-//    archiveFileName = "lwjgl_util.jar"
-//}
-
 tasks.register("-createjars") {
     dependsOn "compile", "createjars_lwjgl", "createjars_lwjgl_util_applet", "createjars_lwjgl_test", "createjars_lwjgl_util"
 }
@@ -79,7 +56,7 @@ def ENV = System.getenv()
 
 tasks.register("compile_native") {
     description = "Compiles the native files"
-    dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
+    dependsOn "-initialize", ":lwjgl:compileJava", "touch-version", "a-version-mismatch"
 
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         dependsOn "link_win32"

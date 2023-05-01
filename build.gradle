@@ -93,7 +93,7 @@ apply from:"gradle/clean.gradle"
 apply from:"gradle/maven.gradle"
 
 tasks.register("touch-version") {
-    dependsOn "compile"
+    dependsOn ":lwjgl:compileJava"
 
     doFirst {
         for (final def a in [
