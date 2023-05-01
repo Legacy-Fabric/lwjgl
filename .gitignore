@@ -10,6 +10,7 @@
 /src/generated
 /lwjgl-platform/src/generated
 /lwjgl/src/generated
+/lwjgl_es/src/generated
 /lwjgl-platform/src/common/c/common/Debug
 /lwjgl-platform/src/common/c/common/Release
 /lwjgl-platform/src/windows/c/windows/Debug

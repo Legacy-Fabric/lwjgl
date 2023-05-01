@@ -88,7 +88,6 @@ tasks.register("-initialize") {
     }
 }
 
-apply from:"gradle/generator.gradle"
 apply from:"gradle/compile.gradle"
 apply from:"gradle/clean.gradle"
 apply from:"gradle/maven.gradle"

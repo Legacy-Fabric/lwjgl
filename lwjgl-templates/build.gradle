@@ -37,6 +37,7 @@ abstract class GeneratorJavaCompile extends JavaCompile {
         options.annotationProcessorPath = project.files(project.project(":lwjgl-common").sourceSets.main.output, project.project(":generator").sourceSets.main.output)
         options.generatedSourceOutputDirectory.set(project.file("../lwjgl/src/generated/java/"))
         options.headerOutputDirectory.set(project.file("../lwjgl-platform/src/generated/c/generated/$component"))
+        options.sourcepath = project.files(project.sourceSets.named(component).get().java)
 
         options.compilerArgs += [
                 "-proc:only",
@@ -65,14 +66,80 @@ abstract class GeneratorJavaCompile extends JavaCompile {
     }
 }
 
+abstract class CapabilitiesJavaCompile extends JavaCompile {
+    @Inject
+    public CapabilitiesJavaCompile(String component, boolean debug, String processor) {
+        options.annotationProcessorPath = project.files(project.project(":lwjgl-common").sourceSets.main.output, project.project(":generator").sourceSets.main.output)
+        options.generatedSourceOutputDirectory.set(project.file("../lwjgl/src/generated/java/"))
+        options.sourcepath = project.files(project.sourceSets.named(component).get().java)
+
+        options.compilerArgs += [
+                "-proc:only",
+                "-g:none",
+                "-processor",
+                "org.lwjgl.util.generator.$processor"
+        ]
+
+        if ((component == "opengl" || component == "opencl") && !processor.contains("References")) {
+            options.compilerArgs.add("-Acontextspecific")
+        }
+
+        if (debug) {
+            options.compilerArgs.add("-Ageneratechecks")
+        }
+
+        source(project.sourceSets.named(component).get().java)
+
+        classpath = project.sourceSets.named(component).get().compileClasspath
+        destinationDirectory.set(project.sourceSets.named(component).get().output.classesDirs[0])
+
+        options.failOnError = false
+    }
+}
+
 tasks.register("generateOpenal", GeneratorJavaCompile, "openal", false, "ALTypeMap", "")
 tasks.register("generateOpenalDebug", GeneratorJavaCompile, "openal", true, "ALTypeMap", "")
 
 tasks.register("generateOpengl", GeneratorJavaCompile, "opengl", false, "GLTypeMap", "")
 tasks.register("generateOpenglDebug", GeneratorJavaCompile, "opengl", true, "GLTypeMap", "")
+tasks.register("generateOpenglCapabilities", CapabilitiesJavaCompile, "opengl", false, "opengl.GLGeneratorProcessor")
+tasks.register("generateOpenglCapabilitiesDebug", CapabilitiesJavaCompile, "opengl", true, "opengl.GLGeneratorProcessor")
+tasks.register("generateOpenglReferences", CapabilitiesJavaCompile, "opengl", false, "opengl.GLReferencesGeneratorProcessor")
 
 tasks.register("generateOpengles", GeneratorJavaCompile, "opengles", false, "GLESTypeMap", "opengl")
 tasks.register("generateOpenglesDebug", GeneratorJavaCompile, "opengles", true, "GLESTypeMap", "opengl")
+tasks.register("generateOpenglesCapabilities", CapabilitiesJavaCompile, "opengles", false, "opengl.GLESGeneratorProcessor")
+tasks.register("generateOpenglesCapabilitiesDebug", CapabilitiesJavaCompile, "opengles", true, "opengl.GLESGeneratorProcessor")
 
 tasks.register("generateOpencl", GeneratorJavaCompile, "opencl", false, "CLTypeMap", "")
 tasks.register("generateOpenclDebug", GeneratorJavaCompile, "opencl", true, "CLTypeMap", "")
+tasks.register("generateOpenclCapabilities", CapabilitiesJavaCompile, "opencl", false, "opencl.CLGeneratorProcessor")
+tasks.register("generateOpenclCapabilitiesDebug", CapabilitiesJavaCompile, "opencl", true, "opencl.CLGeneratorProcessor")
+
+tasks.register("generateAll") {
+    description = "Generates java and native source"
+    dependsOn (
+            ":lwjgl-templates:generateOpenal",
+            ":lwjgl-templates:generateOpengl",
+            ":lwjgl-templates:generateOpenglCapabilities",
+            ":lwjgl-templates:generateOpenglReferences",
+            ":lwjgl-templates:generateOpengles",
+            ":lwjgl-templates:generateOpenglesCapabilities",
+            ":lwjgl-templates:generateOpencl",
+            ":lwjgl-templates:generateOpenclCapabilities"
+    )
+}
+
+tasks.register("generateDebug") {
+    description = "Generates java and native source with debug functionality"
+    dependsOn (
+            ":lwjgl-templates:generateOpenalDebug",
+            ":lwjgl-templates:generateOpenglDebug",
+            ":lwjgl-templates:generateOpenglCapabilitiesDebug",
+            ":lwjgl-templates:generateOpenglReferences",
+            ":lwjgl-templates:generateOpenglesDebug",
+            ":lwjgl-templates:generateOpenglesCapabilitiesDebug",
+            ":lwjgl-templates:generateOpenclDebug",
+            ":lwjgl-templates:generateOpenclCapabilitiesDebug"
+    )
+}
