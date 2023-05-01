@@ -24,33 +24,33 @@ import org.apache.tools.ant.taskdefs.condition.Os
 //    archiveFileName = "lwjgl_util_applet.jar"
 //}
 
-tasks.register("createjars_lwjgl_test", Jar) {
-    dependsOn "compile"
-    from proparties["lwjgl_test.fileset"]
-    from proparties["lwjgl_test_extra.fileset"]
-
-    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
-    archiveFileName = "lwjgl_test.jar"
-}
-
-tasks.register("-createjars") {
-    dependsOn "compile", "createjars_lwjgl", "createjars_lwjgl_util_applet", "createjars_lwjgl_test", "createjars_lwjgl_util"
-}
-
-tasks.register("-createdebugjars", Jar) {
-    dependsOn "compile"
-    from proparties["lwjgl.fileset"]
-    from proparties["lwjgl.fileset.dependencies"]
-
-    manifest {
-        attributes(
-                "Sealed": true
-        )
-    }
-
-    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
-    archiveFileName = "lwjgl-debug.jar"
-}
+//tasks.register("createjars_lwjgl_test", Jar) {
+//    dependsOn "compile"
+//    from proparties["lwjgl_test.fileset"]
+//    from proparties["lwjgl_test_extra.fileset"]
+//
+//    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+//    archiveFileName = "lwjgl_test.jar"
+//}
+//
+//tasks.register("-createjars") {
+//    dependsOn "compile", "createjars_lwjgl", "createjars_lwjgl_util_applet", "createjars_lwjgl_test", "createjars_lwjgl_util"
+//}
+//
+//tasks.register("-createdebugjars", Jar) {
+//    dependsOn "compile"
+//    from proparties["lwjgl.fileset"]
+//    from proparties["lwjgl.fileset.dependencies"]
+//
+//    manifest {
+//        attributes(
+//                "Sealed": true
+//        )
+//    }
+//
+//    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+//    archiveFileName = "lwjgl-debug.jar"
+//}
 
 def ENV = System.getenv()
 

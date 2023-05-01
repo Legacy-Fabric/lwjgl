@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id "maven-publish"
 }
 
 def ported = [
@@ -61,8 +62,6 @@ apply from:"gradle/props.gradle"
 
 def proparties = project.praps
 
-version = "2.9.4-babric.2"
-
 tasks.register("-initialize") {
     description = "Initialize build"
 
@@ -108,97 +107,97 @@ tasks.register("touch-version") {
 
 tasks.named("a-version-mismatch").get().dependsOn "touch-version"
 
-tasks.register("compile") {
-    description = "Compiles the java source code"
-    dependsOn "-initialize", "compile_core", "compile_test", "compile_examples"
-}
-
-tasks.register("all") {
-    description = "Creates the Java archives and the natives for the current platform"
-    dependsOn "jars", "compile_native"
-}
-
-// Create ONLY the jar archives
-tasks.register("jars") {
-    description = "Creates the Java archives ONLY and places them in libs/"
-    dependsOn "-initialize", "generate-all", "compile", "-createjars", "-jars_NoDEP"
-}
-
-// Create ONLY the jar archives for the ES build
-tasks.register("jars_es") {
-    description = "Creates the Java archives ONLY for the ES build and places them in libs/"
-    dependsOn "-initialize", "generate-all", "compile", "-createjars_es", "-jars_NoDEP"
-}
-
-tasks.register("-jars_NoDEP", Copy) {
-    from(proparties["lwjgl.temp"].toString() + "/jar") {
-        include "*.jar"
-    }
-
-    into("libs/")
-}
-
-tasks.register("-distribution_javadoc", Zip) {
-    description = "Creates a versioned distribution of javadocs"
-
-    destinationDirectory.set(proparties["lwjgl.dist"])
-
-    from(proparties["lwjgl.docs"]) {
-        include "javadoc/**"
-    }
-    archiveFileName = "lwjgl-docs-" + proparties["lwjgl.version"] + ".zip"
-}
-
-tasks.register("-distribution_source", Zip) {
-    description = "Creates a versioned distribution of the source code"
-
-    destinationDirectory.set(proparties["lwjgl.dist"])
-    archiveFileName = "lwjgl-source-" + proparties["lwjgl.version"] + ".zip"
-
-    from proparties["lwjgl.source.fileset"]
-}
-
-tasks.register("-distribute") {
-    description = "Distributes files"
-    dependsOn "-distribute_base"
-}
-
-tasks.register("-distribute_del", Delete) {
-    delete(fileTree(proparties["lwjgl.temp"].toString() + "/native") {
-        include "**/*"
-    })
-}
-
-tasks.register("-distribute_jar", Copy) {
-    destinationDir = file(proparties["lwjgl.temp"].toString() + "/jar")
-
-    from(proparties["lwjgl.lib"]) {
-        include "*.jar"
-    }
-}
-
-tasks.register("-distribute_base", Zip) {
-    destinationDirectory.set(proparties["lwjgl.dist"])
-    archiveFileName = "lwjgl-" + proparties["lwjgl.version"] + ".zip"
-
-    from(proparties["lwjgl.temp"]) {
-        include "**/lwjgl-" + proparties["lwjgl.version"] + "*/**"
-        with proparties["lwjgl_base"]
-    }
-}
-
-for (final def os in ["windows", "linux", "freebsd", "openbsd", "macosx", "solaris"]) {
-    tasks.register("-distribute_${os}", Copy) {
-        dependsOn "-distribute_del"
-        destinationDir = file(proparties["lwjgl.temp"].toString() + "/native/${os}")
-
-        from proparties["lwjgl.bin"].toString() + "/${os}"
-        with proparties["lwjgl-${os}.fileset"]
-    }
-
-    tasks.named("-distribute").get().dependsOn "-distribute_${os}"
-    tasks.named("-distribute_base").get().dependsOn "-distribute_${os}"
-}
+//tasks.register("compile") {
+//    description = "Compiles the java source code"
+//    dependsOn "-initialize", "compile_core", "compile_test", "compile_examples"
+//}
+//
+//tasks.register("all") {
+//    description = "Creates the Java archives and the natives for the current platform"
+//    dependsOn "jars", "compile_native"
+//}
+//
+//// Create ONLY the jar archives
+//tasks.register("jars") {
+//    description = "Creates the Java archives ONLY and places them in libs/"
+//    dependsOn "-initialize", "generate-all", "compile", "-createjars", "-jars_NoDEP"
+//}
+//
+//// Create ONLY the jar archives for the ES build
+//tasks.register("jars_es") {
+//    description = "Creates the Java archives ONLY for the ES build and places them in libs/"
+//    dependsOn "-initialize", "generate-all", "compile", "-createjars_es", "-jars_NoDEP"
+//}
+//
+//tasks.register("-jars_NoDEP", Copy) {
+//    from(proparties["lwjgl.temp"].toString() + "/jar") {
+//        include "*.jar"
+//    }
+//
+//    into("libs/")
+//}
+//
+//tasks.register("-distribution_javadoc", Zip) {
+//    description = "Creates a versioned distribution of javadocs"
+//
+//    destinationDirectory.set(proparties["lwjgl.dist"])
+//
+//    from(proparties["lwjgl.docs"]) {
+//        include "javadoc/**"
+//    }
+//    archiveFileName = "lwjgl-docs-" + proparties["lwjgl.version"] + ".zip"
+//}
+//
+//tasks.register("-distribution_source", Zip) {
+//    description = "Creates a versioned distribution of the source code"
+//
+//    destinationDirectory.set(proparties["lwjgl.dist"])
+//    archiveFileName = "lwjgl-source-" + proparties["lwjgl.version"] + ".zip"
+//
+//    from proparties["lwjgl.source.fileset"]
+//}
+//
+//tasks.register("-distribute") {
+//    description = "Distributes files"
+//    dependsOn "-distribute_base"
+//}
+//
+//tasks.register("-distribute_del", Delete) {
+//    delete(fileTree(proparties["lwjgl.temp"].toString() + "/native") {
+//        include "**/*"
+//    })
+//}
+//
+//tasks.register("-distribute_jar", Copy) {
+//    destinationDir = file(proparties["lwjgl.temp"].toString() + "/jar")
+//
+//    from(proparties["lwjgl.lib"]) {
+//        include "*.jar"
+//    }
+//}
+//
+//tasks.register("-distribute_base", Zip) {
+//    destinationDirectory.set(proparties["lwjgl.dist"])
+//    archiveFileName = "lwjgl-" + proparties["lwjgl.version"] + ".zip"
+//
+//    from(proparties["lwjgl.temp"]) {
+//        include "**/lwjgl-" + proparties["lwjgl.version"] + "*/**"
+//        with proparties["lwjgl_base"]
+//    }
+//}
+//
+//for (final def os in ["windows", "linux", "freebsd", "openbsd", "macosx", "solaris"]) {
+//    tasks.register("-distribute_${os}", Copy) {
+//        dependsOn "-distribute_del"
+//        destinationDir = file(proparties["lwjgl.temp"].toString() + "/native/${os}")
+//
+//        from proparties["lwjgl.bin"].toString() + "/${os}"
+//        with proparties["lwjgl-${os}.fileset"]
+//    }
+//
+//    tasks.named("-distribute").get().dependsOn "-distribute_${os}"
+//    tasks.named("-distribute_base").get().dependsOn "-distribute_${os}"
+//}
 
 tasks.withType(JavaCompile).configureEach {
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -219,4 +218,39 @@ allprojects {
 
 subprojects {
     version = rootProject.version
+    group = rootProject.group
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId "parent"
+
+            pom {
+                name = "Lighweight Java Game Library"
+                description = "Lighweight Java Game Library"
+                url = "http://lwjgl.org/"
+
+                licenses {
+                    license {
+                        name = "BSD"
+                        url = "http://lwjgl.org/license.php"
+                        distribution = "repo"
+                    }
+                }
+
+                scm {
+                    url = "http://java-game-lib.svn.sourceforge.net/viewvc/java-game-lib/trunk/"
+                    connection = "https://java-game-lib.svn.sourceforge.net/svnroot/java-game-lib"
+                }
+
+                developers {
+                    developer {
+                        id = "Developers"
+                        url = "http://lwjgl.org/credits.php"
+                    }
+                }
+            }
+        }
+    }
 }

@@ -50,7 +50,7 @@ if (ENV.ARCHITECTURE && linux_arch != "amd64") {
 
 def libs = []
 
-if (linux_arch == "amd64") {
+if (linux_arch == "amd64" || linux_arch == "ppc64el") {
     libs += [
             "-L/usr/X11R6/lib64",
             "-L/usr/X11/lib64"
@@ -126,7 +126,7 @@ if (ENV.ARCHITECTURE) {
             thepart = "powerpc-linux-gnu"
             break
         case "ppc64":
-            thepart = "powerpc-linux-gnu"
+            thepart = "powerpc64-linux-gnu"
             break
         default:
             thepart = ""

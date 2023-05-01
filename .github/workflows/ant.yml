@@ -43,13 +43,13 @@ jobs:
             packages: gcc-aarch64-linux-gnu libc6-dev-arm64-cross g++-aarch64-linux-gnu
             ports: true
             extra_java: 8
-#          - os: ubuntu-20.04
-#            arch: ppc64le
-#            java_arch: x64
-#            linux_arch: ppc64el
-#            packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross g++-powerpc64le-linux-gnu
-#            ports: true
-#            extra_java: 8
+          - os: ubuntu-20.04
+            arch: ppc64le
+            java_arch: x64
+            linux_arch: ppc64el
+            packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross g++-powerpc64le-linux-gnu
+            ports: true
+            extra_java: 8
           - os: ubuntu-22.04
             arch: riscv64
             java_arch: x64
@@ -168,8 +168,8 @@ jobs:
           name: natives
           path: bin/lwjgl
       - name: Build
-        run: ./gradlew maven-full --stacktrace
+        run: ./gradlew publishToMavenLocal --stacktrace
       - uses: actions/upload-artifact@v3
         with:
           name: maven
-          path: dist/lwjgl-maven-*.zip
+          path: ~/.m2/repository

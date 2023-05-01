@@ -1,5 +1,6 @@
 plugins {
     id "c"
+    id 'maven-publish'
 }
 
 sourceSets {
@@ -67,4 +68,39 @@ tasks.register("windowsNativeJar", Jar) {
     archiveClassifier.set("natives-windows")
     destinationDirectory.set(file("../temp/maven"))
     archiveBaseName.set("lwjgl-platform")
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId "lwjgl-platform"
+
+            artifact(linuxNativeJar) {
+                builtBy linuxNativeJar
+            }
+            artifact(macosxNativeJar) {
+                builtBy macosxNativeJar
+            }
+            artifact(windowsNativeJar) {
+                builtBy windowsNativeJar
+            }
+
+            pom {
+                name = "Lighweight Java Game Library - Platform"
+                description = "Lighweight Java Game Library - Platform"
+                url = "http://lwjgl.org/"
+
+                scm {
+                    url = "http://java-game-lib.svn.sourceforge.net/viewvc/java-game-lib/trunk/"
+                    connection = "https://java-game-lib.svn.sourceforge.net/svnroot/java-game-lib"
+                }
+                withXml {
+                    def parenting = asNode().appendNode("parent")
+                    parenting.appendNode("groupId", project.group)
+                    parenting.appendNode("artifactId", "parent")
+                    parenting.appendNode("version", project.version)
+                }
+            }
+        }
+    }
 }

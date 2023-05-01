@@ -1,5 +1,6 @@
 plugins {
     id "java"
+    id "maven-publish"
 }
 
 sourceSets {
@@ -20,7 +21,7 @@ dependencies {
     implementation(files("../libs/AppleJavaExtensions.jar"))
     implementation(files("../libs/asm-debug-all.jar"))
     implementation(project(":lwjgl-common"))
-    implementation("net.java.jinput:jinput:2.0.5")
+    implementation("net.java.jinput:jinput:$rootProject.jinput_version")
 }
 
 compileJava {
@@ -31,31 +32,259 @@ compileJava {
 }
 
 jar {
-    include "org/**/*"
-    exclude(
-            "org/lwjgl/opengles/**",
-            "org/lwjgl/util/**"
-    )
-    include "org/lwjgl/opengles/ContextAttribs*.*"
-
     manifest {
         attributes(
                 "Sealed": true
         )
     }
+
+    doFirst {
+        from(project(":lwjgl-common").tasks.compileJava.outputs)
+
+        include "org/lwjgl/*"
+        include "org/lwjgl/opengles/ContextAttribs*.*"
+        include "org/lwjgl/opencl/**"
+        include "org/lwjgl/opengl/**"
+        include "org/lwjgl/input/**"
+        include "org/lwjgl/openal/**"
+    }
 }
 
-tasks.register("jarUtils", Jar) {
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+sourcesJar {
+    dependsOn ":lwjgl-templates:generateAll"
+
+    doFirst {
+        from(project(":lwjgl-common").tasks.compileJava.inputs.files)
+
+        include "org/lwjgl/*"
+        include "org/lwjgl/opengles/ContextAttribs*.*"
+        include "org/lwjgl/opencl/**"
+        include "org/lwjgl/opengl/**"
+        include "org/lwjgl/input/**"
+        include "org/lwjgl/openal/**"
+
+//        include "**/*"
+
+        exclude "**.jar"
+    }
+}
+
+tasks.register("utilJar", Jar) {
     dependsOn ":lwjgl:classes"
 
-    from(compileJava.outputs) {
+    doFirst {
+        from(compileJava.outputs)
+
         exclude "**.*"
         exclude "org/lwjgl/util/generator/**"
         exclude "org/lwjgl/util/applet/**"
         include "org/lwjgl/util/**"
     }
 
-    archiveBaseName = "lwjgl_util"
+    archiveBaseName.set("lwjgl_util")
 }
 
-assemble.dependsOn(":lwjgl:jarUtils")
+tasks.register("utilSourceJar", Jar) {
+    doFirst {
+        from(sourceSets.main.allJava.srcDirs)
+
+        exclude "**.*"
+        exclude "org/lwjgl/util/generator/**"
+        exclude "org/lwjgl/util/applet/**"
+        include "org/lwjgl/util/**"
+
+        exclude "**.jar"
+    }
+
+    archiveBaseName.set("lwjgl_util")
+    archiveClassifier.set("sources")
+}
+
+javadoc {
+    dependsOn ":lwjgl-templates:generateAll"
+
+    failOnError = false
+    maxMemory = '2G'
+
+    options {
+        source = 8
+        encoding = 'UTF-8'
+        charSet = 'UTF-8'
+        memberLevel = JavadocMemberLevel.PACKAGE
+        windowTitle("LWJGL API")
+        header("<h1>Lightweight Java Game Toolkit</h1>")
+    }
+
+    doFirst {
+        source(compileJava.inputs.files, project(":lwjgl-common").tasks.compileJava.inputs.files)
+
+        include "org/lwjgl/*"
+        include "org/lwjgl/opengles/ContextAttribs*.*"
+        include "org/lwjgl/opencl/**"
+        include "org/lwjgl/opengl/**"
+        include "org/lwjgl/input/**"
+        include "org/lwjgl/openal/**"
+
+//        include "**/*"
+
+        exclude "**.jar"
+
+        classpath = sourceSets.main.compileClasspath
+    }
+
+    // 		<javadoc destdir="${lwjgl.dstMaven}/lwjgl-javadoc" classpath="${lwjgl.lib}/jinput.jar" author="true" version="true" use="true" source="1.8" windowtitle="LWJGL API" useexternalfile="true">
+    //			<fileset refid="lwjgl-sources.manual.fileset"/>
+    //			<fileset refid="lwjgl-sources.generated.fileset"/>
+    //			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>
+    //			<bottom><![CDATA[<i>Copyright &#169; 2002-2010 lwjgl.org. All Rights Reserved.</i>]]></bottom>
+    //		</javadoc>
+}
+
+tasks.register("utilJavadoc", Javadoc) {
+    dependsOn jar
+
+    failOnError = false
+    maxMemory = '2G'
+
+    destinationDir = file("build/docs/javadoc_util")
+
+    options {
+        source = 8
+        encoding = 'UTF-8'
+        charSet = 'UTF-8'
+        memberLevel = JavadocMemberLevel.PACKAGE
+        windowTitle("LWJGL UTIL API")
+        header("<h1>Lightweight Java Game Toolkit</h1>")
+    }
+
+    source(compileJava.inputs.files)
+
+    exclude "**.*"
+    exclude "org/lwjgl/util/generator/**"
+    exclude "org/lwjgl/util/applet/**"
+    include "org/lwjgl/util/**"
+
+    classpath = sourceSets.main.compileClasspath + jar.outputs.files
+
+    // 		<javadoc destdir="${lwjgl.dstMaven}/lwjgl_util-javadoc" classpath="${lwjgl.lib}/jinput.jar:${lwjgl.lib}/lwjgl.jar" author="true" version="true" use="true" source="1.8" windowtitle="LWJGL UTIL API" useexternalfile="true">
+    //			<fileset refid="lwjgl_util-sources.fileset"/>
+    //			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>
+    //			<bottom><![CDATA[<i>Copyright &#169; 2002-2010 lwjgl.org. All Rights Reserved.</i>]]></bottom>
+    //		</javadoc>
+}
+
+tasks.register("utilJavadocJar", Jar) {
+    dependsOn utilJavadoc
+
+    doFirst {
+        from utilJavadoc.destinationDir
+    }
+
+    archiveBaseName.set("lwjgl_util")
+    archiveClassifier.set("javadoc")
+}
+
+assemble.dependsOn(":lwjgl:utilJar")
+assemble.dependsOn(":lwjgl:utilSourceJar")
+assemble.dependsOn(":lwjgl:utilJavadocJar")
+
+publishing {
+    publications {
+        lwjgl(MavenPublication) {
+            artifactId "lwjgl"
+
+            artifact(jar) {
+                builtBy jar
+            }
+            artifact(sourcesJar) {
+                builtBy sourcesJar
+            }
+            artifact(javadocJar) {
+                builtBy javadocJar
+            }
+
+            pom {
+                name = "Lighweight Java Game Library"
+                packaging = "jar"
+                description = "Lighweight Java Game Library"
+                url = "http://lwjgl.org/"
+
+                scm {
+                    url = "http://java-game-lib.svn.sourceforge.net/viewvc/java-game-lib/trunk/"
+                    connection = "https://java-game-lib.svn.sourceforge.net/svnroot/java-game-lib"
+                }
+
+                withXml {
+                    def parenting = asNode().appendNode("parent")
+                    parenting.appendNode("groupId", project.group)
+                    parenting.appendNode("artifactId", "parent")
+                    parenting.appendNode("version", project.version)
+
+                    def deps = asNode().appendNode("dependencies")
+
+                    for (final def os in ["windows", "linux", "osx"]) {
+                        def dep = deps.appendNode("dependency")
+                        dep.appendNode("groupId", project.group)
+                        dep.appendNode("artifactId", "lwjgl-platform")
+                        dep.appendNode("version", project.version)
+                        dep.appendNode("classifier", "natives-$os")
+                    }
+
+                    def jinput = deps.appendNode("dependency")
+                    jinput.appendNode("groupId", "net.java.jinput")
+                    jinput.appendNode("artifactId", "jinput")
+                    jinput.appendNode("version", rootProject.jinput_version)
+                }
+            }
+        }
+        lwjgl_util(MavenPublication) {
+            artifactId "lwjgl_util"
+
+            artifact(utilJar) {
+                builtBy utilJar
+            }
+            artifact(utilSourceJar) {
+                builtBy utilSourceJar
+            }
+            artifact(utilJavadocJar) {
+                builtBy utilJavadocJar
+            }
+
+            pom {
+                name = "Lighweight Java Game Library"
+                packaging = "jar"
+                description = "Lighweight Java Game Library"
+                url = "http://lwjgl.org/"
+
+                scm {
+                    url = "http://java-game-lib.svn.sourceforge.net/viewvc/java-game-lib/trunk/"
+                    connection = "https://java-game-lib.svn.sourceforge.net/svnroot/java-game-lib"
+                }
+
+                withXml {
+                    def parenting = asNode().appendNode("parent")
+                    parenting.appendNode("groupId", project.group)
+                    parenting.appendNode("artifactId", "parent")
+                    parenting.appendNode("version", project.version)
+
+                    def deps = asNode().appendNode("dependencies")
+
+                    def dep = deps.appendNode("dependency")
+                    dep.appendNode("groupId", project.group)
+                    dep.appendNode("artifactId", "lwjgl")
+                    dep.appendNode("version", project.version)
+
+                    def jinput = deps.appendNode("dependency")
+                    jinput.appendNode("groupId", "net.java.jinput")
+                    jinput.appendNode("artifactId", "jinput")
+                    jinput.appendNode("version", rootProject.jinput_version)
+                }
+            }
+        }
+    }
+}
