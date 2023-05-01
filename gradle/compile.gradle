@@ -2,20 +2,20 @@ def proparties = project.praps
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-tasks.register("createjars_lwjgl", Jar) {
-    dependsOn "compile"
-    from proparties["lwjgl.fileset"]
-    from proparties["lwjgl.fileset.dependencies"]
-
-    manifest {
-        attributes(
-                "Sealed": true
-        )
-    }
-
-    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
-    archiveFileName = "lwjgl.jar"
-}
+//tasks.register("createjars_lwjgl", Jar) {
+//    dependsOn "compile"
+//    from proparties["lwjgl.fileset"]
+//    from proparties["lwjgl.fileset.dependencies"]
+//
+//    manifest {
+//        attributes(
+//                "Sealed": true
+//        )
+//    }
+//
+//    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+//    archiveFileName = "lwjgl.jar"
+//}
 
 //tasks.register("createjars_lwjgl_util_applet", Jar) {
 //    dependsOn "compile"
@@ -48,13 +48,13 @@ tasks.register("createjars_lwjgl_test", Jar) {
     archiveFileName = "lwjgl_test.jar"
 }
 
-tasks.register("createjars_lwjgl_util", Jar) {
-    dependsOn "compile"
-    from proparties["lwjgl_util.fileset"]
-
-    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
-    archiveFileName = "lwjgl_util.jar"
-}
+//tasks.register("createjars_lwjgl_util", Jar) {
+//    dependsOn "compile"
+//    from proparties["lwjgl_util.fileset"]
+//
+//    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
+//    archiveFileName = "lwjgl_util.jar"
+//}
 
 tasks.register("-createjars") {
     dependsOn "compile", "createjars_lwjgl", "createjars_lwjgl_util_applet", "createjars_lwjgl_test", "createjars_lwjgl_util"
@@ -126,65 +126,3 @@ for(final def os in ["freebsd", "openbsd", "solaris"]) {
 for(final def os in ["win32", "linux"]) {
     tasks.named("a--compile_native_${os}_es").get().dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
 }
-
-//tasks.register("compile_test", JavaCompile) {
-//    dependsOn("-initialize", "compile_core")
-//
-//    destinationDirectory.set(proparties["lwjgl.bin"])
-//
-//    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
-//        include "org/lwjgl/test/**"
-//    }
-//
-//    options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
-//
-//    classpath = files(proparties["lwjgl.bin"])
-//}
-//
-//tasks.register("compile_examples", JavaCompile) {
-//    dependsOn("-initialize", "compile_core", "compile_test")
-//
-//    destinationDirectory.set(proparties["lwjgl.bin"])
-//
-//    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
-//        include "org/lwjgl/examples/**"
-//    }
-//
-//    options.sourcepath = files(proparties["lwjgl.src"].toString() + "/java/")
-//
-//    classpath = files(proparties["lwjgl.bin"])
-//}
-
-//tasks.register("compile_core", JavaCompile) {
-//    dependsOn("-initialize", "generate-all")
-//
-//    destinationDirectory.set(proparties["lwjgl.bin"])
-//
-//    source fileTree(proparties["lwjgl.src"].toString() + "/java/") {
-//        include "org/lwjgl/*.java"
-//        include "org/lwjgl/input/**"
-//        include "org/lwjgl/opengl/**"
-//        include "org/lwjgl/opengles/**"
-//        include "org/lwjgl/openal/**"
-//        include "org/lwjgl/opencl/**"
-//        include "org/lwjgl/util/**"
-//        exclude "org/lwjgl/util/generator/**"
-//    }, fileTree(proparties["lwjgl.src"].toString() + "/generated/") {
-//        include "org/lwjgl/*.java"
-//        include "org/lwjgl/input/**"
-//        include "org/lwjgl/opengl/**"
-//        include "org/lwjgl/opengles/**"
-//        include "org/lwjgl/openal/**"
-//        include "org/lwjgl/opencl/**"
-//        include "org/lwjgl/util/**"
-//        exclude "org/lwjgl/util/generator/**"
-//    }
-//
-//    classpath = files(
-//            proparties["lwjgl.lib"].toString() + "/jinput.jar",
-//            proparties["lwjgl.lib"].toString() + "/AppleJavaExtensions.jar",
-//            proparties["lwjgl.lib"].toString() + "/asm-debug-all.jar"
-//    )
-//
-//    options.getHeaderOutputDirectory().set(proparties["natives_generated"])
-//}

@@ -41,6 +41,7 @@ import org.lwjgl.util.glu.Sphere;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.util.glu.GLU.*;
 
 /**
  * A test of loading textures in a background thread. This can be achieved in 2 ways:

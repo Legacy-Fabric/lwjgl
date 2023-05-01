@@ -42,6 +42,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengles.*;
 import org.lwjgl.test.opengles.util.Geometry;
 import org.lwjgl.test.opengles.util.ImmediateModeBuffer;
 import org.lwjgl.test.opengles.util.Shader;

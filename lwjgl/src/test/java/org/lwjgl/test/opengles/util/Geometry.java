@@ -1,5 +1,7 @@
 package org.lwjgl.test.opengles.util;
 
+import org.lwjgl.test.opengles.util.BufferObjectArray;
+
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
