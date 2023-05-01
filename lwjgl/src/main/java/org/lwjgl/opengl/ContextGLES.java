@@ -204,7 +204,7 @@ final class ContextGLES implements org.lwjgl.opengl.Context {
 		boolean was_current = isCurrent();
 		int error = GLES20.GL_NO_ERROR;
 		if ( was_current ) {
-			if ( org.lwjgl.opengles.GLContext.getCapabilities() != null && org.lwjgl.opengl.GLContext.getCapabilities().OpenGLES20 )
+			if ( org.lwjgl.opengles.GLContext.getCapabilities() != null && GLContext.getCapabilities().OpenGLES20 )
 				error = GLES20.glGetError();
 
 			try {

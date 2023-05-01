@@ -6,6 +6,11 @@ sourceSets {
     generated {
         java
     }
+
+    main {
+        compileClasspath += sourceSets.generated.compileClasspath
+        runtimeClasspath += sourceSets.generated.runtimeClasspath
+    }
 }
 
 dependencies {
@@ -16,7 +21,8 @@ dependencies {
 }
 
 compileJava {
+    dependsOn ":lwjgl-templates:generateAll"
     options.getHeaderOutputDirectory().set(file("../lwjgl-platform/src/generated/c/"))
 
-    source project(":lwjgl-common").sourceSets.main.java, sourceSets.generated.java
+    source project(":lwjgl-common").sourceSets.main.java, sourceSets.main.java, sourceSets.generated.java
 }
