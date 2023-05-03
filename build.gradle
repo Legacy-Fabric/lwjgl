@@ -89,7 +89,6 @@ tasks.register("-initialize") {
 
 apply from:"gradle/compile.gradle"
 apply from:"gradle/clean.gradle"
-apply from:"gradle/maven.gradle"
 
 tasks.register("touch-version") {
     dependsOn ":lwjgl:compileJava"

@@ -347,14 +347,14 @@
 <!--		</java>-->
 <!--	</target>-->
 
-	<!-- Creates the Javadoc -->
-	<target name="javadoc" description="Creates javadoc from java source code">
-		<javadoc destdir="${lwjgl.docs}/javadoc" classpath="${lwjgl.lib}/jinput.jar" author="true" version="true" use="true" source="1.8" windowtitle="LWJGL API" useexternalfile="true">
-			<fileset refid="lwjgl.javadoc.fileset" />
-			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2002-2009 lwjgl.org. All Rights Reserved.</i>]]></bottom>
-		</javadoc>
-	</target>
+<!--	&lt;!&ndash; Creates the Javadoc &ndash;&gt;-->
+<!--	<target name="javadoc" description="Creates javadoc from java source code">-->
+<!--		<javadoc destdir="${lwjgl.docs}/javadoc" classpath="${lwjgl.lib}/jinput.jar" author="true" version="true" use="true" source="1.8" windowtitle="LWJGL API" useexternalfile="true">-->
+<!--			<fileset refid="lwjgl.javadoc.fileset" />-->
+<!--			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>-->
+<!--			<bottom><![CDATA[<i>Copyright &#169; 2002-2009 lwjgl.org. All Rights Reserved.</i>]]></bottom>-->
+<!--		</javadoc>-->
+<!--	</target>-->
 
 <!--	&lt;!&ndash; get and copy nightly binaries into libs folder &ndash;&gt;-->
 <!--	<target name="copy-nightly-binaries" depends="-initialize" description="Copies latest successful nightly binaries into appropriate libs folder">-->

@@ -2,28 +2,6 @@ def proparties = project.praps
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-//tasks.register("createjars_lwjgl_util_applet", Jar) {
-//    dependsOn "compile"
-//    from(proparties["lwjgl.res"]) {
-//        include "applet*"
-//    }
-//    from proparties["lwjgl_util_applet.fileset"]
-//
-//    manifest {
-//        attributes(
-//                "Sealed": true,
-//                "Trusted-Library": true,
-//                "Permissions": "all-permissions",
-//                "Codebase": "*",
-//                "Caller-Allowable-Codebase": "*",
-//                "Application-Library-Allowable-Codebase": "*"
-//        )
-//    }
-//
-//    destinationDirectory = file(proparties["lwjgl.temp"].toString() + "/jar")
-//    archiveFileName = "lwjgl_util_applet.jar"
-//}
-
 //tasks.register("createjars_lwjgl_test", Jar) {
 //    dependsOn "compile"
 //    from proparties["lwjgl_test.fileset"]
@@ -34,7 +12,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 //}
 //
 //tasks.register("-createjars") {
-//    dependsOn "compile", "createjars_lwjgl", "createjars_lwjgl_util_applet", "createjars_lwjgl_test", "createjars_lwjgl_util"
+//    dependsOn "createjars_lwjgl_util_applet", "createjars_lwjgl_test"
 //}
 //
 //tasks.register("-createdebugjars", Jar) {

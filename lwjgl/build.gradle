@@ -74,37 +74,6 @@ sourcesJar {
     }
 }
 
-tasks.register("utilJar", Jar) {
-    dependsOn ":lwjgl:classes"
-
-    doFirst {
-        from(compileJava.outputs)
-
-        exclude "**.*"
-        exclude "org/lwjgl/util/generator/**"
-        exclude "org/lwjgl/util/applet/**"
-        include "org/lwjgl/util/**"
-    }
-
-    archiveBaseName.set("lwjgl_util")
-}
-
-tasks.register("utilSourceJar", Jar) {
-    doFirst {
-        from(sourceSets.main.allJava.srcDirs)
-
-        exclude "**.*"
-        exclude "org/lwjgl/util/generator/**"
-        exclude "org/lwjgl/util/applet/**"
-        include "org/lwjgl/util/**"
-
-        exclude "**.jar"
-    }
-
-    archiveBaseName.set("lwjgl_util")
-    archiveClassifier.set("sources")
-}
-
 javadoc {
     dependsOn ":lwjgl-templates:generateAll"
 
@@ -143,6 +112,37 @@ javadoc {
     //			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>
     //			<bottom><![CDATA[<i>Copyright &#169; 2002-2010 lwjgl.org. All Rights Reserved.</i>]]></bottom>
     //		</javadoc>
+}
+
+tasks.register("utilJar", Jar) {
+    dependsOn ":lwjgl:classes"
+
+    doFirst {
+        from(compileJava.outputs)
+
+        exclude "**.*"
+        exclude "org/lwjgl/util/generator/**"
+        exclude "org/lwjgl/util/applet/**"
+        include "org/lwjgl/util/**"
+    }
+
+    archiveBaseName.set("lwjgl_util")
+}
+
+tasks.register("utilSourceJar", Jar) {
+    doFirst {
+        from(sourceSets.main.allJava.srcDirs)
+
+        exclude "**.*"
+        exclude "org/lwjgl/util/generator/**"
+        exclude "org/lwjgl/util/applet/**"
+        include "org/lwjgl/util/**"
+
+        exclude "**.jar"
+    }
+
+    archiveBaseName.set("lwjgl_util")
+    archiveClassifier.set("sources")
 }
 
 tasks.register("utilJavadoc", Javadoc) {
@@ -189,9 +189,96 @@ tasks.register("utilJavadocJar", Jar) {
     archiveClassifier.set("javadoc")
 }
 
+tasks.register("utilAppletJar", Jar) {
+    dependsOn ":lwjgl:classes"
+
+    from("res") {
+        include "applet*"
+    }
+
+    doFirst {
+        from(compileJava.outputs)
+
+        exclude "**.*"
+        include "org/lwjgl/util/applet/**"
+    }
+
+    manifest {
+        attributes(
+                "Sealed": true,
+                "Trusted-Library": true,
+                "Permissions": "all-permissions",
+                "Codebase": "*",
+                "Caller-Allowable-Codebase": "*",
+                "Application-Library-Allowable-Codebase": "*"
+        )
+    }
+
+    archiveBaseName.set("lwjgl_util_applet")
+}
+
+tasks.register("utilAppletSourceJar", Jar) {
+    doFirst {
+        from(sourceSets.main.allJava.srcDirs)
+
+        exclude "**.*"
+        include "org/lwjgl/util/applet/**"
+
+        exclude "**.jar"
+    }
+
+    archiveBaseName.set("lwjgl_util_applet")
+    archiveClassifier.set("sources")
+}
+
+tasks.register("utilAppletJavadoc", Javadoc) {
+    dependsOn jar
+
+    failOnError = false
+    maxMemory = '2G'
+
+    destinationDir = file("build/docs/javadoc_util_applet")
+
+    options {
+        source = 8
+        encoding = 'UTF-8'
+        charSet = 'UTF-8'
+        memberLevel = JavadocMemberLevel.PACKAGE
+        windowTitle("LWJGL UTIL API")
+        header("<h1>Lightweight Java Game Toolkit</h1>")
+    }
+
+    source(compileJava.inputs.files)
+
+    exclude "**.*"
+    include "org/lwjgl/util/applet/**"
+
+    classpath = sourceSets.main.compileClasspath + jar.outputs.files
+
+    // 		<javadoc destdir="${lwjgl.dstMaven}/lwjgl_util_applet-javadoc" classpath="${lwjgl.lib}/jinput.jar:${lwjgl.lib}/lwjgl.jar" author="true" version="true" use="true" source="1.8" windowtitle="LWJGL UTIL API" useexternalfile="true">
+    //			<fileset refid="lwjgl_util_applet-sources.fileset"/>
+    //			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>
+    //			<bottom><![CDATA[<i>Copyright &#169; 2002-2010 lwjgl.org. All Rights Reserved.</i>]]></bottom>
+    //		</javadoc>
+}
+
+tasks.register("utilAppletJavadocJar", Jar) {
+    dependsOn utilAppletJavadoc
+
+    doFirst {
+        from utilAppletJavadoc.destinationDir
+    }
+
+    archiveBaseName.set("lwjgl_util_applet")
+    archiveClassifier.set("javadoc")
+}
+
 assemble.dependsOn(":lwjgl:utilJar")
 assemble.dependsOn(":lwjgl:utilSourceJar")
 assemble.dependsOn(":lwjgl:utilJavadocJar")
+assemble.dependsOn(":lwjgl:utilAppletJar")
+assemble.dependsOn(":lwjgl:utilAppletSourceJar")
+assemble.dependsOn(":lwjgl:utilAppletJavadocJar")
 
 publishing {
     publications {
@@ -283,6 +370,38 @@ publishing {
                     jinput.appendNode("groupId", "net.java.jinput")
                     jinput.appendNode("artifactId", "jinput")
                     jinput.appendNode("version", rootProject.jinput_version)
+                }
+            }
+        }
+        lwjgl_util_applet(MavenPublication) {
+            artifactId "lwjgl_util_applet"
+
+            artifact(utilAppletJar) {
+                builtBy utilAppletJar
+            }
+            artifact(utilAppletSourceJar) {
+                builtBy utilAppletSourceJar
+            }
+            artifact(utilAppletJavadocJar) {
+                builtBy utilAppletJavadocJar
+            }
+
+            pom {
+                name = "Lighweight Java Game Library"
+                packaging = "jar"
+                description = "Lighweight Java Game Library"
+                url = "http://lwjgl.org/"
+
+                scm {
+                    url = "http://java-game-lib.svn.sourceforge.net/viewvc/java-game-lib/trunk/"
+                    connection = "https://java-game-lib.svn.sourceforge.net/svnroot/java-game-lib"
+                }
+
+                withXml {
+                    def parenting = asNode().appendNode("parent")
+                    parenting.appendNode("groupId", project.group)
+                    parenting.appendNode("artifactId", "parent")
+                    parenting.appendNode("version", project.version)
                 }
             }
         }
