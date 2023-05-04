@@ -1,6 +1,6 @@
 name: Java CI
 
-on: [ push ]
+on: [ push, workflow_dispatch ]
 
 jobs:
   build-natives:
@@ -47,14 +47,14 @@ jobs:
             ports: true
             extra_java: 8
             vendor: zulu
-          - os: ubuntu-22.04
-            arch: ppc64le
-            java_arch: x64
-            linux_arch: ppc64el
-            packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross g++-powerpc64le-linux-gnu
-            ports: true
-            extra_java: 8
-            vendor: temurin
+#          - os: ubuntu-22.04
+#            arch: ppc64le
+#            java_arch: x64
+#            linux_arch: ppc64el
+#            packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross g++-powerpc64le-linux-gnu
+#            ports: true
+#            extra_java: 8
+#            vendor: temurin
           - os: ubuntu-22.04
             arch: riscv64
             java_arch: x64
@@ -178,3 +178,8 @@ jobs:
         with:
           name: maven
           path: ~/.m2/repository
+      - if: ${{ github.event_name == 'workflow_dispatch' }}
+        name: Publish to Maven
+        run: ./gradlew publish --stacktrace
+        env:
+          MAVEN_PUBLISH_CREDENTIALS: ${{ secrets.MAVEN_PUBLISH_CREDENTIALS }}

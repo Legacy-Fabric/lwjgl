@@ -295,7 +295,6 @@ publishing {
 
             pom {
                 name = "Lighweight Java Game Library"
-                packaging = "jar"
                 description = "Lighweight Java Game Library"
                 url = "http://lwjgl.org/"
 
@@ -305,6 +304,8 @@ publishing {
                 }
 
                 withXml {
+                    asNode().appendNode("packaging", "jar")
+
                     def parenting = asNode().appendNode("parent")
                     parenting.appendNode("groupId", project.group)
                     parenting.appendNode("artifactId", "parent")
@@ -342,7 +343,6 @@ publishing {
 
             pom {
                 name = "Lighweight Java Game Library"
-                packaging = "jar"
                 description = "Lighweight Java Game Library"
                 url = "http://lwjgl.org/"
 
@@ -352,6 +352,8 @@ publishing {
                 }
 
                 withXml {
+                    asNode().appendNode("packaging", "jar")
+
                     def parenting = asNode().appendNode("parent")
                     parenting.appendNode("groupId", project.group)
                     parenting.appendNode("artifactId", "parent")
@@ -386,7 +388,6 @@ publishing {
 
             pom {
                 name = "Lighweight Java Game Library"
-                packaging = "jar"
                 description = "Lighweight Java Game Library"
                 url = "http://lwjgl.org/"
 
@@ -396,6 +397,8 @@ publishing {
                 }
 
                 withXml {
+                    asNode().appendNode("packaging", "jar")
+
                     def parenting = asNode().appendNode("parent")
                     parenting.appendNode("groupId", project.group)
                     parenting.appendNode("artifactId", "parent")
@@ -404,4 +407,5 @@ publishing {
             }
         }
     }
+    setupRepositories(repositories)
 }

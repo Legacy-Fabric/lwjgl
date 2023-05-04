@@ -1,4 +1,4 @@
-rootProject.name = "parent"
+rootProject.name = "lwjgl-parent"
 
 include "lwjgl-common"
 include "generator"

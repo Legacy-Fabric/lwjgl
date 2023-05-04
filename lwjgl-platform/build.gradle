@@ -52,7 +52,7 @@ tasks.register("macosxNativeJar", Jar) {
     from fileTree("libs/macosx") {
         include "openal*.dylib"
     }
-    archiveClassifier.set("natives-macosx")
+    archiveClassifier.set("natives-osx")
     destinationDirectory.set(file("../temp/maven"))
     archiveBaseName.set("lwjgl-platform")
 }
@@ -103,4 +103,5 @@ publishing {
             }
         }
     }
+    setupRepositories(repositories)
 }
