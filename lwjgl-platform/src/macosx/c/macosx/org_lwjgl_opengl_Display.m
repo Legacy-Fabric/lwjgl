@@ -77,10 +77,7 @@ static NSUInteger lastModifierFlags = 0;
     // Inform the view of its parent window info;
 	[window_info->view setParent:window_info];
 	
-	if (window_info->enableHighDPI) {
-		// call method using runtime selector as its a 10.7+ api and allows compiling on older SDK's
-		[window_info->view performSelector:NSSelectorFromString(@"setWantsBestResolutionOpenGLSurface:") withObject:YES];
-	}
+	[window_info->view setWantsBestResolutionOpenGLSurface:NO];
 	
 	// set nsapp delegate for catching app quit events
 	[NSApp setDelegate:window_info->view];
