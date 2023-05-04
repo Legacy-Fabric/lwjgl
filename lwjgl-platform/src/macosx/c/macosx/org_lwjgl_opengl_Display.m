@@ -258,7 +258,11 @@ static NSUInteger lastModifierFlags = 0;
 	if (context == nil) return;
 	
 	if ([context view] != self) {
-		[context setView:self];
+		if ([NSThread isMainThread]) {
+			[context setView:self];
+		} else {
+			dispatch_sync(dispatch_get_main_queue(), ^{[context setView:self];});
+		}
 	}
 	
 	[context makeCurrentContext];
@@ -591,7 +595,11 @@ JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nResizeWindow(JNIEnv 
 	MacOSXWindowInfo *window_info = (MacOSXWindowInfo *)(*env)->GetDirectBufferAddress(env, window_handle);
 	window_info->display_rect = NSMakeRect(x, y, width, height);
 	[window_info->window setFrame:window_info->display_rect display:false];
-	[window_info->view update];
+	if ([NSThread isMainThread]) {
+		[window_info->view update];
+	} else {
+		dispatch_sync(dispatch_get_main_queue(), ^{[window_info->view update];});
+	}
 }
 
 JNIEXPORT jboolean JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nWasResized(JNIEnv *env, jobject this, jobject window_handle) {
@@ -621,7 +629,11 @@ JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nSetResizable(JNIEnv 
 	} else {
 		style_mask &= ~NSResizableWindowMask;
 	}
-	[window_info->window setStyleMask:style_mask];
+	if ([NSThread isMainThread]) {
+		[window_info->window setStyleMask:style_mask];
+	} else {
+		dispatch_sync(dispatch_get_main_queue(), ^{[window_info->window setStyleMask:style_mask];});	
+	}
 
 	if (window_info->enableFullscreenModeAPI) {
 		if (resizable) {
