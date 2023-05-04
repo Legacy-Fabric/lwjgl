@@ -40,7 +40,7 @@ tasks.register("linuxNativeJar", Jar) {
         include "libopenal*.so"
     }
     archiveClassifier.set("natives-linux")
-    destinationDirectory.set(file("../temp/maven"))
+    destinationDirectory.set(file("build/libs"))
     archiveBaseName.set("lwjgl-platform")
 }
 
@@ -53,7 +53,7 @@ tasks.register("macosxNativeJar", Jar) {
         include "openal*.dylib"
     }
     archiveClassifier.set("natives-osx")
-    destinationDirectory.set(file("../temp/maven"))
+    destinationDirectory.set(file("build/libs"))
     archiveBaseName.set("lwjgl-platform")
 }
 
@@ -66,7 +66,7 @@ tasks.register("windowsNativeJar", Jar) {
         include "OpenAL*.dll"
     }
     archiveClassifier.set("natives-windows")
-    destinationDirectory.set(file("../temp/maven"))
+    destinationDirectory.set(file("build/libs"))
     archiveBaseName.set("lwjgl-platform")
 }
 
@@ -78,11 +78,11 @@ publishing {
             artifact(linuxNativeJar) {
                 builtBy linuxNativeJar
             }
-            artifact(macosxNativeJar) {
-                builtBy macosxNativeJar
-            }
             artifact(windowsNativeJar) {
                 builtBy windowsNativeJar
+            }
+            artifact(macosxNativeJar) {
+                builtBy macosxNativeJar
             }
 
             pom {
