@@ -12,7 +12,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 //}
 //
 //tasks.register("-createjars") {
-//    dependsOn "createjars_lwjgl_util_applet", "createjars_lwjgl_test"
+//    dependsOn "createjars_lwjgl_test"
 //}
 //
 //tasks.register("-createdebugjars", Jar) {

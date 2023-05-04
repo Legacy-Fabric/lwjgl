@@ -50,7 +50,7 @@ if (ENV.ARCHITECTURE && linux_arch != "amd64") {
 
 def libs = []
 
-if (linux_arch == "amd64" || linux_arch == "ppc64el") {
+if (linux_arch == "amd64") {
     libs += [
             "-L/usr/X11R6/lib64",
             "-L/usr/X11/lib64"
@@ -65,7 +65,7 @@ if (linux_arch == "amd64" || linux_arch == "ppc64el") {
 def java_in_arch = linux_arch
 
 if (java_in_arch == "ppc64el") {
-    java_in_arch = "ppc64el"
+    java_in_arch = "ppc64le"
 }
 
 libs += [

@@ -6,14 +6,12 @@ plugins {
 sourceSets {
     generated {
         java
-        compileClasspath += sourceSets.main.compileClasspath
-        runtimeClasspath += sourceSets.main.runtimeClasspath
     }
 
     main {
-        java
         compileClasspath += sourceSets.generated.compileClasspath
         runtimeClasspath += sourceSets.generated.runtimeClasspath
+        java
     }
 }
 
