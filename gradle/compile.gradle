@@ -34,7 +34,7 @@ def ENV = System.getenv()
 
 tasks.register("compile_native") {
     description = "Compiles the native files"
-    dependsOn "-initialize", ":lwjgl:compileJava", "touch-version", "a-version-mismatch"
+    dependsOn ":lwjgl:compileJava", "touch-version", "a-version-mismatch"
 
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         dependsOn "link_win32"
@@ -52,10 +52,6 @@ tasks.register("compile_native") {
         dependsOn("a--compile_native_openbsd")
     }
 
-    if (Os.isName("sunos")) {
-        dependsOn("a--compile_native_solaris")
-    }
-
     if (Os.isName("mac os x")) {
         dependsOn("macosx_natives_lipo")
     }
@@ -63,7 +59,7 @@ tasks.register("compile_native") {
 
 tasks.register("compile_native_es") {
     description = "Compiles the native files"
-    dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
+    dependsOn "compile", "touch-version", "a-version-mismatch"
 
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         dependsOn "a--compile_native_win32_es"
@@ -74,7 +70,7 @@ tasks.register("compile_native_es") {
     }
 }
 
-for(final def os in ["freebsd", "openbsd", "solaris"]) {
+for(final def os in ["freebsd", "openbsd"]) {
     tasks.named("a--compile_native_${os}").get().dependsOn "-initialize", "compile", "touch-version", "a-version-mismatch"
 }
 

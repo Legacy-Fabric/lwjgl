@@ -58,10 +58,7 @@ libs += [
 ]
 
 def cflags = [
-        "-O2"
-]
-
-cflags += [
+        "-O2",
         "-Wall",
         "-c",
         "-fPIC",
@@ -115,8 +112,9 @@ if (ENV.ARCHITECTURE) {
     }
 }
 
-def workdir = "bin/lwjgl"
+def workdir = file("lwjgl-platform/build/natives")
 def workdirX = "${workdir}/${target_arch}"
+file(workdirX).mkdirs()
 
 def cflags_pthread = ["-pthread"]
 

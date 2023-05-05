@@ -31,6 +31,8 @@ sourceSets {
     }
 }
 
+def builtDir = file("build/natives")
+
 tasks.register("linuxNativeJar", Jar) {
     dependsOn ":compile_native"
 
@@ -40,7 +42,7 @@ tasks.register("linuxNativeJar", Jar) {
         )
     }
 
-    from fileTree("../bin/lwjgl") {
+    from fileTree(builtDir) {
         include "liblwjgl*.so"
     }
     from fileTree("libs/linux") {
@@ -61,7 +63,7 @@ tasks.register("macosxNativeJar", Jar) {
         )
     }
 
-    from fileTree("../bin/lwjgl") {
+    from fileTree(builtDir) {
         include "liblwjgl*.dylib"
     }
     from fileTree("libs/macosx") {
@@ -82,7 +84,7 @@ tasks.register("windowsNativeJar", Jar) {
         )
     }
 
-    from fileTree("../bin/lwjgl") {
+    from fileTree(builtDir) {
         include "lwjgl*.dll"
     }
     from fileTree("libs/windows") {

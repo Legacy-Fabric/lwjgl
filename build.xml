@@ -240,17 +240,6 @@
 		</copy>
 	</target>
 
-
-	<!-- Compiles LWJGL on solaris platforms -->
-	<target name="-compile_native_solaris">
-		<!-- Reusing the linux ant task, but copy the output to solaris -->
-		<ant antfile="platform_build/linux_ant/build.xml" inheritAll="false"/>
-		<copy todir="${lwjgl.lib}/solaris">
-			<fileset dir="${lwjgl.bin}/lwjgl" includes="liblwjgl*.so"/>
-		</copy>
-		<version-check platform="solaris"/>
-	</target>
-
 <!--	&lt;!&ndash; Compiles LWJGL on Mac platforms &ndash;&gt;-->
 <!--	<target name="-compile_native_macosx">-->
 <!--		<ant antfile="platform_build/macosx_ant/build.xml" inheritAll="false"/>-->

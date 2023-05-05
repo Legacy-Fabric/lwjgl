@@ -105,9 +105,9 @@ jobs:
       with:
         name: natives
         path: |
-          bin/lwjgl/lwjgl*.dll
-          bin/lwjgl/liblwjgl*.so
-          bin/lwjgl/liblwjgl*.dylib
+          lwjgl-platform/build/natives/lwjgl*.dll
+          lwjgl-platform/build/natives/liblwjgl*.so
+          lwjgl-platform/build/natives/liblwjgl*.dylib
 
   build_debian:
     strategy:
@@ -156,7 +156,7 @@ jobs:
         with:
           name: natives
           path: |
-            bin/lwjgl/liblwjgl*.so
+            lwjgl-platform/build/natives/liblwjgl*.so
   build:
     runs-on: ubuntu-latest
     needs: [build-natives, build_debian]
@@ -171,7 +171,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: natives
-          path: bin/lwjgl
+          path: lwjgl-platform/build/natives
       - name: Build
         run: ./gradlew publishToMavenLocal --stacktrace
       - uses: actions/upload-artifact@v3

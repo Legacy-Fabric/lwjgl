@@ -26,6 +26,10 @@ def dllname = "lwjgl-windows-${target_arch}.dll"
 
 def libss = "Kernel32.lib ole32.lib OpenGL32.Lib Version.lib user32.lib Gdi32.lib Advapi32.lib jawt.lib delayimp.lib winmm.lib Comctl32.lib"
 
+def workdir = file("lwjgl-platform/build/natives")
+def workdirX = "${workdir}/${target_arch}"
+file(workdirX).mkdirs()
+
 tasks.register("compile_win32", Exec) {
     dependsOn "a-version-mismatch"
     executable("cl")
@@ -74,7 +78,7 @@ tasks.register("compile_win32", Exec) {
         )
     }
 
-    workingDir("bin/lwjgl")
+    workingDir(workdir)
 }
 
 tasks.register("link_win32", Exec) {
@@ -107,11 +111,5 @@ tasks.register("link_win32", Exec) {
         args.each {println(it)}
     }
 
-    workingDir("bin/lwjgl")
+    workingDir(workdir)
 }
-
-//tasks.register("clean_win32", Delete) {
-//    from fileTree("bin/lwjgl") {
-//        include "*.obj", "*.dll", "*.exp", "*.lib"
-//    }
-//}

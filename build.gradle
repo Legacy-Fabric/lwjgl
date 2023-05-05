@@ -62,31 +62,6 @@ apply from:"gradle/props.gradle"
 
 def proparties = project.praps
 
-tasks.register("-initialize") {
-    description = "Initialize build"
-
-    doFirst {
-        mkdir(proparties["lwjgl.bin"])
-        mkdir(proparties["lwjgl.bin"].toString() + "/lwjgl")
-        mkdir(proparties["lwjgl.bin"].toString() + "/lwjgles")
-        mkdir(proparties["lwjgl.lib"])
-        mkdir(proparties["lwjgl.dist"])
-        mkdir(proparties["lwjgl.docs"].toString() + "/javadoc")
-        mkdir(proparties["lwjgl.res"])
-        mkdir(proparties["lwjgl.temp"])
-        mkdir(proparties["lwjgl.temp"].toString() + "/jar")
-        mkdir(proparties["lwjgl.temp"].toString() + "/doc")
-        mkdir(proparties["lwjgl.temp"].toString() + "/res")
-        mkdir(proparties["lwjgl.temp"].toString() + "/native")
-        mkdir(proparties["lwjgl.temp"].toString() + "/native/windows")
-        mkdir(proparties["lwjgl.temp"].toString() + "/native/linux")
-        mkdir(proparties["lwjgl.temp"].toString() + "/native/freebsd")
-        mkdir(proparties["lwjgl.temp"].toString() + "/native/openbsd")
-        mkdir(proparties["lwjgl.temp"].toString() + "/native/macosx")
-        mkdir(proparties["lwjgl.temp"].toString() + "/native/solaris")
-    }
-}
-
 static String getArch(String arch) {
     if (arch == "amd64" || arch == "x64" || arch == "x86_64") {
         return "amd64"
@@ -132,7 +107,7 @@ tasks.named("a-version-mismatch").get().dependsOn "touch-version"
 
 //tasks.register("compile") {
 //    description = "Compiles the java source code"
-//    dependsOn "-initialize", "compile_test", "compile_examples"
+//    dependsOn "compile_test", "compile_examples"
 //}
 //
 //tasks.register("all") {

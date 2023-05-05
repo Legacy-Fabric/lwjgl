@@ -56,8 +56,9 @@ def sdkroot = "${developer_path}/${sdk_path}/MacOSX.sdk"
 
 def compiler = "clang"
 
-def workdir = "bin/lwjgl"
-def workdirX = "${workdir}/${macos_arch}"
+def workdir = file("lwjgl-platform/build/natives")
+def workdirX = "${workdir}/${target_arch}"
+file(workdirX).mkdirs()
 
 def final_name = "liblwjgl-macos-${target_arch}.dylib"
 
@@ -133,7 +134,7 @@ tasks.register("macosx_natives_symbols", Exec) {
     executable("sh")
 
     args(
-            "../../platform_build/macosx_ant/build-symbol-list",
+            file("platform_build/macosx_ant/build-symbol-list").toString(),
             macos_arch
     )
 
@@ -141,7 +142,7 @@ tasks.register("macosx_natives_symbols", Exec) {
     standardOutput = new ByteArrayOutputStream()
 
     doLast {
-        file(workdir + "/lwjgl.symbols").write(standardOutput.toString())
+        file(workdir.toString() + "/lwjgl.symbols").write(standardOutput.toString())
     }
 }
 
