@@ -86,8 +86,9 @@ static String getArch(String arch) {
     return "unknown"
 }
 
-static def getNativeFolder(String name, String fold) {
-    return file("lwjgl-platform/src/" + name + "/c/" + fold).toString()
+static String getNativeFolder(Project project, String name, String fold) {
+    project.file("lwjgl-platform/src/" + name + "/c/" + fold).mkdirs()
+    return project.file("lwjgl-platform/src/" + name + "/c/" + fold).toString()
 }
 
 apply from:"gradle/compile.gradle"

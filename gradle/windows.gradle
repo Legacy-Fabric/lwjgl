@@ -40,11 +40,11 @@ tasks.register("compile_win32", Exec) {
                 "${java_home}/include/win32",
                 "${java_home}/../include",
                 "${java_home}/../include/win32",
-                getNativeFolder("generated", "."),
-                getNativeFolder("common", "common"),
-                getNativeFolder("common", "common/opengl"),
-                getNativeFolder("windows", "windows"),
-                getNativeFolder("windows", "windows/opengl")
+                getNativeFolder(project,"generated", "."),
+                getNativeFolder(project,"common", "common"),
+                getNativeFolder(project,"common", "common/opengl"),
+                getNativeFolder(project,"windows", "windows"),
+                getNativeFolder(project,"windows", "windows/opengl")
         ]
 
         iss.each {
@@ -74,7 +74,7 @@ tasks.register("compile_win32", Exec) {
         )
     }
 
-    workingDir(workdir)
+    workingDir(workdirX)
 }
 
 tasks.register("link_win32", Exec) {
@@ -86,7 +86,7 @@ tasks.register("link_win32", Exec) {
                 "/LD", "/nologo"
         )
 
-        fileTree("bin/lwjgl") {
+        fileTree(workdirX) {
             include "*.obj"
         }.files.each {args(it.toString())}
 

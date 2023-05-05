@@ -96,10 +96,10 @@ tasks.register("macosx_natives_compile", Exec) {
         def inputs = [
                 "${javavmroot}/include",
                 "${javavmroot}/include/darwin",
-                getNativeFolder("generated", "."),
-                getNativeFolder("common", "common"),
-                getNativeFolder("common", "common/opengl"),
-                getNativeFolder("macosx", "macosx")
+                getNativeFolder(project,"generated", "."),
+                getNativeFolder(project,"common", "common"),
+                getNativeFolder(project,"common", "common/opengl"),
+                getNativeFolder(project,"macosx", "macosx")
         ]
 
         inputs.each {args("-I" + it)}
@@ -131,7 +131,7 @@ tasks.register("macosx_natives_symbols", Exec) {
 
     args(
             file("platform_build/macosx_ant/build-symbol-list").toString(),
-            macos_arch
+            target_arch
     )
 
     //store the output instead of printing to the console:
