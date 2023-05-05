@@ -33,12 +33,20 @@ sourceSets {
 
 tasks.register("linuxNativeJar", Jar) {
     dependsOn ":lwjgl:compileJava"
+
+    manifest {
+        attributes(
+                "Implementation-Version": project.version
+        )
+    }
+
     from fileTree("../bin/lwjgl") {
         include "liblwjgl*.so"
     }
     from fileTree("libs/linux") {
         include "libopenal*.so"
     }
+
     archiveClassifier.set("natives-linux")
     destinationDirectory.set(file("build/libs"))
     archiveBaseName.set("lwjgl-platform")
@@ -46,12 +54,20 @@ tasks.register("linuxNativeJar", Jar) {
 
 tasks.register("macosxNativeJar", Jar) {
     dependsOn ":lwjgl:compileJava"
+
+    manifest {
+        attributes(
+                "Implementation-Version": project.version
+        )
+    }
+
     from fileTree("../bin/lwjgl") {
         include "liblwjgl*.dylib"
     }
     from fileTree("libs/macosx") {
         include "openal*.dylib"
     }
+
     archiveClassifier.set("natives-osx")
     destinationDirectory.set(file("build/libs"))
     archiveBaseName.set("lwjgl-platform")
@@ -59,12 +75,20 @@ tasks.register("macosxNativeJar", Jar) {
 
 tasks.register("windowsNativeJar", Jar) {
     dependsOn ":lwjgl:compileJava"
+
+    manifest {
+        attributes(
+                "Implementation-Version": project.version
+        )
+    }
+
     from fileTree("../bin/lwjgl") {
         include "lwjgl*.dll"
     }
     from fileTree("libs/windows") {
         include "OpenAL*.dll"
     }
+
     archiveClassifier.set("natives-windows")
     destinationDirectory.set(file("build/libs"))
     archiveBaseName.set("lwjgl-platform")

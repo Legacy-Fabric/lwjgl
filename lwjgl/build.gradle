@@ -32,7 +32,8 @@ compileJava {
 jar {
     manifest {
         attributes(
-                "Sealed": true
+                "Sealed": true,
+                "Implementation-Version": project.version
         )
     }
 
@@ -114,6 +115,12 @@ javadoc {
 
 tasks.register("utilJar", Jar) {
     dependsOn ":lwjgl:classes"
+
+    manifest {
+        attributes(
+                "Implementation-Version": project.version
+        )
+    }
 
     doFirst {
         from(compileJava.outputs)
@@ -208,7 +215,8 @@ tasks.register("utilAppletJar", Jar) {
                 "Permissions": "all-permissions",
                 "Codebase": "*",
                 "Caller-Allowable-Codebase": "*",
-                "Application-Library-Allowable-Codebase": "*"
+                "Application-Library-Allowable-Codebase": "*",
+                "Implementation-Version": project.version
         )
     }
 
