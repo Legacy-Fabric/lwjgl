@@ -31,10 +31,7 @@
  */
 package org.lwjgl.util.generator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -287,9 +284,10 @@ public class GeneratorVisitor extends ElementKindVisitor8<Void, Void> {
 
 		PrintWriter java_writer = null;
 		try {
-			final JavaFileObject outputJava = env.getFiler().createSourceFile(
-					env.getElementUtils().getPackageOf(e).getQualifiedName().toString() + "." + Utils.getSimpleClassName(e));
-			final File outputJavaFile = new File(outputJava.toUri());
+			final File outputDirectory = new File(env.getOptions().get("outputDir"));
+			final String className = (env.getElementUtils().getPackageOf(e).getQualifiedName().toString() + "." + Utils.getSimpleClassName(e))
+					.replace(".", "/");
+			final File outputJavaFile = new File(outputDirectory, className + ".java");
 
 			final Collection<? extends ExecutableElement> methods = Utils.getMethods(e);
 			if ( methods.isEmpty() && Utils.getFields(e).isEmpty() ) {
@@ -305,7 +303,7 @@ public class GeneratorVisitor extends ElementKindVisitor8<Void, Void> {
 
 			// TODO: Back-port LWJGL 3's generation file handling (generate in-memory and avoid touching files if nothing has changed)
 			outputJavaFile.getParentFile().mkdirs();
-			generateJavaSource(e, new PrintWriter(outputJava.openWriter()));
+			generateJavaSource(e, new PrintWriter(new FileWriter(outputJavaFile)));
 
 			if ( methods.size() > 0 ) {
 				boolean noNative = true;

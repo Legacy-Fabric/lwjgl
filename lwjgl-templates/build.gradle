@@ -45,7 +45,8 @@ abstract class GeneratorJavaCompile extends JavaCompile {
                 "-processor",
                 "org.lwjgl.util.generator.GeneratorProcessor",
                 "-Atypemap=org.lwjgl.util.generator.${packaje != null && !packaje.isEmpty() ? packaje : component}.${typeClassName}",
-                "-Abinpath=" + project.project(":generator").sourceSets.main.output.classesDirs[0]
+                "-Abinpath=" + project.project(":generator").sourceSets.main.output.classesDirs[0],
+                "-AoutputDir=" + project.file("../lwjgl/src/generated/java/").toString()
         ]
 
         if (component == "opengl" || component == "opencl") {

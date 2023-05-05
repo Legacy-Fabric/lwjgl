@@ -49,9 +49,9 @@ import javax.lang.model.element.Element;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
-import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.lang.model.util.SimpleTypeVisitor8;
 
-public class PostfixTranslator extends SimpleTypeVisitor6<Void, Void> {
+public class PostfixTranslator extends SimpleTypeVisitor8<Void, Void> {
 	private final StringBuilder signature = new StringBuilder();
 	private final Element declaration;
 	private final TypeMap type_map;

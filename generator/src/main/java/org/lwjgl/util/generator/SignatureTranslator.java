@@ -52,8 +52,9 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.NoType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.lang.model.util.SimpleTypeVisitor8;
 
-class SignatureTranslator extends SimpleTypeVisitor6<Void, Void> {
+class SignatureTranslator extends SimpleTypeVisitor8<Void, Void> {
 	private final StringBuilder signature = new StringBuilder();
 
 	SignatureTranslator() {}

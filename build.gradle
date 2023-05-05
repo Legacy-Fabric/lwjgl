@@ -222,13 +222,6 @@ tasks.named("a-version-mismatch").get().dependsOn "touch-version"
 //    tasks.named("-distribute_base").get().dependsOn "-distribute_${os}"
 //}
 
-tasks.withType(JavaCompile).configureEach {
-    targetCompatibility = JavaVersion.VERSION_1_8
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    it.options.encoding = "UTF-8"
-    if (JavaVersion.current().isJava9Compatible()) it.options.release = 8
-}
-
 apply from:"gradle/windows.gradle"
 apply from:"gradle/macosx.gradle"
 apply from:"gradle/linux.gradle"
@@ -236,6 +229,17 @@ apply from:"gradle/linux.gradle"
 allprojects {
     repositories {
         mavenCentral()
+    }
+
+    tasks.all {
+        if (it instanceof JavaCompile) {
+            targetCompatibility = JavaVersion.VERSION_1_8
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            it.options.encoding = "UTF-8"
+            if (JavaVersion.current().isJava9Compatible()) {
+                it.options.release = 8
+            }
+        }
     }
 }
 

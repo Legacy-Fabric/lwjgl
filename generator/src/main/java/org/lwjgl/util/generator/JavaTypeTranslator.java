@@ -33,7 +33,7 @@ package org.lwjgl.util.generator;
 
 import java.nio.ByteBuffer;
 import javax.lang.model.type.*;
-import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.lang.model.util.SimpleTypeVisitor8;
 
 /**
  * A TypeVisitor that translates (annotated) TypeMirrors to java types
@@ -42,7 +42,7 @@ import javax.lang.model.util.SimpleTypeVisitor6;
  * @author elias_naur <elias_naur@users.sourceforge.net>
  * @version $Revision$ $Id$
  */
-public class JavaTypeTranslator extends SimpleTypeVisitor6<Void, Void> {
+public class JavaTypeTranslator extends SimpleTypeVisitor8<Void, Void> {
 
 	private Class type;
 

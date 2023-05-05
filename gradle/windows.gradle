@@ -110,8 +110,8 @@ tasks.register("link_win32", Exec) {
     workingDir("bin/lwjgl")
 }
 
-tasks.register("clean_win32", Delete) {
-    from fileTree("bin/lwjgl") {
-        include "*.obj", "*.dll", "*.exp", "*.lib"
-    }
-}
+//tasks.register("clean_win32", Delete) {
+//    from fileTree("bin/lwjgl") {
+//        include "*.obj", "*.dll", "*.exp", "*.lib"
+//    }
+//}

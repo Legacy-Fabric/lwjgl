@@ -49,7 +49,7 @@ import java.util.List;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.*;
-import javax.lang.model.util.SimpleTypeVisitor6;
+import javax.lang.model.util.SimpleTypeVisitor8;
 
 /**
  * $Id$
@@ -59,7 +59,7 @@ import javax.lang.model.util.SimpleTypeVisitor6;
  * @author elias_naur <elias_naur@users.sourceforge.net>
  * @version $Revision$
  */
-public class NativeTypeTranslator extends SimpleTypeVisitor6<Void, Void> {
+public class NativeTypeTranslator extends SimpleTypeVisitor8<Void, Void> {
 
 	private       Collection<Class> native_types;
 	private       boolean           is_indirect;

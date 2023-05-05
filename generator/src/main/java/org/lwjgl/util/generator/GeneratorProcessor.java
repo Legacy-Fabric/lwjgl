@@ -52,7 +52,7 @@ import javax.tools.Diagnostic;
  */
 @SupportedAnnotationTypes({ "*" })
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedOptions({ "binpath", "typemap", "generatechecks", "contextspecific" })
+@SupportedOptions({ "binpath", "typemap", "generatechecks", "contextspecific", "outputDir" })
 public class GeneratorProcessor extends AbstractProcessor {
 
 	private static boolean first_round = true;
@@ -87,10 +87,11 @@ public class GeneratorProcessor extends AbstractProcessor {
 			first_round = false;
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			if ( lastFile == null ) {
 				throw new RuntimeException(e);
 			} else {
-				throw new RuntimeException("\n-- Failed to process template: " + lastFile.asType().toString() + " --", e);
+				throw new RuntimeException("\n-- Failed to process template: " + lastFile.asType().toString() + " --");
 			}
 		}
 	}
