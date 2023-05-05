@@ -4,53 +4,29 @@ def getNativeFolder(String name, String fold) {
     return file("lwjgl-platform/src/" + name + "/c/" + fold).toString()
 }
 
-def target_arch = ENV.ARCHITECTURE ? ENV.ARCHITECTURE : System.getProperty("os.arch")
+def os_arch = getArch(System.getProperty("os.arch"))
+def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
 
-def linux_arch = "amd64"
-if (target_arch == "x86" || target_arch == "i386") {
-    linux_arch = "i386"
-} else if (target_arch == "arm32hf" || target_arch == "armhf" || target_arch == "aarch32hf") {
-    linux_arch = "armhf"
-} else if (target_arch == "arm64" || target_arch == "aarch64") {
-    linux_arch = "aarch64"
-} else if (target_arch == "ppc64el" || target_arch == "powerpc64le" || target_arch == "ppc64le" || target_arch == "powerpc64el") {
-    linux_arch = "ppc64el"
-} else if (target_arch == "riscv64") {
-    linux_arch = "riscv64"
-} else if (target_arch == "armel" || target_arch == "arm" || target_arch == "arm32" || target_arch == "aarch32") {
-    linux_arch = "armel"
-} else if (target_arch == "powerpc" || target_arch == "ppc") {
-    linux_arch = "powerpc"
-} else if (target_arch == "ppc64" || target_arch == "powerpc64") {
-    linux_arch = "ppc64"
-}
+def libname = "liblwjgl-linux-${target_arch}.so"
 
-def libname = "liblwjgl64.so"
-
-if (linux_arch == "i386") {
-    libname = "liblwjgl.so"
-} else if (linux_arch != "amd64") {
-    libname = "liblwjgl-${linux_arch}.so"
-}
-
-def java_home = ENV.JAVA_HOME + "/jre"
-if (ENV.ARCHITECTURE && linux_arch != "amd64") {
-    if (linux_arch == "armhf" || linux_arch == "riscv64"
-            || linux_arch == "armel" || linux_arch == "riscv64"
-            || linux_arch == "powerpc" || linux_arch == "ppc64") {
+def java_home = System.getProperty("java.home")
+if (ENV.ARCHITECTURE && target_arch != "amd64") {
+    if (target_arch == "armhf" || target_arch == "riscv64"
+            || target_arch == "armel" || target_arch == "riscv64"
+            || target_arch == "powerpc" || target_arch == "ppc64") {
         java_home = ENV.TARGET_JAVA
-    } else if (linux_arch == "aarch64") {
+    } else if (target_arch == "aarch64") {
         java_home = ENV.JAVA_HOME_8_AARCH64 + "/jre"
-    } else if (linux_arch == "i386") {
+    } else if (target_arch == "i386") {
         java_home = ENV.JAVA_HOME_8_I386 + "/jre"
-    } else if (linux_arch == "ppc64el") {
+    } else if (target_arch == "ppc64el") {
         java_home = ENV.JAVA_HOME_8_PPC64LE + "/jre"
     }
 }
 
 def libs = []
 
-if (linux_arch == "amd64") {
+if (target_arch == "amd64") {
     libs += [
             "-L/usr/X11R6/lib64",
             "-L/usr/X11/lib64"
@@ -62,7 +38,7 @@ if (linux_arch == "amd64") {
     ]
 }
 
-def java_in_arch = linux_arch
+def java_in_arch = target_arch
 
 if (java_in_arch == "ppc64el") {
     java_in_arch = "ppc64le"
@@ -106,7 +82,7 @@ def stripper = "strip"
 
 if (ENV.ARCHITECTURE) {
     def thepart;
-    switch (linux_arch) {
+    switch (target_arch) {
         case "armhf":
             thepart = "arm-linux-gnueabihf"
             break
@@ -140,7 +116,7 @@ if (ENV.ARCHITECTURE) {
 }
 
 def workdir = "bin/lwjgl"
-def workdirX = "${workdir}/${linux_arch}"
+def workdirX = "${workdir}/${target_arch}"
 
 def cflags_pthread = ["-pthread"]
 
@@ -150,8 +126,8 @@ tasks.register("linux_natives_init") {
         println(
                 "Compiler: ${compiler}" +
                 "\nJava Home: ${java_home}" +
-                "\nOS arch: ${System.getProperty("os.arch")}" +
-                "\nTarget arch ${linux_arch}"
+                "\nOS arch: ${os_arch}" +
+                "\nTarget arch ${target_arch}"
         )
         mkdir(workdirX)
     }
@@ -162,7 +138,7 @@ tasks.register("linux_natives_compile", Exec) {
     workingDir(workdirX)
     executable(compiler)
 
-    if (linux_arch == "i386") {
+    if (target_arch == "i386") {
         args("-m32")
     }
 
@@ -170,7 +146,7 @@ tasks.register("linux_natives_compile", Exec) {
     cflags_pthread.each {args(it)}
 
     ["${java_home}/include", "${java_home}/include/linux", "${java_home}/../include",
-     "${java_home}/../include/linux", "${java_home}/../include/solaris",
+     "${java_home}/../include/linux",
      getNativeFolder("generated", "."),
      getNativeFolder("common", "common"),
      getNativeFolder("common", "common/opengl"),
@@ -208,7 +184,7 @@ tasks.register("linux_natives_link", Exec) {
             include "*.o"
         }.files.each {args(it.toString())}
 
-        if (linux_arch == "i386") {
+        if (target_arch == "i386") {
             args("-m32")
         }
 

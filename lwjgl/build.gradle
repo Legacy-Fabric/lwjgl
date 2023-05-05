@@ -286,6 +286,8 @@ assemble.dependsOn(":lwjgl:utilAppletJar")
 assemble.dependsOn(":lwjgl:utilAppletSourceJar")
 assemble.dependsOn(":lwjgl:utilAppletJavadocJar")
 
+testClasses.dependsOn(":compile_native")
+
 publishing {
     publications {
         lwjgl(MavenPublication) {

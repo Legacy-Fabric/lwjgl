@@ -269,15 +269,15 @@ public class LWJGLUtil {
 	private static final int PLATFORM;
 
 	static {
-		final String osName = getPrivilegedProperty("os.name");
-		if ( osName.startsWith("Windows") )
+		if (Os.CURRENT_OS.isWindows()) {
 			PLATFORM = PLATFORM_WINDOWS;
-		else if ( osName.startsWith("Linux") || osName.startsWith("FreeBSD") || osName.startsWith("OpenBSD") || osName.startsWith("SunOS") || osName.startsWith("Unix") )
-			PLATFORM = PLATFORM_LINUX;
-		else if ( osName.startsWith("Mac OS X") || osName.startsWith("Darwin") )
+		} else if (Os.CURRENT_OS.isMacOs()) {
 			PLATFORM = PLATFORM_MACOSX;
-		else
-			throw new LinkageError("Unknown platform: " + osName);
+		} else if (Os.CURRENT_OS.useLinuxImplementation()) {
+			PLATFORM = PLATFORM_LINUX;
+		} else {
+			throw new LinkageError("Unknown platform: " + getPrivilegedProperty("os.name"));
+		}
 	}
 
 	private static ByteBuffer loadIcon(String data) {
@@ -329,7 +329,7 @@ public class LWJGLUtil {
 	 */
 	public static String mapLibraryName(String name) {
 		String libName = System.mapLibraryName(name);
-		return LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_MACOSX && libName.endsWith(".jnilib")
+		return Os.CURRENT_OS.isMacOs() && libName.endsWith(".jnilib")
 			? libName.substring(0, libName.length() - ".jnilib".length()) + ".dylib"
 			: libName;
 	}
@@ -626,4 +626,150 @@ public class LWJGLUtil {
 
 	}
 
+	/**
+	 * Added by LegacyFabric fork to help handling more os and arch
+	 */
+	@Deprecated
+	enum Os {
+		windows(new String[]{"windows", "Windows"}, Arch.i386, Arch.amd64, Arch.aarch64),
+		macos(new String[]{"mac os x", "mac", "osx", "os x", "Mac OS X", "Mac", "OSX", "OS X", "darwin", "Darwin"}, Arch.amd64, Arch.aarch64),
+		linux(new String[]{"linux", "Linux"}, Arch.i386, Arch.amd64, Arch.armhf, Arch.armel, Arch.aarch64, Arch.riscv64),
+		freebsd(new String[]{"freebsd", "FreeBSD"}),
+		openbsd(new String[]{"openbsd", "OpenBSD"}),
+		unknown(new String[]{});
+
+		public static final Os CURRENT_OS = getOs();
+		public static final Arch CURRENT_ARCH = CURRENT_OS.getArch();
+
+		final String[] aliases;
+		final Arch[] supportedArches;
+
+		Os(String[] aliases, Arch... supportedArches) {
+			this.aliases = aliases;
+			this.supportedArches = supportedArches;
+		}
+		Os(String alias, Arch... supportedArches) {
+			this(new String[]{alias}, supportedArches);
+		}
+
+		public boolean isUnknown() {
+			return this == unknown;
+		}
+
+		public boolean isWindows() {
+			return this == windows;
+		}
+
+		public boolean isMacOs() {
+			return this == macos;
+		}
+
+		public boolean isLinux() {
+			return this == linux;
+		}
+
+		public boolean isFreeBSD() {
+			return this == freebsd;
+		}
+
+		public boolean isOpenBSD() {
+			return this == openbsd;
+		}
+
+		public boolean isUnixLike() {
+			return isMacOs() || useLinuxImplementation();
+		}
+
+		public boolean useLinuxImplementation() {
+			return isLinux() || isBSDLike();
+		}
+
+		public boolean isBSDLike() {
+			return isFreeBSD() || isOpenBSD();
+		}
+
+		private Arch getArch() {
+			for (Arch arch : supportedArches) {
+				if (arch.match()) return arch;
+			}
+
+			return Arch.unknown;
+		}
+
+		private boolean match() {
+			String name = getPrivilegedProperty("os.name");
+
+			for (String alias : aliases) {
+				if (name.contains(alias)) return true;
+			}
+
+			return false;
+		}
+
+		private static Os getOs() {
+			for (Os os: values()) {
+				if (os.match()) return os;
+			}
+
+			return Os.unknown;
+		}
+
+		public static String getPlatformSuffix() {
+			return "-" + CURRENT_OS.name() + "-" + CURRENT_ARCH.name();
+		}
+	}
+
+	/**
+	 * Added by LegacyFabric fork to help handling more os and arch
+	 */
+	@Deprecated
+	enum Arch {
+		i386(new String[]{"i386", "x86"}),
+		amd64(new String[]{"amd64", "x86_64", "x64"}),
+		armhf(new String[]{"armhf", "armv7"}),
+		armel("armel"),
+		aarch64(new String[]{"aarch64", "armv8", "arm64"}),
+		ppc64el(new String[]{"ppc64el", "ppc64le"}),
+		riscv64("riscv64"),
+		unknown("");
+
+		final String[] aliases;
+
+		Arch(String[] aliases) {
+			this.aliases = aliases;
+		}
+		Arch(String alias) {
+			this(new String[]{alias});
+		}
+
+		public boolean isUnknown() {
+			return this == unknown;
+		}
+
+		public boolean is64bit() {
+			return this == amd64 || this == aarch64 || this == ppc64el || this == riscv64;
+		}
+
+		public boolean isArm() {
+			return this == armhf || this == armel || this == aarch64;
+		}
+
+		public boolean isPPC() {
+			return this == ppc64el;
+		}
+
+		public boolean isRiscv() {
+			return this == riscv64;
+		}
+
+		public boolean match() {
+			String name = getPrivilegedProperty("os.arch");
+
+			for (String alias : aliases) {
+				if (name.equals(alias)) return true;
+			}
+
+			return false;
+		}
+	}
 }

@@ -32,7 +32,7 @@ sourceSets {
 }
 
 tasks.register("linuxNativeJar", Jar) {
-    dependsOn ":lwjgl:compileJava"
+    dependsOn ":compile_native"
 
     manifest {
         attributes(
@@ -53,7 +53,7 @@ tasks.register("linuxNativeJar", Jar) {
 }
 
 tasks.register("macosxNativeJar", Jar) {
-    dependsOn ":lwjgl:compileJava"
+    dependsOn ":compile_native"
 
     manifest {
         attributes(
@@ -74,7 +74,7 @@ tasks.register("macosxNativeJar", Jar) {
 }
 
 tasks.register("windowsNativeJar", Jar) {
-    dependsOn ":lwjgl:compileJava"
+    dependsOn ":compile_native"
 
     manifest {
         attributes(

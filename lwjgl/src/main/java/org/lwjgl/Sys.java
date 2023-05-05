@@ -56,8 +56,6 @@ public final class Sys {
 	/** Current version of library */
 	private static final String VERSION = Sys.class.getPackage().getImplementationVersion();
 
-	private static final String POSTFIX64BIT = "64";
-
 	/** The implementation instance to delegate platform specific behavior to */
 	private static final SysImplementation implementation;
 	private static final boolean is64Bit;
@@ -77,45 +75,14 @@ public final class Sys {
 	}
 
 	private static void loadLibrary(final String lib_name) {
-		// actively try to load 64bit libs on 64bit architectures first
-		String osArch = System.getProperty("os.arch");
-		boolean try64First = LWJGLUtil.getPlatform() != LWJGLUtil.PLATFORM_MACOSX && ("amd64".equals(osArch) || "x86_64".equals(osArch));
-
-		Error err = null;
-		if ( try64First ) {
-			try {
-				doLoadLibrary(lib_name + POSTFIX64BIT);
-				return;
-			} catch (UnsatisfiedLinkError e) {
-				err = e;
-			}
-		}
-		
-		// fallback to loading the "old way"
-		try {
-			doLoadLibrary(lib_name);
-		} catch (UnsatisfiedLinkError e) {
-			if ( try64First )
-				throw err;
-
-			if (implementation.has64Bit()) {
-				try {
-					doLoadLibrary(lib_name + POSTFIX64BIT);
-					return;
-				} catch (UnsatisfiedLinkError e2) {
-					LWJGLUtil.log("Failed to load 64 bit library: " + e2.getMessage());
-				}
-			}
-
-			// Throw original error
-			throw e;
-		}
+		doLoadLibrary(lib_name + LWJGLUtil.Os.getPlatformSuffix());
 	}
 
 	static {
 		implementation = createImplementation();
 		loadLibrary(JNI_LIBRARY_NAME);
-		is64Bit = implementation.getPointerSize() == 8;
+//		is64Bit = implementation.getPointerSize() == 8;
+		is64Bit = LWJGLUtil.Os.CURRENT_ARCH.is64bit();
 
 		int native_jni_version = implementation.getJNIVersion();
 		int required_version = implementation.getRequiredJNIVersion();

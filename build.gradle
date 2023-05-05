@@ -87,6 +87,30 @@ tasks.register("-initialize") {
     }
 }
 
+static String getArch(String arch) {
+    if (arch == "amd64" || arch == "x64" || arch == "x86_64") {
+        return "amd64"
+    } else if (arch == "x86" || arch == "i386") {
+        return "i386"
+    } else if (arch == "armhf" || arch == "armv7") {
+        return "armhf"
+    } else if (arch == "arm64" || arch == "aarch64" || arch == "armv8") {
+        return "aarch64"
+    } else if (arch == "ppc64el" || arch == "ppc64le") {
+        return "ppc64el"
+    } else if (arch == "riscv64") {
+        return "riscv64"
+    } else if (arch == "armel") {
+        return "armel"
+    } else if (arch == "powerpc" || arch == "ppc") {
+        return "powerpc"
+    } else if (arch == "ppc64" || arch == "powerpc64") {
+        return "ppc64"
+    }
+
+    return "unknown"
+}
+
 apply from:"gradle/compile.gradle"
 apply from:"gradle/clean.gradle"
 
@@ -108,7 +132,7 @@ tasks.named("a-version-mismatch").get().dependsOn "touch-version"
 
 //tasks.register("compile") {
 //    description = "Compiles the java source code"
-//    dependsOn "-initialize", "compile_core", "compile_test", "compile_examples"
+//    dependsOn "-initialize", "compile_test", "compile_examples"
 //}
 //
 //tasks.register("all") {
