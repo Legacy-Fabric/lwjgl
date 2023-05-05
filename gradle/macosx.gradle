@@ -2,9 +2,8 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 def ENV = System.getenv()
 
-def getNativeFolder(String name, String fold) {
-    return file("lwjgl-platform/src/" + name + "/c/" + fold).toString()
-}
+def os_arch = getArch(System.getProperty("os.arch"))
+def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
 
 def java_home = System.getProperty("java.home")
 
@@ -15,9 +14,6 @@ if (ENV.ARCHITECTURE) {
 }
 
 def javavmroot = java_home + "/.."
-
-def os_arch = getArch(System.getProperty("os.arch"))
-def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
 
 def macos_arch = "x86_64"
 

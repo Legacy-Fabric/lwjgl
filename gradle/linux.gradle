@@ -1,18 +1,13 @@
 def ENV = System.getenv()
 
-def getNativeFolder(String name, String fold) {
-    return file("lwjgl-platform/src/" + name + "/c/" + fold).toString()
-}
-
 def os_arch = getArch(System.getProperty("os.arch"))
 def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
 
 def libname = "liblwjgl-linux-${target_arch}.so"
 
 def java_home = System.getProperty("java.home")
-if (ENV.ARCHITECTURE && target_arch != "amd64") {
-    if (target_arch == "armhf" || target_arch == "riscv64"
-            || target_arch == "armel" || target_arch == "riscv64"
+if (ENV.ARCHITECTURE && target_arch != os_arch) {
+    if (target_arch == "armhf" || target_arch == "riscv64" || target_arch == "armel"
             || target_arch == "powerpc" || target_arch == "ppc64") {
         java_home = ENV.TARGET_JAVA
     } else if (target_arch == "aarch64") {
@@ -67,7 +62,7 @@ def cflags = [
 ]
 
 def version_script_flags = [
-//        "-Wl,--version-script='${Native}/linux/lwjgl.map"
+        "-Wl,--version-script='${file("src/linux/c/linux/lwjgl.map")}'"
 ]
 
 def linker_flags = version_script_flags + [
@@ -77,7 +72,7 @@ def linker_flags = version_script_flags + [
 def compiler = "gcc"
 def stripper = "strip"
 
-if (ENV.ARCHITECTURE) {
+if (os_arch != target_arch) {
     def thepart;
     switch (target_arch) {
         case "armhf":

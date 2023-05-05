@@ -3,7 +3,7 @@ name: Java CI
 on: [ push, workflow_dispatch ]
 
 jobs:
-  build-natives:
+  natives:
     strategy:
       matrix:
         include:
@@ -109,7 +109,7 @@ jobs:
           lwjgl-platform/build/natives/liblwjgl*.so
           lwjgl-platform/build/natives/liblwjgl*.dylib
 
-  build_debian:
+  natives-debian:
     strategy:
       matrix:
         include:
@@ -159,7 +159,7 @@ jobs:
             lwjgl-platform/build/natives/liblwjgl*.so
   build:
     runs-on: ubuntu-latest
-    needs: [build-natives, build_debian]
+    needs: [natives, natives-debian]
     steps:
       - name: Checkout
         uses: actions/checkout@v3

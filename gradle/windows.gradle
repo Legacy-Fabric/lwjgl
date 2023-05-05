@@ -1,9 +1,5 @@
 def ENV = System.getenv()
 
-def getNativeFolder(String name, String fold) {
-    return file("lwjgl-platform/src/" + name + "/c/" + fold).toString()
-}
-
 def os_arch = getArch(System.getProperty("os.arch"))
 def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
 
@@ -106,9 +102,6 @@ tasks.register("link_win32", Exec) {
         )
 
         libss.split(" ").each {args(it)}
-
-        println("Args:")
-        args.each {println(it)}
     }
 
     workingDir(workdir)
