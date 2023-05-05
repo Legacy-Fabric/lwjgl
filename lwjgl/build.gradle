@@ -279,6 +279,13 @@ tasks.register("utilAppletJavadocJar", Jar) {
     archiveClassifier.set("javadoc")
 }
 
+tasks.register("nativeTest", JavaExec) {
+    dependsOn "testClasses"
+    systemProperty("java.library.path", file("../lwjgl-platform/build/natives").toString())
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "org.lwjgl.test.NativeTest"
+}
+
 assemble.dependsOn(":lwjgl:utilJar")
 assemble.dependsOn(":lwjgl:utilSourceJar")
 assemble.dependsOn(":lwjgl:utilJavadocJar")

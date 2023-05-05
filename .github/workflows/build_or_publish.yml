@@ -62,7 +62,6 @@ jobs:
             packages: gcc-riscv64-linux-gnu libc6-dev-riscv64-cross g++-riscv64-linux-gnu
             ports: true
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
     steps:
     - uses: actions/checkout@v3
     - if: (matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04') && matrix.ports
@@ -126,7 +125,6 @@ jobs:
 #            image: sid
 #            packages: gcc-powerpc64-linux-gnu libc6-dev-ppc64-cross g++-powerpc64-linux-gnu
     runs-on: ubuntu-latest
-    continue-on-error: true
     container:
       image: debian:${{ matrix.image }}
     steps:

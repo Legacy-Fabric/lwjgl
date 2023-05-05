@@ -278,3 +278,10 @@ def static setupRepositories(RepositoryHandler repositories) {
         }
     }
 }
+
+def os_arch = getArch(System.getProperty("os.arch"))
+def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
+
+if (os_arch == target_arch) {
+    compile_native.finalizedBy(":lwjgl:nativeTest")
+}
