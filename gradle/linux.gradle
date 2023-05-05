@@ -11,11 +11,11 @@ if (ENV.ARCHITECTURE && target_arch != os_arch) {
             || target_arch == "powerpc" || target_arch == "ppc64") {
         java_home = ENV.TARGET_JAVA
     } else if (target_arch == "aarch64") {
-        java_home = ENV.JAVA_HOME_8_AARCH64 + "/jre"
+        java_home = ENV.JAVA_HOME_11_AARCH64
     } else if (target_arch == "i386") {
-        java_home = ENV.JAVA_HOME_8_I386 + "/jre"
+        java_home = ENV.JAVA_HOME_11_I386
     } else if (target_arch == "ppc64el") {
-        java_home = ENV.JAVA_HOME_8_PPC64LE + "/jre"
+        java_home = ENV.JAVA_HOME_11_PPC64LE
     }
 }
 
@@ -62,7 +62,7 @@ def cflags = [
 ]
 
 def version_script_flags = [
-//        "-Wl,--version-script='${file("lwjgl-platform/src/linux/c/linux/lwjgl.map").toString()}'"
+//        "-Wl,--version-script='../../lwjgl.map'"
 ]
 
 def linker_flags = version_script_flags + [

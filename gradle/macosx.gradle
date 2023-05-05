@@ -17,7 +17,7 @@ def javavmroot = java_home + "/.."
 
 def macos_arch = "x86_64"
 
-def macos_target = "10.9"
+def macos_target = "10.10"
 
 if (target_arch == "aarch64") {
     macos_arch = "arm64"

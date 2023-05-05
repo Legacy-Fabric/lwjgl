@@ -79,7 +79,7 @@ jobs:
     - if: matrix.arch == 'riscv64'
       run: sudo apt-get install openjdk-11-jdk:${{ matrix.linux_arch }}
     - if: matrix.extra_java
-      name: Set up ${{ matrix.arch }} zulu JDK ${{ matrix.extra_java }}
+      name: Set up ${{ matrix.arch }} ${{ matrix.vendor }} JDK ${{ matrix.extra_java }}
       uses: actions/setup-java@v3
       with:
         java-version: ${{ matrix.extra_java }}
