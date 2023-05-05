@@ -34,18 +34,20 @@ jobs:
             java_arch: x64
             linux_arch: i386
             packages: gcc-multilib
-            extra_java: 8
+            extra_java: 11
             vendor: zulu
           - os: ubuntu-20.04
             arch: amd64
             java_arch: x64
+            extra_java: 11
+            vendor: zulu
           - os: ubuntu-20.04
             arch: aarch64
             java_arch: x64
             linux_arch: arm64
             packages: gcc-aarch64-linux-gnu libc6-dev-arm64-cross g++-aarch64-linux-gnu
             ports: true
-            extra_java: 8
+            extra_java: 11
             vendor: zulu
           - os: ubuntu-20.04
             arch: ppc64le
@@ -53,7 +55,7 @@ jobs:
             linux_arch: ppc64el
             packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross g++-powerpc64le-linux-gnu
             ports: true
-            extra_java: 8
+            extra_java: 11
             vendor: temurin
           - os: ubuntu-22.04
             arch: riscv64
