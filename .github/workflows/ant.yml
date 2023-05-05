@@ -47,14 +47,14 @@ jobs:
             ports: true
             extra_java: 8
             vendor: zulu
-#          - os: ubuntu-22.04
-#            arch: ppc64le
-#            java_arch: x64
-#            linux_arch: ppc64el
-#            packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross g++-powerpc64le-linux-gnu
-#            ports: true
-#            extra_java: 8
-#            vendor: temurin
+          - os: ubuntu-20.04
+            arch: ppc64le
+            java_arch: x64
+            linux_arch: ppc64el
+            packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross g++-powerpc64le-linux-gnu
+            ports: true
+            extra_java: 8
+            vendor: temurin
           - os: ubuntu-22.04
             arch: riscv64
             java_arch: x64

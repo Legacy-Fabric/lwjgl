@@ -633,7 +633,7 @@ public class LWJGLUtil {
 	enum Os {
 		windows(new String[]{"windows", "Windows"}, Arch.i386, Arch.amd64, Arch.aarch64),
 		macos(new String[]{"mac os x", "mac", "osx", "os x", "Mac OS X", "Mac", "OSX", "OS X", "darwin", "Darwin"}, Arch.amd64, Arch.aarch64),
-		linux(new String[]{"linux", "Linux"}, Arch.i386, Arch.amd64, Arch.armhf, Arch.armel, Arch.aarch64, Arch.riscv64),
+		linux(new String[]{"linux", "Linux"}, Arch.i386, Arch.amd64, Arch.armhf, Arch.armel, Arch.aarch64, Arch.riscv64, Arch.ppc64el),
 		freebsd(new String[]{"freebsd", "FreeBSD"}),
 		openbsd(new String[]{"openbsd", "OpenBSD"}),
 		unknown(new String[]{});
