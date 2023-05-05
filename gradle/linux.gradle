@@ -120,7 +120,7 @@ tasks.register("linux_natives_init") {
                 "Compiler: ${compiler}" +
                 "\nJava Home: ${java_home}" +
                 "\nOS arch: ${os_arch}" +
-                "\nTarget arch ${target_arch}"
+                "\nTarget arch: ${target_arch}"
         )
         mkdir(workdirX)
     }

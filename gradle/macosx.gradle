@@ -68,7 +68,7 @@ tasks.register("macosx_natives_echo") {
                 "\nMacOS Version Target: ${macos_target}" +
                 "\nJava Home/JavaVM.framework: ${javavmroot}" +
                 "\nOS arch: ${os_arch}" +
-                "\nTarget arch ${target_arch}"
+                "\nTarget arch: ${target_arch}"
         )
         mkdir(workdirX)
     }

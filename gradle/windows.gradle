@@ -70,7 +70,7 @@ tasks.register("compile_win32", Exec) {
                 "\nDLLName: ${dllname}" +
                 "\nJava Home: ${java_home}" +
                 "\nOS arch: ${os_arch}" +
-                "\nTarget arch ${target_arch}"
+                "\nTarget arch: ${target_arch}"
         )
     }
 
