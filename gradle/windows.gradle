@@ -106,3 +106,9 @@ tasks.register("link_win32", Exec) {
 
     workingDir(workdir)
 }
+
+tasks.register("build_natives_win32") {
+    if (!file(workdir.toString() + "/" + dllname).exists()) {
+        dependsOn "link_win32"
+    }
+}

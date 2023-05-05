@@ -217,3 +217,9 @@ tasks.register("macosx_natives_lipo", Exec) {
         args("-output", final_name)
     }
 }
+
+tasks.register("build_natives_macosx") {
+    if (!file(workdir.toString() + "/" + final_name).exists()) {
+        dependsOn "macosx_natives_lipo"
+    }
+}

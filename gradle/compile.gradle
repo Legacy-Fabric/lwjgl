@@ -37,11 +37,11 @@ tasks.register("compile_native") {
     dependsOn ":lwjgl:compileJava", "touch-version", "a-version-mismatch"
 
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        dependsOn "link_win32"
+        dependsOn "build_natives_win32"
     }
 
     if (Os.isName("linux")) {
-        dependsOn("linux_natives_strip")
+        dependsOn("build_natives_linux")
     }
 
     if (Os.isName("freebsd")) {
@@ -53,7 +53,7 @@ tasks.register("compile_native") {
     }
 
     if (Os.isName("mac os x")) {
-        dependsOn("macosx_natives_lipo")
+        dependsOn("build_natives_macosx")
     }
 }
 
