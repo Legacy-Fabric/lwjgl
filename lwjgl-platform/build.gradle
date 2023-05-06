@@ -45,9 +45,9 @@ tasks.register("linuxNativeJar", Jar) {
     from fileTree(builtDir) {
         include "liblwjgl*.so"
     }
-    from fileTree("libs/linux") {
-        include "libopenal*.so"
-    }
+//    from fileTree("libs/linux") {
+//        include "libopenal*.so"
+//    }
 
     archiveClassifier.set("natives-linux")
     destinationDirectory.set(file("build/libs"))
@@ -66,9 +66,9 @@ tasks.register("macosxNativeJar", Jar) {
     from fileTree(builtDir) {
         include "liblwjgl*.dylib"
     }
-    from fileTree("libs/macosx") {
-        include "openal*.dylib"
-    }
+//    from fileTree("libs/macosx") {
+//        include "openal*.dylib"
+//    }
 
     archiveClassifier.set("natives-osx")
     destinationDirectory.set(file("build/libs"))
@@ -87,9 +87,9 @@ tasks.register("windowsNativeJar", Jar) {
     from fileTree(builtDir) {
         include "lwjgl*.dll"
     }
-    from fileTree("libs/windows") {
-        include "OpenAL*.dll"
-    }
+//    from fileTree("libs/windows") {
+//        include "OpenAL*.dll"
+//    }
 
     archiveClassifier.set("natives-windows")
     destinationDirectory.set(file("build/libs"))
