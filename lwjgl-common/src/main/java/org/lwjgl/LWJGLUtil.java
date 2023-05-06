@@ -693,6 +693,20 @@ public class LWJGLUtil {
 				if (arch.match()) return arch;
 			}
 
+			boolean detected = false;
+
+			for (Arch arch : Arch.values()) {
+				if (arch.match()) {
+					detected = true;
+					log("Detected unsupported architecture " + arch.name() + " on operating system " + this.name());
+					break;
+				}
+			}
+
+			if (!detected) {
+				log("Detected unknown and unsupported architecture: " + getPrivilegedProperty("os.arch"));
+			}
+
 			return Arch.unknown;
 		}
 
@@ -710,6 +724,8 @@ public class LWJGLUtil {
 			for (Os os: values()) {
 				if (os.match()) return os;
 			}
+
+			log("Detected unknown and unsupported operating system: " + getPrivilegedProperty("os.name"));
 
 			return Os.unknown;
 		}
