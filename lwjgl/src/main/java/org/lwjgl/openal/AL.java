@@ -111,29 +111,71 @@ public final class AL {
 
 		if (created)
 			throw new IllegalStateException("Only one OpenAL context may be instantiated at any one time.");
+
 		String libname;
-		String[] library_names;
-		switch (LWJGLUtil.getPlatform()) {
-			case LWJGLUtil.PLATFORM_WINDOWS:
-				if ( Sys.is64Bit() ) {
-					libname = "OpenAL64";
-					library_names = new String[]{"OpenAL64.dll"};
-				} else {
-					libname = "OpenAL32";
-					library_names = new String[]{"OpenAL32.dll"};
+		String[] libNames;
+		switch (LWJGLUtil.Os.CURRENT_OS) {
+
+			case windows:
+				libname = "OpenAL";
+				if (LWJGLUtil.Os.CURRENT_ARCH.isOpenALShipped()) {
+					libname = "OpenAL-" + LWJGLUtil.Os.CURRENT_ARCH.name();
+				}
+
+				libNames = new String[]{libname + ".dll", "OpenAL64.dll"};
+
+				if (LWJGLUtil.Os.CURRENT_ARCH == LWJGLUtil.Arch.i386) {
+					libNames[1] = "OpenAL32.dll";
+				} else if (LWJGLUtil.Os.CURRENT_ARCH == LWJGLUtil.Arch.amd64) {
+					libNames[1] = "OpenAL64.dll";
+				}
+
+				initNative(
+						deviceArguments, contextFrequency, contextRefresh, contextSynchronized, openDevice,
+						libname, libNames
+				);
+				break;
+			case macos:
+				try {
+					// Create from Framework
+					nCreateDefault();
+					created = true;
+					init(deviceArguments, contextFrequency, contextRefresh, contextSynchronized, openDevice);
+				} catch (LWJGLException e) {
+					LWJGLUtil.log("Failed to load OpenAL Framework : " + e.getMessage());
 				}
 				break;
-			case LWJGLUtil.PLATFORM_LINUX:
+			case linux:
 				libname = "openal";
-				library_names = new String[]{"libopenal64.so", "libopenal.so", "libopenal.so.0"};
+				if (LWJGLUtil.Os.CURRENT_ARCH.isOpenALShipped()) {
+					libname = "openal-" + LWJGLUtil.Os.CURRENT_ARCH.name();
+				}
+
+				libNames = new String[]{"lib" + libname + ".so", "libopenal.so", "libopenal.so.0"};
+
+				if (LWJGLUtil.Os.CURRENT_ARCH == LWJGLUtil.Arch.i386) {
+					libNames[1] = "libopenal.so";
+				} else if (LWJGLUtil.Os.CURRENT_ARCH == LWJGLUtil.Arch.amd64) {
+					libNames[1] = "libopenal64.so";
+				}
+
+				initNative(
+						deviceArguments, contextFrequency, contextRefresh, contextSynchronized, openDevice,
+						libname, libNames
+				);
 				break;
-			case LWJGLUtil.PLATFORM_MACOSX:
-				libname = "openal";
-				library_names = new String[]{"openal.dylib"};
+			case freebsd:
+			case openbsd:
+			case unknown:
 				break;
-			default:
-				throw new LWJGLException("Unknown platform: " + LWJGLUtil.getPlatform());
 		}
+
+		if (!created)
+			throw new LWJGLException("Could not locate OpenAL library.");
+	}
+
+	private static void initNative(String deviceArguments, int contextFrequency, int contextRefresh, boolean contextSynchronized, boolean openDevice,
+									  String libname, String[] library_names) {
 		String[] oalPaths = LWJGLUtil.getLibraryPaths(libname, library_names, AL.class.getClassLoader());
 		LWJGLUtil.log("Found " + oalPaths.length + " OpenAL paths");
 		for ( String oalPath : oalPaths ) {
@@ -146,14 +188,6 @@ public final class AL {
 				LWJGLUtil.log("Failed to load " + oalPath + ": " + e.getMessage());
 			}
 		}
-		if (!created && LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_MACOSX) {
-			// Try to load OpenAL from the framework instead
-			nCreateDefault();
-			created = true;
-			init(deviceArguments, contextFrequency, contextRefresh, contextSynchronized, openDevice);
-		}
-		if (!created)
-			throw new LWJGLException("Could not locate OpenAL library.");
 	}
 
 	private static void init(String deviceArguments, int contextFrequency, int contextRefresh, boolean contextSynchronized, boolean openDevice) throws LWJGLException {

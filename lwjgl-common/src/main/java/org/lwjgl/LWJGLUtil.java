@@ -630,7 +630,7 @@ public class LWJGLUtil {
 	 * Added by LegacyFabric fork to help handling more os and arch
 	 */
 	@Deprecated
-	enum Os {
+	public enum Os {
 		windows(new String[]{"windows", "Windows"}, Arch.i386, Arch.amd64, Arch.aarch64),
 		macos(new String[]{"mac os x", "mac", "osx", "os x", "Mac OS X", "Mac", "OSX", "OS X", "darwin", "Darwin"}, Arch.amd64, Arch.aarch64),
 		linux(new String[]{"linux", "Linux"}, Arch.i386, Arch.amd64, Arch.armhf, Arch.armel, Arch.aarch64, Arch.riscv64, Arch.ppc64el),
@@ -739,7 +739,7 @@ public class LWJGLUtil {
 	 * Added by LegacyFabric fork to help handling more os and arch
 	 */
 	@Deprecated
-	enum Arch {
+	public enum Arch {
 		i386(new String[]{"i386", "x86"}),
 		amd64(new String[]{"amd64", "x86_64", "x64"}),
 		armhf(new String[]{"armhf", "armv7"}),
@@ -776,6 +776,10 @@ public class LWJGLUtil {
 
 		public boolean isRiscv() {
 			return this == riscv64;
+		}
+
+		public boolean isOpenALShipped() {
+			return this == i386 || this == amd64;
 		}
 
 		public boolean match() {
