@@ -39,8 +39,6 @@ jobs:
           - os: ubuntu-20.04
             arch: amd64
             java_arch: x64
-            extra_java: 8
-            vendor: zulu
           - os: ubuntu-20.04
             arch: amd64
             java_arch: x64
@@ -121,10 +119,10 @@ jobs:
       matrix:
         include:
           - arch: armhf
-            image: oldstable-backports
+            image: oldoldstable-backports
             packages: gcc-arm-linux-gnueabihf libc6-dev-armhf-cross g++-arm-linux-gnueabihf
           - arch: armel
-            image: stable-backports
+            image: oldstable-backports
             packages: gcc-arm-linux-gnueabi libc6-dev-armel-cross g++-arm-linux-gnueabi
 #          - arch: powerpc
 #            image: sid
