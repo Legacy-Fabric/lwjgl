@@ -3,21 +3,31 @@ def ENV = System.getenv()
 def os_arch = getArch(System.getProperty("os.arch"))
 def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
 
-def libname = "liblwjgl-linux-${target_arch}.so"
-
 def java_home = System.getProperty("java.home")
-if (ENV.ARCHITECTURE && target_arch != os_arch) {
-    if (target_arch == "armhf" || target_arch == "riscv64" || target_arch == "armel"
-            || target_arch == "powerpc" || target_arch == "ppc64") {
-        java_home = ENV.TARGET_JAVA
-    } else if (target_arch == "aarch64") {
-        java_home = ENV.JAVA_HOME_11_AARCH64
-    } else if (target_arch == "i386") {
-        java_home = ENV.JAVA_HOME_11_I386
-    } else if (target_arch == "ppc64el") {
-        java_home = ENV.JAVA_HOME_11_PPC64LE
+def java_version = System.getProperty("java.version")
+
+def extra_suffix = ""
+
+if (ENV.ARCHITECTURE) {
+    if (target_arch != os_arch) {
+        if (target_arch == "armhf" || target_arch == "riscv64" || target_arch == "armel"
+                || target_arch == "powerpc" || target_arch == "ppc64") {
+            java_home = ENV.TARGET_JAVA
+        } else if (target_arch == "aarch64") {
+            java_home = ENV.JAVA_HOME_11_AARCH64
+        } else if (target_arch == "i386") {
+            java_home = ENV.JAVA_HOME_11_I386
+        } else if (target_arch == "ppc64el") {
+            java_home = ENV.JAVA_HOME_11_PPC64LE
+        }
     }
 }
+
+if (extra_suffix.isEmpty() && target_arch == os_arch && target_arch == "amd64" && java_version.startsWith("1.")) {
+    extra_suffix = "-8"
+}
+
+def libname = "liblwjgl-linux-${target_arch}${extra_suffix}.so"
 
 def libs = []
 

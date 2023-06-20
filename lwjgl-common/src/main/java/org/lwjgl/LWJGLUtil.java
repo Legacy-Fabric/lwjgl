@@ -688,6 +688,14 @@ public class LWJGLUtil {
 			return isFreeBSD() || isOpenBSD();
 		}
 
+		public String getExtraSuffix() {
+			if (isLinux() && CURRENT_ARCH == Arch.amd64 && System.getProperty("java.version").startsWith("1.")) {
+				return "-8";
+			}
+
+			return "";
+		}
+
 		private Arch getArch() {
 			for (Arch arch : supportedArches) {
 				if (arch.match()) return arch;
@@ -731,7 +739,7 @@ public class LWJGLUtil {
 		}
 
 		public static String getPlatformSuffix() {
-			return "-" + CURRENT_OS.name() + "-" + CURRENT_ARCH.name();
+			return "-" + CURRENT_OS.name() + "-" + CURRENT_ARCH.name() + CURRENT_OS.getExtraSuffix();
 		}
 	}
 
