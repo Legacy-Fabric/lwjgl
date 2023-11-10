@@ -27,8 +27,8 @@ LWJGL requires a JDK 8, as well as your platforms native compiler to compile the
 Supported platforms
 
 
-| OS      | x64/amd64 | x86 | arm64/aarch64 | armhf | armel | riscv64 |
-|---------|-----------|-----|---------------|-------|-------|---------|
-| linux   | x         | x   | x             | x     | x     | x       |
-| windows | x         | x   | x             |       |       |         |
-| macos   | x         |     | x             |       |       |         |
+| OS      | x64/amd64 | x86 | arm64/aarch64 | armhf | armel | riscv64 | ppc64le |
+|---------|-----------|-----|---------------|-------|-------|---------|---------|
+| linux   | x         | x   | x             | x     | x     | x       | x       |
+| windows | x         | x   | x             |       |       |         |         |
+| macos   | x         |     | x             |       |       |         |         |
