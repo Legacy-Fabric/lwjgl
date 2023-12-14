@@ -787,7 +787,7 @@ public class LWJGLUtil {
 		}
 
 		public boolean isOpenALShipped() {
-			return this == i386 || this == amd64;
+			return this != armel && this != ppc64el && this != unknown;
 		}
 
 		public boolean match() {

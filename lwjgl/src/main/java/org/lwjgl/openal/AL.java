@@ -142,7 +142,19 @@ public final class AL {
 					created = true;
 					init(deviceArguments, contextFrequency, contextRefresh, contextSynchronized, openDevice);
 				} catch (LWJGLException e) {
-					LWJGLUtil.log("Failed to load OpenAL Framework : " + e.getMessage());
+					LWJGLUtil.log("Failed to load OpenAL Framework, trying bundled natives instead : " + e.getMessage());
+
+					libname = "openal";
+					if (LWJGLUtil.Os.CURRENT_ARCH.isOpenALShipped()) {
+						libname = "openal-" + LWJGLUtil.Os.CURRENT_ARCH.name();
+					}
+
+					libNames = new String[]{"lib" + libname + ".dylib", "libopenal.dylib", "openal.dylib"};
+
+					initNative(
+							deviceArguments, contextFrequency, contextRefresh, contextSynchronized, openDevice,
+							libname, libNames
+					);
 				}
 				break;
 			case linux:

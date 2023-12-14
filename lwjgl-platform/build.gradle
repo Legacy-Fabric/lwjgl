@@ -68,6 +68,7 @@ tasks.register("macosxNativeJar", Jar) {
     }
     from fileTree("libs/macosx") {
         include "openal*.dylib"
+        include "libopenal*.dylib"
     }
 
     archiveClassifier.set("natives-osx")

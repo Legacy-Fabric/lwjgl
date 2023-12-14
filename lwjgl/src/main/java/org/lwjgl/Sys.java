@@ -90,7 +90,7 @@ public final class Sys {
 			throw new LinkageError("Version mismatch: jar version is '" + required_version +
                              "', native library version is '" + native_jni_version + "'");
 		implementation.setDebug(LWJGLUtil.DEBUG);
-		
+
 		System.out.println("[LWJGL] Detected environment: Os:"
 				+ LWJGLUtil.Os.CURRENT_OS.name()
 				+ " Arch: " + LWJGLUtil.Os.CURRENT_ARCH.name()
