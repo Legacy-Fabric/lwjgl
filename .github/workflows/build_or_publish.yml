@@ -7,28 +7,26 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: windows-latest
+          - os: windows-2022
             arch: x86
             java_arch: x86
             msvc_arch: amd64_x86
-          - os: windows-latest
+          - os: windows-2022
             arch: x64
             java_arch: x64
             msvc_arch: amd64
-          - os: windows-latest
+          - os: windows-2022
             arch: arm64
             java_arch: x64
             msvc_arch: amd64_arm64
             extra_java: 17
             vendor: zulu
-          - os: macos-latest
+          - os: macos-13
             arch: x64
             java_arch: x64
-          - os: macos-latest
+          - os: macos-14
             arch: arm64
-            java_arch: x64
-            extra_java: 8
-            vendor: zulu
+            java_arch: arm64
           - os: ubuntu-20.04
             arch: i386
             java_arch: x64
@@ -68,7 +66,7 @@ jobs:
         architecture: ${{ matrix.java_arch }}
     - if: (matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04') && matrix.arch == 'amd64'
       run: sudo apt install libx11-dev libxrandr-dev libxext-dev libxcursor-dev libxxf86vm-dev
-    - if: matrix.os == 'windows-latest'
+    - if: matrix.os == 'windows-latest' || matrix.os == 'windows-2022'
       uses: ilammy/msvc-dev-cmd@v1
       with:
           arch: ${{ matrix.msvc_arch }}
