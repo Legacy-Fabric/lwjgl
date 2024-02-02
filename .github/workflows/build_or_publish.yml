@@ -45,21 +45,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     continue-on-error: true
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - if: (matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04') && matrix.linux_arch
       run: |
         sudo dpkg --add-architecture ${{ matrix.linux_arch }} && sudo apt-get clean && sudo apt-get update
         sudo apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install ${{ matrix.packages }} libx11-dev:${{ matrix.linux_arch }} libxrandr-dev:${{ matrix.linux_arch }} libxext-dev:${{ matrix.linux_arch }} libxcursor-dev:${{ matrix.linux_arch }} libxxf86vm-dev:${{ matrix.linux_arch }}
     - if: matrix.extra_java
       name: Set up ${{ matrix.arch }} ${{ matrix.vendor }} JDK ${{ matrix.extra_java }}
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: ${{ matrix.extra_java }}
         distribution: ${{ matrix.vendor }}
         architecture: ${{ matrix.arch }}
     - if: (matrix.os == 'ubuntu-20.04' && matrix.arch == 'amd64' && matrix.extra_java == '11') != true
       name: Set up ${{ matrix.java_arch }} zulu JDK 8
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 8
         distribution: zulu
@@ -75,9 +75,9 @@ jobs:
       env:
         ARCHITECTURE: ${{ matrix.arch }}
         TARGET_JAVA: /usr/lib/jvm/java-11-openjdk-${{ matrix.arch }}
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
-        name: natives
+        name: natives-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.extra_java }}
         path: |
           lwjgl-platform/build/natives/lwjgl*.dll
           lwjgl-platform/build/natives/liblwjgl*.so
@@ -111,7 +111,7 @@ jobs:
             packages: gcc-riscv64-linux-gnu libc6-dev-riscv64-cross g++-riscv64-linux-gnu
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           sed -i 's/deb http/deb [arch=amd64,i386] http/' /etc/apt/sources.list
           grep "ubuntu.com/ubuntu" /etc/apt/sources.list | tee /etc/apt/sources.list.d/ports.list
@@ -123,14 +123,14 @@ jobs:
         run: apt-get -yq -f --allow-unauthenticated --no-install-suggests install openjdk-11-jdk:${{ matrix.linux_arch }}
       - if: matrix.extra_java
         name: Set up ${{ matrix.arch }} ${{ matrix.vendor }} JDK ${{ matrix.extra_java }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.extra_java }}
           distribution: ${{ matrix.vendor }}
           architecture: ${{ matrix.arch }}
       - if: (matrix.os == 'ubuntu-20.04' && matrix.arch == 'amd64' && matrix.extra_java == '11') != true
         name: Set up ${{ matrix.java_arch }} zulu JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 8
           distribution: zulu
@@ -140,9 +140,9 @@ jobs:
         env:
           ARCHITECTURE: ${{ matrix.arch }}
           TARGET_JAVA: /usr/lib/jvm/java-11-openjdk-${{ matrix.arch }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: natives
+          name: natives-linux-${{ matrix.arch }}
           path: |
             lwjgl-platform/build/natives/liblwjgl*.so
 
@@ -167,7 +167,7 @@ jobs:
     container:
       image: debian:${{ matrix.image }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - if: matrix.image == 'sid'
         run: |
           apt-get clean && apt-get update && apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install debian-ports-archive-keyring
@@ -179,7 +179,7 @@ jobs:
       - run: apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install libx11-dev:${{ matrix.arch }} libxrandr-dev:${{ matrix.arch }} libxext-dev:${{ matrix.arch }} libxcursor-dev:${{ matrix.arch }} libxxf86vm-dev:${{ matrix.arch }}
       - run: apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install openjdk-11-jdk:${{ matrix.arch }}
       - name: Set up x64 zulu JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 8
           distribution: zulu
@@ -189,9 +189,9 @@ jobs:
         env:
           ARCHITECTURE: ${{ matrix.arch }}
           TARGET_JAVA: /usr/lib/jvm/java-11-openjdk-${{ matrix.arch }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: natives
+          name: natives-linux-${{ matrix.arch }}
           path: |
             lwjgl-platform/build/natives/liblwjgl*.so
   build:
@@ -199,19 +199,20 @@ jobs:
     needs: [natives, natives-debian, natives-cross]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 8
           distribution: zulu
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: natives
           path: lwjgl-platform/build/natives
+          pattern: natives-*
+          merge-multiple: true
       - name: Build
         run: ./gradlew publishToMavenLocal --stacktrace
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: maven
           path: ~/.m2/repository
