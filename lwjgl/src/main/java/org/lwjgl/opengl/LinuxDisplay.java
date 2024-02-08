@@ -162,6 +162,8 @@ final class LinuxDisplay implements DisplayImplementation {
 	private LinuxMouse mouse;
 	
 	private String wm_class;
+    
+    private static boolean destroying;
 
 	private final FocusListener focus_listener = new FocusListener() {
 		public void focusGained(FocusEvent e) {
@@ -334,7 +336,14 @@ final class LinuxDisplay implements DisplayImplementation {
 		
 		if (display == getDisplay()) {
 			String error_msg = getErrorText(display, error_code);
-			throw new LWJGLException("X Error - disp: 0x" + Long.toHexString(error_display) + " serial: " + serial + " error: " + error_msg + " request_code: " + request_code + " minor_code: " + minor_code);
+            LWJGLException exception = new LWJGLException("X Error - disp: 0x" + Long.toHexString(error_display) + " serial: " + serial + " error: " + error_msg + " request_code: " + request_code + " minor_code: " + minor_code);
+            
+            if (destroying) {
+                exception.printStackTrace();
+                return 0;
+            }
+
+			throw exception;
 		} else if (saved_error_handler != 0)
 			return callErrorHandler(saved_error_handler, display, event_ptr);
 		return 0;
@@ -595,6 +604,8 @@ final class LinuxDisplay implements DisplayImplementation {
 	public void destroyWindow() {
 		lockAWT();
 		try {
+            destroying = true;
+
 			if (parent != null) {
 				parent.removeFocusListener(focus_listener);
 			}
