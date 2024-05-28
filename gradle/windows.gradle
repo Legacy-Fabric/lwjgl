@@ -1,21 +1,23 @@
 def ENV = System.getenv()
 
 def os_arch = getArch(System.getProperty("os.arch"))
-def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
+def target_arch = getArch(System.getProperty("targetArch", os_arch))
 
 def java_home = System.getProperty("java.home")
 
-if (ENV.ARCHITECTURE && target_arch == "aarch64") {
-    java_home = ENV.JAVA_HOME_17_ARM64 + "/jre"
+def alternative_java_home = System.getProperty("targetJavaHomeVar")
+
+if (alternative_java_home != null && alternative_java_home != "") {
+    java_home = ENV[alternative_java_home]
 }
 
 def sdkhome = ENV.VCToolsInstallDir ? ENV.VCToolsInstallDir : ENV.MSVC
-def sdkhomelib = sdkhome + "/lib/x64"
+def sdkhomelib = sdkhome + "/lib"
 
-if (target_arch == "i386") {
-    sdkhomelib = sdkhome + "/lib"
+if (target_arch == "amd64") {
+    sdkhomelib = sdkhomelib + "/x64"
 } else if (target_arch == "aarch64") {
-    sdkhomelib = sdkhome + "/lib/arm64"
+    sdkhomelib = sdkhomelib + "/arm64"
 }
 
 def dllname = "lwjgl-windows-${target_arch}.dll"

@@ -3,11 +3,15 @@ import org.apache.tools.ant.taskdefs.condition.Os
 def ENV = System.getenv()
 
 def os_arch = getArch(System.getProperty("os.arch"))
-def target_arch = ENV.ARCHITECTURE ? getArch(ENV.ARCHITECTURE) : os_arch
+def target_arch = getArch(System.getProperty("targetArch", os_arch))
 
-def java_home = System.getProperty("java.home")
+def java_home = System.getProperty("targetJavaHome", System.getProperty("java.home"))
 
-def javavmroot = java_home + "/.."
+def javavmroot = java_home
+
+while (!file("${javavmroot}/include/darwin").exists()) {
+    javavmroot = "${javavmroot}/.."
+}
 
 def macos_arch = "x86_64"
 
@@ -28,14 +32,6 @@ try {
     }
 } catch (ignored) {
     ignored.printStackTrace()
-}
-
-if (developer_path == "/Developer" && ENV.ARCHITECTURE) {
-    developer_path = (ENV.XCODE_13_DEVELOPER_DIR ? ENV.XCODE_13_DEVELOPER_DIR : (
-            ENV.XCODE_14_DEVELOPER_DIR ? ENV.XCODE_14_DEVELOPER_DIR : (
-                    ENV.XCODE_15_DEVELOPER_DIR ? ENV.XCODE_15_DEVELOPER_DIR : "/Developer"
-            )
-    ))
 }
 
 
@@ -139,9 +135,9 @@ tasks.register("macosx_natives_symbols", Exec) {
 tasks.register("macosx_natives_link", Exec) {
     dependsOn "macosx_natives_symbols"
 
-    def jdk_lib = "${java_home}/../Libraries"
-    if (file("${java_home}/lib/libjawt.dylib").exists()) {
-        jdk_lib = "${java_home}/lib"
+    def jdk_lib = "${javavmroot}/Libraries"
+    if (file("${javavmroot}/jre/lib/libjawt.dylib").exists()) {
+        jdk_lib = "${javavmroot}/jre/lib"
     }
 
     workingDir(workdirX)
