@@ -8,17 +8,17 @@ jobs:
       matrix:
         include:
           # Win x86
-          - os: windows-2022
+          - os: windows-latest
             arch: x86
             java_arch: x86
             msvc_arch: amd64_x86
             args: -DtargetArch=x86
           # Win x64
-          - os: windows-2022
+          - os: windows-latest
             arch: x64
             msvc_arch: amd64
           # Win Arm64
-          - os: windows-2022
+          - os: windows-latest
             arch: arm64
             java_arch: x64
             msvc_arch: amd64_arm64
@@ -31,7 +31,7 @@ jobs:
             arch: x64
             args: -DtargetJavaHome="$JAVA_HOME_8_X64"
           # Mac Silicon (arm64)
-          - os: macos-14
+          - os: macos-latest
             arch: arm64
             java_arch: arm64
 
@@ -184,8 +184,8 @@ jobs:
           - arch: armel
             image: trixie-backports
             packages: gcc-arm-linux-gnueabi libc6-dev-armel-cross g++-arm-linux-gnueabi
-            args: -DtargetJavaHome="/usr/lib/jvm/java-17-openjdk-armel" -DtargetArch=armel
-            java_version: 17
+            args: -DtargetJavaHome="/usr/lib/jvm/java-21-openjdk-armel" -DtargetArch=armel
+            java_version: 21
     runs-on: ubuntu-latest
     continue-on-error: true
     container:
