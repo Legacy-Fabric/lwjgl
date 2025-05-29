@@ -88,7 +88,7 @@ jobs:
 
     # Build natives
     - name: Build natives
-      run: ./gradlew compile_native ${{ matrix.args }} --stacktrace
+      run: ./gradlew compile_native ${{ matrix.args }} --stacktrace --warning-mode=fail
 
     # Upload result
     - uses: actions/upload-artifact@v4
@@ -161,7 +161,7 @@ jobs:
           distribution: zulu
 
       - name: Build natives
-        run: ./gradlew compile_native ${{ matrix.args }} --stacktrace
+        run: ./gradlew compile_native ${{ matrix.args }} --stacktrace --warning-mode=fail
 
       # Upload result
       - uses: actions/upload-artifact@v4
@@ -202,7 +202,7 @@ jobs:
 
       # Build natives
       - name: Build natives
-        run: ./gradlew compile_native ${{ matrix.args }} --stacktrace
+        run: ./gradlew compile_native ${{ matrix.args }} --stacktrace --warning-mode=fail
 
       # Upload result
       - uses: actions/upload-artifact@v4
@@ -227,13 +227,13 @@ jobs:
           pattern: natives-*
           merge-multiple: true
       - name: Build
-        run: ./gradlew publishToMavenLocal --stacktrace
+        run: ./gradlew publishToMavenLocal --stacktrace --warning-mode=fail
       - uses: actions/upload-artifact@v4
         with:
           name: maven
           path: ~/.m2/repository
       - if: ${{ github.event_name == 'workflow_dispatch' }}
         name: Publish to Maven
-        run: ./gradlew publish --stacktrace
+        run: ./gradlew publish --stacktrace --warning-mode=fail
         env:
           MAVEN_PUBLISH_CREDENTIALS: ${{ secrets.MAVEN_PUBLISH_CREDENTIALS }}
