@@ -33,6 +33,7 @@ jar {
     manifest {
         attributes(
                 "Sealed": true,
+                "Name": "org/lwjgl/",
                 "Implementation-Version": project.version
         )
     }
