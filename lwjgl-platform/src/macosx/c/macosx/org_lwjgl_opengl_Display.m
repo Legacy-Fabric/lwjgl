@@ -77,7 +77,11 @@ static NSUInteger lastModifierFlags = 0;
     // Inform the view of its parent window info;
 	[window_info->view setParent:window_info];
 	
-	[window_info->view setWantsBestResolutionOpenGLSurface:NO];
+	if (window_info->enableHighDPI && !window_info->fullscreen) {
+        [window_info->view setWantsBestResolutionOpenGLSurface:YES];
+    } else {
+        [window_info->view setWantsBestResolutionOpenGLSurface:NO];
+    }
 	
 	// set nsapp delegate for catching app quit events
 	[NSApp setDelegate:window_info->view];
