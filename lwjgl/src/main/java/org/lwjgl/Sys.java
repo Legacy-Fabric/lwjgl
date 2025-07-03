@@ -60,6 +60,8 @@ public final class Sys {
 	private static final SysImplementation implementation;
 	private static final boolean is64Bit;
 
+	public static final boolean HAS_HIDPI_FIX = true;
+
 	private static void doLoadLibrary(final String lib_name) {
 		AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			public Object run() {
