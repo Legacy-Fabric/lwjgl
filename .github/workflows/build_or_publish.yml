@@ -38,6 +38,10 @@ jobs:
           - os: macos-latest
             arch: arm64
             java_arch: arm64
+            vendor: zulu
+            extra_java: 8
+            runtime_java: 17
+            args: -DtargetJavaHome="$JAVA_HOME_8_ARM64"
 
           # Linux i386
           - os: ubuntu-22.04
