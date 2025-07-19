@@ -234,35 +234,35 @@ subprojects {
 
 publishing {
     publications {
-        maven(MavenPublication) {
-            artifactId "parent"
-
-            pom {
-                name = "Lighweight Java Game Library"
-                description = "Lighweight Java Game Library"
-                url = "http://lwjgl.org/"
-
-                licenses {
-                    license {
-                        name = "BSD"
-                        url = "http://lwjgl.org/license.php"
-                        distribution = "repo"
-                    }
-                }
-
-                scm {
-                    url = "http://java-game-lib.svn.sourceforge.net/viewvc/java-game-lib/trunk/"
-                    connection = "https://java-game-lib.svn.sourceforge.net/svnroot/java-game-lib"
-                }
-
-                developers {
-                    developer {
-                        id = "Developers"
-                        url = "http://lwjgl.org/credits.php"
-                    }
-                }
-            }
-        }
+//        maven(MavenPublication) {
+//            artifactId "parent"
+//
+//            pom {
+//                name = "Lighweight Java Game Library"
+//                description = "Lighweight Java Game Library"
+//                url = "http://lwjgl.org/"
+//
+//                licenses {
+//                    license {
+//                        name = "BSD"
+//                        url = "http://lwjgl.org/license.php"
+//                        distribution = "repo"
+//                    }
+//                }
+//
+//                scm {
+//                    url = "http://java-game-lib.svn.sourceforge.net/viewvc/java-game-lib/trunk/"
+//                    connection = "https://java-game-lib.svn.sourceforge.net/svnroot/java-game-lib"
+//                }
+//
+//                developers {
+//                    developer {
+//                        id = "Developers"
+//                        url = "http://lwjgl.org/credits.php"
+//                    }
+//                }
+//            }
+//        }
     }
     setupRepositories(repositories)
 }
