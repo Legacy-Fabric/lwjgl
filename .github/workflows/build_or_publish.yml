@@ -27,9 +27,12 @@ jobs:
             args: -DtargetArch=arm64 -DtargetJavaHomeVar=JAVA_HOME_17_ARM64
 
           # Mac Intel (x64)
-          - os: macos-13
+          - os: macos-latest
             arch: x64
-            args: -DtargetJavaHome="$JAVA_HOME_8_X64"
+            java_arch: arm64
+            vendor: zulu
+            extra_java: 8
+            args: -DtargetArch=amd64 -DtargetJavaHome="$JAVA_HOME_8_X64"
           # Mac Silicon (arm64)
           - os: macos-latest
             arch: arm64
