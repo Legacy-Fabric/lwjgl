@@ -100,7 +100,7 @@ tasks.register("windowsNativeJar", Jar) {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId "lwjgl-platform"
+            artifactId = "lwjgl-platform"
 
             artifact(linuxNativeJar) {
                 builtBy linuxNativeJar
