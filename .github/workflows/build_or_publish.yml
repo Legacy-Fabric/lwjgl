@@ -44,7 +44,7 @@ jobs:
             args: -DtargetJavaHome="$JAVA_HOME_8_ARM64"
 
           # Linux i386
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             arch: i386
             java_arch: x64
             linux_arch: i386
@@ -186,8 +186,8 @@ jobs:
           - arch: armhf
             image: trixie-backports
             packages: gcc-arm-linux-gnueabihf libc6-dev-armhf-cross g++-arm-linux-gnueabihf
-            args: -DtargetJavaHome="/usr/lib/jvm/java-11-openjdk-armhf" -DtargetArch=armhf
-            java_version: 11
+            args: -DtargetJavaHome="/usr/lib/jvm/java-21-openjdk-armhf" -DtargetArch=armhf
+            java_version: 21
           # Linux armel
           - arch: armel
             image: trixie-backports
