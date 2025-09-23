@@ -69,9 +69,9 @@ jobs:
       run: |
         sudo dpkg --add-architecture ${{ matrix.linux_arch }} && sudo apt-get clean && sudo apt-get update
         sudo apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install ${{ matrix.packages }} libx11-dev:${{ matrix.linux_arch }} libxrandr-dev:${{ matrix.linux_arch }} libxext-dev:${{ matrix.linux_arch }} libxcursor-dev:${{ matrix.linux_arch }} libxxf86vm-dev:${{ matrix.linux_arch }}
-    - if: (matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04') && matrix.arch == 'amd64'
+    - if: (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-latest') && matrix.arch == 'amd64'
       run: sudo apt install libx11-dev libxrandr-dev libxext-dev libxcursor-dev libxxf86vm-dev
-    - if: matrix.os == 'windows-latest' || matrix.os == 'windows-2022'
+    - if: matrix.os == 'windows-latest'
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: ${{ matrix.msvc_arch }}
