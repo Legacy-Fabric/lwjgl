@@ -53,7 +53,7 @@ jobs:
           # Linux amd64 Java 8
           - os: ubuntu-24.04
             arch: amd64
-            args: -DtargetJavaHome="$JAVA_HOME_8_X64"
+            args: -DtargetJavaHome="$JAVA_HOME_8_X64" -DtargetJavaVersion="1.8"
           # Linux amd64 Java 11+
           - os: ubuntu-latest
             arch: amd64
