@@ -159,7 +159,7 @@ jobs:
           architecture: ${{ matrix.arch }}
 
       # Setup runtime java
-      - if: matrix.extra_java
+      - if: matrix.extra_java || matrix.arch == 'riscv64'
         name: Set up x64 zulu JDK 17
         uses: actions/setup-java@v4
         with:
