@@ -285,7 +285,9 @@ def static setupRepositories(RepositoryHandler repositories) {
 
 def os_arch = getArch(System.getProperty("os.arch"))
 def target_arch = getArch(System.getProperty("targetArch", os_arch))
+def java_home = System.getProperty("java.home")
+def target_home = System.getProperty("targetJavaHome", java_home)
 
-if (os_arch == target_arch) {
+if (os_arch == target_arch && !(os_arch == "amd64" && java_home != target_home)) {
     compile_native.finalizedBy(":lwjgl:nativeTest")
 }
