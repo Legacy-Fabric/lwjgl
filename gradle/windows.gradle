@@ -28,9 +28,14 @@ def workdir = file("lwjgl-platform/build/natives")
 def workdirX = "${workdir}/${target_arch}"
 file(workdirX).mkdirs()
 
-tasks.register("compile_win32", Exec) {
+import net.legacyfabric.lwjgl.build.CompileNativeTask
+
+tasks.register("compile_win32", CompileNativeTask) {
     dependsOn "a-version-mismatch"
     executable("cl")
+    inputSourceSets.addAll(project(":lwjgl-platform").sourceSets.common,
+            project(":lwjgl-platform").sourceSets.windows,
+            project(":lwjgl-platform").sourceSets.generated)
 
     doFirst {
         args("/c", "/W2", "/EHsc", "/Ox", "/Gy",
@@ -53,17 +58,15 @@ tasks.register("compile_win32", Exec) {
             args("/I" + it.replace("/", "\\"))
         }
 
-        def folders = project(":lwjgl-platform").sourceSets.common.resources.srcDirs +
-                project(":lwjgl-platform").sourceSets.windows.resources.srcDirs +
-                project(":lwjgl-platform").sourceSets.generated.resources.srcDirs
-
-        folders.each {
-            if (it.toString().contains("lwjgl-platform\\src")) {
-                ["common", "common/opengl", "generated/openal",
-                 "generated/opencl", "generated/opengl", "windows", "windows/opengl"].each {et ->
-                    fileTree(it.toString() + "/" + et) {
-                        include "*.c"
-                    }.files.each {args(it.toString())}
+        inputSourceSets.get().each {
+            it.resources.srcDirs.each { path ->
+                if (path.toString().contains("lwjgl-platform\\src")) {
+                    ["common", "common/opengl", "generated/openal",
+                     "generated/opencl", "generated/opengl", "windows", "windows/opengl"].each { et ->
+                        fileTree(path.toString() + "/" + et) {
+                            include "*.c"
+                        }.files.each { args(it.toString()) }
+                    }
                 }
             }
         }
