@@ -219,10 +219,10 @@ allprojects {
 //            if (JavaVersion.current().isJava9Compatible()) {
 //                it.options.release = 8
 //            }
-            it.options.compilerArgs += [
-                    "--add-exports",
-                    "java.desktop/com.sun.media.sound=ALL-UNNAMED"
-            ]
+//            it.options.compilerArgs += [
+//                    "--add-exports",
+//                    "java.desktop/com.sun.media.sound=ALL-UNNAMED"
+//            ]
         }
     }
 }
