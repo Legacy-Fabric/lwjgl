@@ -197,7 +197,6 @@ tasks.register("linux_natives_strip", Exec) {
 }
 
 tasks.register("build_natives_linux") {
-    println(workdir.toString() + "/" + libname)
     if (!file(workdir.toString() + "/" + libname).exists()) {
         dependsOn "linux_natives_strip"
     }
