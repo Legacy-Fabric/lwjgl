@@ -70,7 +70,7 @@ jobs:
         sudo dpkg --add-architecture ${{ matrix.linux_arch }} && sudo apt-get clean && sudo apt-get update
         sudo apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install ${{ matrix.packages }} libx11-dev:${{ matrix.linux_arch }} libxrandr-dev:${{ matrix.linux_arch }} libxext-dev:${{ matrix.linux_arch }} libxcursor-dev:${{ matrix.linux_arch }} libxxf86vm-dev:${{ matrix.linux_arch }}
     - if: (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-latest') && matrix.arch == 'amd64'
-      run: sudo apt install libx11-dev libxrandr-dev libxext-dev libxcursor-dev libxxf86vm-dev
+      run: sudo apt install libxt-dev libx11-dev libxrandr-dev libxext-dev libxcursor-dev libxxf86vm-dev
     - if: matrix.os == 'windows-latest'
       uses: ilammy/msvc-dev-cmd@v1
       with:
@@ -184,7 +184,7 @@ jobs:
         include:
           # Linux armhf
           - arch: armhf
-            image: bullseye-backports
+            image: trixie-backports
             packages: gcc-arm-linux-gnueabihf libc6-dev-armhf-cross g++-arm-linux-gnueabihf
             args: -DtargetJavaHome="/usr/lib/jvm/java-11-openjdk-armhf" -DtargetArch=armhf
             java_version: 11
