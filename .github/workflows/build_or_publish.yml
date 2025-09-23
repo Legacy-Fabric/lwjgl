@@ -53,11 +53,11 @@ jobs:
             vendor: zulu
             args: -DtargetJavaHome="$JAVA_HOME_11_I386" -DtargetArch=i386
           # Linux amd64 Java 8
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             arch: amd64
-            java_arch: x64
+            args: -DtargetJavaHome="$JAVA_HOME_8_X64"
           # Linux amd64 Java 11+
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             arch: amd64
     runs-on: ${{ matrix.os }}
     continue-on-error: true
