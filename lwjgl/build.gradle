@@ -299,7 +299,7 @@ testClasses.dependsOn(":compile_native")
 publishing {
     publications {
         lwjgl(MavenPublication) {
-            artifactId "lwjgl"
+            artifactId = "lwjgl"
 
             artifact(jar) {
                 builtBy jar
@@ -347,7 +347,7 @@ publishing {
             }
         }
         lwjgl_util(MavenPublication) {
-            artifactId "lwjgl_util"
+            artifactId = "lwjgl_util"
 
             artifact(utilJar) {
                 builtBy utilJar
@@ -392,7 +392,7 @@ publishing {
             }
         }
         lwjgl_util_applet(MavenPublication) {
-            artifactId "lwjgl_util_applet"
+            artifactId = "lwjgl_util_applet"
 
             artifact(utilAppletJar) {
                 builtBy utilAppletJar
