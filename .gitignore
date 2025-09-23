@@ -64,3 +64,4 @@ $RECYCLE.BIN/
 [._]sw[a-p]
 [._]*.un~
 !*.svg
+!/buildSrc/src/**

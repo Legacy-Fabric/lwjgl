@@ -64,9 +64,23 @@ tasks.register("macosx_natives_echo") {
     }
 }
 
-tasks.register("macosx_natives_compile", Exec) {
+import net.legacyfabric.lwjgl.build.CompileNativeTask
+
+tasks.register("macosx_natives_compile", CompileNativeTask) {
     dependsOn "macosx_natives_echo"
     workingDir(workdirX)
+    inputSourceSets.addAll(project(":lwjgl-platform").sourceSets.common,
+            project(":lwjgl-platform").sourceSets.macosx,
+            project(":lwjgl-platform").sourceSets.generated)
+
+    def inputs = [
+            "${javavmroot}/include",
+            "${javavmroot}/include/darwin",
+            getNativeFolder(project,"generated", "."),
+            getNativeFolder(project,"common", "common"),
+            getNativeFolder(project,"common", "common/opengl"),
+            getNativeFolder(project,"macosx", "macosx")
+    ]
 
     doFirst {
         args(
@@ -83,28 +97,17 @@ tasks.register("macosx_natives_compile", Exec) {
                 "-fPIC"
         )
 
-        def inputs = [
-                "${javavmroot}/include",
-                "${javavmroot}/include/darwin",
-                getNativeFolder(project,"generated", "."),
-                getNativeFolder(project,"common", "common"),
-                getNativeFolder(project,"common", "common/opengl"),
-                getNativeFolder(project,"macosx", "macosx")
-        ]
-
         inputs.each {args("-I" + it)}
 
-        def folders = project(":lwjgl-platform").sourceSets.common.resources.srcDirs +
-                project(":lwjgl-platform").sourceSets.macosx.resources.srcDirs +
-                project(":lwjgl-platform").sourceSets.generated.resources.srcDirs
-
-        folders.each {
-            if (it.toString().contains("lwjgl-platform/src")) {
-                ["common", "common/opengl", "generated/openal",
-                 "generated/opencl", "generated/opengl", "macosx"].each {et ->
-                    fileTree(it.toString() + "/" + et) {
-                        include "*.c", "*.m"
-                    }.files.each {args(it.toString())}
+        inputSourceSets.get().each {
+            it.resources.srcDirs.each { path ->
+                if (path.toString().contains("lwjgl-platform/src")) {
+                    ["common", "common/opengl", "generated/openal",
+                     "generated/opencl", "generated/opengl", "macosx"].each { et ->
+                        fileTree(path.toString() + "/" + et) {
+                            include "*.c", "*.m"
+                        }.files.each { args(it.toString()) }
+                    }
                 }
             }
         }
