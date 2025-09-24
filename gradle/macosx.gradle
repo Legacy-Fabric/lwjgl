@@ -73,6 +73,15 @@ tasks.register("macosx_natives_compile", CompileNativeTask) {
             project(":lwjgl-platform").sourceSets.macosx,
             project(":lwjgl-platform").sourceSets.generated)
 
+    def inputs = [
+            "${javavmroot}/include",
+            "${javavmroot}/include/darwin",
+            getNativeFolder(project,"generated", "."),
+            getNativeFolder(project,"common", "common"),
+            getNativeFolder(project,"common", "common/opengl"),
+            getNativeFolder(project,"macosx", "macosx")
+    ]
+
     doFirst {
         args(
                 "-isysroot",
@@ -87,15 +96,6 @@ tasks.register("macosx_natives_compile", CompileNativeTask) {
                 "-c",
                 "-fPIC"
         )
-
-        def inputs = [
-                "${javavmroot}/include",
-                "${javavmroot}/include/darwin",
-                getNativeFolder(project,"generated", "."),
-                getNativeFolder(project,"common", "common"),
-                getNativeFolder(project,"common", "common/opengl"),
-                getNativeFolder(project,"macosx", "macosx")
-        ]
 
         inputs.each {args("-I" + it)}
 

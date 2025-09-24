@@ -37,22 +37,22 @@ tasks.register("compile_win32", CompileNativeTask) {
             project(":lwjgl-platform").sourceSets.windows,
             project(":lwjgl-platform").sourceSets.generated)
 
+    def iss = [
+            "${sdkhome}/include",
+            "${java_home}/include",
+            "${java_home}/include/win32",
+            "${java_home}/../include",
+            "${java_home}/../include/win32",
+            getNativeFolder(project,"generated", "."),
+            getNativeFolder(project,"common", "common"),
+            getNativeFolder(project,"common", "common/opengl"),
+            getNativeFolder(project,"windows", "windows"),
+            getNativeFolder(project,"windows", "windows/opengl")
+    ]
+
     doFirst {
         args("/c", "/W2", "/EHsc", "/Ox", "/Gy",
                 "/MT", "/MP", "/nologo")
-
-        def iss = [
-                "${sdkhome}/include",
-                "${java_home}/include",
-                "${java_home}/include/win32",
-                "${java_home}/../include",
-                "${java_home}/../include/win32",
-                getNativeFolder(project,"generated", "."),
-                getNativeFolder(project,"common", "common"),
-                getNativeFolder(project,"common", "common/opengl"),
-                getNativeFolder(project,"windows", "windows"),
-                getNativeFolder(project,"windows", "windows/opengl")
-        ]
 
         iss.each {
             args("/I" + it.replace("/", "\\"))
