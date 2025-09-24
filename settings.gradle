@@ -1,6 +1,6 @@
 rootProject.name = "lwjgl-parent"
 
-include "lwjgl-common"
+include ":lwjgl-common"
 include "generator"
 include "lwjgl-templates"
 include "lwjgl-platform"

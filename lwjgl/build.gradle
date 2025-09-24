@@ -29,6 +29,8 @@ compileJava {
     source project(":lwjgl-common").sourceSets.main.java, sourceSets.main.java, sourceSets.generated.java
 }
 
+def lwjglCommonProject = project(":lwjgl-common") // Safe to use at configuration time
+
 jar {
     manifest {
         attributes(
@@ -39,7 +41,7 @@ jar {
     }
 
     doFirst {
-        from(project(":lwjgl-common").tasks.compileJava.outputs)
+        from(lwjglCommonProject.tasks.compileJava.outputs)
 
         include "org/lwjgl/*"
         include "org/lwjgl/opengles/ContextAttribs*.*"
@@ -59,7 +61,7 @@ sourcesJar {
     dependsOn ":lwjgl-templates:generateAll"
 
     doFirst {
-        from(project(":lwjgl-common").tasks.compileJava.inputs.files)
+        from(lwjglCommonProject.tasks.compileJava.inputs.files)
 
         include "org/lwjgl/*"
         include "org/lwjgl/opengles/ContextAttribs*.*"
@@ -90,7 +92,7 @@ javadoc {
     }
 
     doFirst {
-        source(compileJava.inputs.files, project(":lwjgl-common").tasks.compileJava.inputs.files)
+        source(compileJava.inputs.files, lwjglCommonProject.tasks.compileJava.inputs.files)
 
         include "org/lwjgl/*"
         include "org/lwjgl/opengles/ContextAttribs*.*"
