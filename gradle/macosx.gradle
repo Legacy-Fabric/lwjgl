@@ -27,7 +27,7 @@ def developer_path = "/Developer";
 try {
     def developer_path_pros = Os.isFamily("mac") ? "xcode-select -print-path".execute() : null
 
-    if (!(developer_path_pros == null || developer_path_pros.exitValue() != 0)) {
+    if (!(developer_path_pros == null || developer_path_pros.waitFor() != 0)) {
         developer_path = developer_path_pros.text.trim()
     }
 } catch (ignored) {
