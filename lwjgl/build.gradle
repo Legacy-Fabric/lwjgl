@@ -55,6 +55,10 @@ jar {
 java {
     withJavadocJar()
     withSourcesJar()
+
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
 }
 
 sourcesJar {

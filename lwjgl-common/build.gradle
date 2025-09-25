@@ -5,3 +5,9 @@ plugins {
 compileJava {
     options.getHeaderOutputDirectory().set(file("../lwjgl-platform/src/generated/c/"))
 }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}

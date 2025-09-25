@@ -31,6 +31,12 @@ dependencies {
     annotationProcessor(project(":generator"))
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 abstract class GeneratorJavaCompile extends JavaCompile {
     @Inject
     public GeneratorJavaCompile(String component, boolean debug, String typeClassName, String packaje) {

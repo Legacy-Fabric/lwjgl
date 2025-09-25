@@ -3,6 +3,12 @@ plugins {
     id "maven-publish"
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 def ported = [
         "clean-generated",
         "clean-generated-native",
@@ -209,12 +215,6 @@ apply from:"gradle/linux.gradle"
 allprojects {
     repositories {
         mavenCentral()
-    }
-
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(8)
-        }
     }
 
     tasks.configureEach {

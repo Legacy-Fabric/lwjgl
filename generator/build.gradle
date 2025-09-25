@@ -5,3 +5,9 @@ plugins {
 dependencies {
     implementation(project(":lwjgl-common"))
 }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
