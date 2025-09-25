@@ -211,6 +211,12 @@ allprojects {
         mavenCentral()
     }
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
+    }
+
     tasks.configureEach {
         if (it instanceof JavaCompile) {
             targetCompatibility = JavaVersion.VERSION_1_8
@@ -230,12 +236,6 @@ allprojects {
 subprojects {
     version = rootProject.version
     group = rootProject.group
-
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(8)
-        }
-    }
 }
 
 publishing {
