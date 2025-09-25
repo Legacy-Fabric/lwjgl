@@ -3,6 +3,18 @@ plugins {
     id "maven-publish"
 }
 
+def taskName = project.gradle.startParameter.taskNames[0]
+
+def ENV = System.getenv()
+
+if (!(taskName == "compile_native" && Boolean.valueOf(ENV.CI))) {
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
+    }
+}
+
 def ported = [
         "clean-generated",
         "clean-generated-native",
@@ -50,8 +62,6 @@ def ported = [
         "-distribution_source",
         "-distribute"
 ]
-
-def ENV = System.getenv()
 
 ant.importBuild('build.xml') { String oldTargetName ->
     if (ported.contains(oldTargetName)) return oldTargetName

@@ -52,9 +52,19 @@ jar {
     }
 }
 
+def taskName = project.gradle.startParameter.taskNames[0]
+
+def ENV = System.getenv()
+
 java {
     withJavadocJar()
     withSourcesJar()
+
+    if (!(taskName == "compile_native" && Boolean.valueOf(ENV.CI))) {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
+    }
 }
 
 sourcesJar {
