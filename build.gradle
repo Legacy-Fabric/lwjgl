@@ -230,6 +230,12 @@ allprojects {
 subprojects {
     version = rootProject.version
     group = rootProject.group
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
+    }
 }
 
 publishing {
