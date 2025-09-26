@@ -22,55 +22,6 @@
 		<patternset refid="lwjgl_util.package.pattern" />
 	</fileset>
 
-	 <target name="-fixmavenversion">
-		<script language="javascript">
-			<![CDATA[
-				var originalVersion = project.getProperty("lwjgl.version");
-				java.lang.System.out.println("LWJGL Version: " + originalVersion);
-				var mavenVersion = originalVersion;
-				if(originalVersion.match(/^[0-9]+\.[0-9]+$/)){
-					java.lang.System.out.println("Fixing LWJGL Maven version (Maven version should be x.y.z)");
-					mavenVersion = originalVersion + ".0";
-				}
-				if(!mavenVersion.match(/^.*-SNAPSHOT$/)){
-					var forceSnapshot = project.getProperty("snapshot")
-					if(forceSnapshot!=null && forceSnapshot!="false"){
-						java.lang.System.out.println("Forcing Maven Version to Snapshot");
-						mavenVersion = mavenVersion + "-SNAPSHOT";
-					}
-			    }
-			
-				project.setNewProperty("lwjgl-maven-version",mavenVersion);
-				java.lang.System.out.println("LWJGL Maven Version: " + project.getProperty("lwjgl-maven-version"));
-			]]>
-		</script>
-	</target>
-	
-<!--	<target name="-checkjinputversion">-->
-<!--			<script language="javascript" classpath="${lwjgl.lib}/jinput.jar">-->
-<!--			<![CDATA[-->
-<!--			var version =  net.java.games.input.Version.getVersion()-->
-<!--			project.setNewProperty("jinputversion",version);-->
-<!--			var declaredJinputVersion = project.getProperty("jinput.version");-->
-<!--			java.lang.System.out.println("JINPUT Version: " + version + " - DeclaredVersion: " + declaredJinputVersion);-->
-<!--				-->
-<!--			if(declaredJinputVersion.equals(version)){-->
-<!--				java.lang.System.out.println("JINPUT Version Matches");-->
-<!--				project.setNewProperty("jinputversionmatches", true);-->
-<!--			} else {-->
-<!--				java.lang.System.out.println("JINPUT Version don't match");-->
-<!--			}-->
-<!--			]]>-->
-<!--			</script>-->
-<!--			<condition property="failjinputcheck">-->
-<!--				<and>-->
-<!--					<not><isset property="jinputversionmatches" /></not>-->
-<!--					<not><isset property="overridejinput" /></not>-->
-<!--				</and>-->
-<!--			</condition>		-->
-<!--			<fail  if="failjinputcheck" message="Jinput version in project (${jinputversion}) is different from the declared jinput version for maven (${jinput.version}) add -Doverridejinput=true as a command line option to avoid this check" />	-->
-<!--	</target>-->
-
 	<target name="maven-full">
 		<antcall target="-initialize" />
 		
@@ -131,7 +82,7 @@
 	<target name="-createmavenjavadocs">
 	<!-- Creates the Javadoc -->
 	
-		<javadoc destdir="${lwjgl.dstMaven}/lwjgl-javadoc" classpath="${lwjgl.lib}/jinput.jar" author="true" version="true" use="true" source="1.5" windowtitle="LWJGL API" useexternalfile="true">
+		<javadoc destdir="${lwjgl.dstMaven}/lwjgl-javadoc" classpath="${lwjgl.lib}/jinput.jar" author="true" version="true" use="true" source="1.8" windowtitle="LWJGL API" useexternalfile="true">
 			<fileset refid="lwjgl-sources.manual.fileset"/>
 			<fileset refid="lwjgl-sources.generated.fileset"/>
 			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>
@@ -141,7 +92,7 @@
 			<fileset dir="${lwjgl.dstMaven}/lwjgl-javadoc" />
 		</jar>
 		
-		<javadoc destdir="${lwjgl.dstMaven}/lwjgl_util-javadoc" classpath="${lwjgl.lib}/jinput.jar:${lwjgl.lib}/lwjgl.jar" author="true" version="true" use="true" source="1.5" windowtitle="LWJGL UTIL API" useexternalfile="true">
+		<javadoc destdir="${lwjgl.dstMaven}/lwjgl_util-javadoc" classpath="${lwjgl.lib}/jinput.jar:${lwjgl.lib}/lwjgl.jar" author="true" version="true" use="true" source="1.8" windowtitle="LWJGL UTIL API" useexternalfile="true">
 			<fileset refid="lwjgl_util-sources.fileset"/>
 			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; 2002-2010 lwjgl.org. All Rights Reserved.</i>]]></bottom>
@@ -150,7 +101,7 @@
 			<fileset dir="${lwjgl.dstMaven}/lwjgl_util-javadoc" />
 		</jar>
 		
-		<javadoc destdir="${lwjgl.dstMaven}/lwjgl_util_applet-javadoc" classpath="${lwjgl.lib}/jinput.jar:${lwjgl.lib}/lwjgl.jar" author="true" version="true" use="true" source="1.5" windowtitle="LWJGL UTIL API" useexternalfile="true">
+		<javadoc destdir="${lwjgl.dstMaven}/lwjgl_util_applet-javadoc" classpath="${lwjgl.lib}/jinput.jar:${lwjgl.lib}/lwjgl.jar" author="true" version="true" use="true" source="1.8" windowtitle="LWJGL UTIL API" useexternalfile="true">
 			<fileset refid="lwjgl_util_applet-sources.fileset"/>
 			<doctitle><![CDATA[<h1>Lightweight Java Game Toolkit</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; 2002-2010 lwjgl.org. All Rights Reserved.</i>]]></bottom>
