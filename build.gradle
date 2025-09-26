@@ -63,8 +63,6 @@ def ported = [
         "-distribute"
 ]
 
-def ENV = System.getenv()
-
 ant.importBuild('build.xml') { String oldTargetName ->
     if (ported.contains(oldTargetName)) return oldTargetName
     return "a-" + oldTargetName
