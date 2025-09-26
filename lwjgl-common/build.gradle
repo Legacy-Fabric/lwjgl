@@ -6,8 +6,14 @@ compileJava {
     options.getHeaderOutputDirectory().set(file("../lwjgl-platform/src/generated/c/"))
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+def taskName = project.gradle.startParameter.taskNames[0]
+
+def ENV = System.getenv()
+
+if (!(taskName == "compile_native" && Boolean.valueOf(ENV.CI))) {
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
     }
 }
