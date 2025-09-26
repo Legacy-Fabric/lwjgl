@@ -1,5 +1,55 @@
-[LEGACY] LWJGL - Lightweight Java Game Library
-======
+# Legacy Fabric LWJGL 2 fork
+## Summary
+This is Legacy Fabric own fork of LWJGL 2.
+## Features over the original LWJGL 2
+### More platform supported
+#### LWJGL
+| OS      | x64/amd64 | x86 | arm64/aarch64 | armhf | armel | riscv64 | ppc64le |
+|---------|-----------|-----|---------------|-------|-------|---------|---------|
+| linux   | x         | x   | x             | x     | x     | x       | x       |
+| windows | x         | x   | x             |       |       |         |         |
+| macos   | x         |     | x             |       |       |         |         |
+#### Bundled OpenAL
+| OS      | x64/amd64 | x86 | arm64/aarch64 | armhf | armel | riscv64 | ppc64le |
+|---------|-----------|-----|---------------|-------|-------|---------|---------|
+| linux   | x         | x   | x             | x     |       | x       | x       |
+| windows | x         | x   | x             |       |       |         |         |
+| macos   | x         |     | x             |       |       |         |         |
+### Fixes
+#### macOS
+* Update minimum supported version to 10.11 for x64 and 11.0 for arm64
+* Fix High DPI outside fullscreen
+* dispatch calls from main thread
+* Fix crash when resizing windows
+* Include HAS_HIDPI_FIX field
+#### Linux
+* Don't crash when xrandr executable is not accessible
+* Fix crash on Java 11+ due to missing symbols
+
+### Other
+The project has been mostly converted from ant to gradle modules, a few task a still ran through gradle's builtin compatibility layer for ant.
+
+To compile the project, you need to have both a JDK 8 and a 17+ one.
+
+The project structure has been reorganized.
+
+#### Modules structure
+* `lwjgl-common`: classes used by every other module
+* `generator`: Annotation processor used to generate bindings
+* `lwjgl-templates`: Classes from which bindings are generated
+* `lwjgl`: Most classes of the library live here
+* `lwjgl-platform`: Native code to compile into natives
+* `lwjgl_examples`: Example projects using the library
+
+## Credits
+- The original LWJGL maintainers
+- zcronix: some of the modernising fixes
+- MinecraftMachina team: macOs arm64 fixes and support
+- Babric team and js6pak: some linux fixes
+- Colin McDonald, Wyvest and Fadenfire: more macOs fixes
+
+# Original Readme
+## [LEGACY] LWJGL - Lightweight Java Game Library
 
 > **WARNING**
 > 
@@ -24,11 +74,4 @@ LWJGL requires a JDK 8, as well as your platforms native compiler to compile the
 * gradlew compile_native
 
 -----------
-Supported platforms
 
-
-| OS      | x64/amd64 | x86 | arm64/aarch64 | armhf | armel | riscv64 | ppc64le |
-|---------|-----------|-----|---------------|-------|-------|---------|---------|
-| linux   | x         | x   | x             | x     | x     | x       | x       |
-| windows | x         | x   | x             |       |       |         |         |
-| macos   | x         |     | x             |       |       |         |         |
