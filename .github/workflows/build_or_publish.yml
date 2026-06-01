@@ -97,7 +97,7 @@ jobs:
       run: ./gradlew compile_native ${{ matrix.args }} --stacktrace --warning-mode=fail
 
     # Upload result
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         name: natives-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.extra_java }}-${{ matrix.java_arch }}
         path: |
@@ -170,7 +170,7 @@ jobs:
         run: ./gradlew compile_native ${{ matrix.args }} --stacktrace --warning-mode=fail
 
       # Upload result
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: natives-linux-${{ matrix.arch }}
           path: |
@@ -211,7 +211,7 @@ jobs:
         run: ./gradlew compile_native ${{ matrix.args }} --stacktrace --warning-mode=fail
 
       # Upload result
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: natives-linux-${{ matrix.arch }}
           path: |
@@ -229,7 +229,7 @@ jobs:
           merge-multiple: true
       - name: Build
         run: ./gradlew publishToMavenLocal --stacktrace --warning-mode=fail
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: maven
           path: ~/.m2/repository
