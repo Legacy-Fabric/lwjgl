@@ -178,6 +178,15 @@ public final class AL {
 				break;
 			case freebsd:
 			case openbsd:
+				libname = "openal";
+
+				libNames = new String[]{"lib" + libname + ".so", "libopenal.so", "libopenal.so.0", "libopenal.so.1"};
+
+				initNative(
+						deviceArguments, contextFrequency, contextRefresh, contextSynchronized, openDevice,
+						libname, libNames
+				);
+				break;
 			case unknown:
 				break;
 		}
