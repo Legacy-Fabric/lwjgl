@@ -76,8 +76,47 @@ public final class Sys {
 		});
 	}
 
+	private static final String POSTFIX64BIT = "64";
+
 	private static void loadLibrary(final String lib_name) {
-		doLoadLibrary(lib_name + LWJGLUtil.Os.getPlatformSuffix());
+		try {
+			doLoadLibrary(lib_name + LWJGLUtil.Os.getPlatformSuffix());
+		} catch (UnsatisfiedLinkError e) {
+			LWJGLUtil.log("Failed to load native library at known path, using fallback path.");
+			// Fallback the original way
+			// actively try to load 64bit libs on 64bit architectures first
+			boolean try64First = !LWJGLUtil.Os.CURRENT_OS.isMacOs() && (LWJGLUtil.Os.CURRENT_ARCH == LWJGLUtil.Arch.amd64);
+
+			Error err = null;
+			if ( try64First ) {
+				try {
+					doLoadLibrary(lib_name + POSTFIX64BIT);
+					return;
+				} catch (UnsatisfiedLinkError e2) {
+					err = e2;
+				}
+			}
+
+			// fallback to loading the "old way"
+			try {
+				doLoadLibrary(lib_name);
+			} catch (UnsatisfiedLinkError e2) {
+				if ( try64First )
+					throw err;
+
+				if (implementation.has64Bit()) {
+					try {
+						doLoadLibrary(lib_name + POSTFIX64BIT);
+						return;
+					} catch (UnsatisfiedLinkError e3) {
+						LWJGLUtil.log("Failed to load 64 bit library: " + e3.getMessage());
+					}
+				}
+
+				// Throw original error
+				throw e2;
+			}
+		}
 	}
 
 	static {
@@ -125,7 +164,7 @@ public final class Sys {
 		String version = Sys.class.getPackage().getImplementationVersion();
 
 		if (version == null || version.isEmpty()) {
-			version = "2.9.4+legacyfabric";
+			version = "2.9.4+legacyfabric.16";
 		}
 
 		return version;
