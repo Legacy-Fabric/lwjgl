@@ -164,7 +164,7 @@ public final class Sys {
 		String version = Sys.class.getPackage().getImplementationVersion();
 
 		if (version == null || version.isEmpty()) {
-			version = "2.9.4+legacyfabric.16";
+			version = "2.9.4+legacyfabric.17";
 		}
 
 		return version;
