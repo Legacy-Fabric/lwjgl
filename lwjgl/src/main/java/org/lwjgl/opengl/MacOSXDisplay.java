@@ -125,6 +125,8 @@ final class MacOSXDisplay implements DisplayImplementation {
 	private native int nGetHeight(ByteBuffer window_handle);
 	
 	private native boolean nIsNativeMode(ByteBuffer peer_info_handle);
+
+	private static native void nProcessEvents();
     
 	private static boolean isUndecorated() {
 		return Display.getPrivilegedBoolean("org.lwjgl.opengl.Window.undecorated");
@@ -325,6 +327,8 @@ final class MacOSXDisplay implements DisplayImplementation {
 	}
 
 	public void update() {
+		nProcessEvents();
+		
 		boolean should_update = true;
 		
 		DrawableGL drawable = (DrawableGL)Display.getDrawable();
