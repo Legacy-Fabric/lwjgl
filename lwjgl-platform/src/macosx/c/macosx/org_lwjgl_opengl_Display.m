@@ -724,10 +724,30 @@ JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nCreateWindow(JNIE
 		window_info->jdisplay = (*env)->NewGlobalRef(env, this);
 	}
 	
+	static bool app_launched = false;
+	if (!app_launched && [NSThread isMainThread]) {
+		app_launched = true;
+		[NSApplication sharedApplication];
+		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+		[NSApp finishLaunching];
+		[NSApp activateIgnoringOtherApps:YES];
+	}
+	
 	// create window on main thread
 	[MacOSXKeyableWindow performSelectorOnMainThread:@selector(createWindow) withObject:nil waitUntilDone:YES];
 	
 	return window_handle;
+}
+
+JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nProcessEvents(JNIEnv *env, jclass clazz) {
+	if (![NSThread isMainThread]) return;
+	
+	NSAutoreleasePool *event_pool = [[NSAutoreleasePool alloc] init];
+	NSEvent *event;
+	while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate distantPast] inMode:NSDefaultRunLoopMode dequeue:YES]) != nil) {
+		[NSApp sendEvent:event];
+	}
+	[event_pool drain];
 }
 
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_MacOSXDisplay_nDestroyWindow(JNIEnv *env, jobject this, jobject window_handle) {
