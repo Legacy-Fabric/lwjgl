@@ -20,7 +20,6 @@ jobs:
           # Win Arm64
           - os: windows-latest
             arch: arm64
-            java_arch: x64
             msvc_arch: amd64_arm64
             extra_java: 17
             vendor: zulu
@@ -29,14 +28,12 @@ jobs:
           # Mac Intel (x64)
           - os: macos-latest
             arch: x64
-            java_arch: arm64
             vendor: zulu
             extra_java: 8
             args: -DtargetArch=amd64 -DtargetJavaHome="$JAVA_HOME_8_X64"
           # Mac Silicon (arm64)
           - os: macos-latest
             arch: arm64
-            java_arch: arm64
             vendor: zulu
             extra_java: 8
             args: -DtargetJavaHome="$JAVA_HOME_8_AARCH64"
@@ -44,7 +41,6 @@ jobs:
           # Linux i386
           - os: ubuntu-24.04
             arch: x86
-            java_arch: x64
             linux_arch: i386
             packages: gcc-multilib
             extra_java: 11
@@ -82,6 +78,7 @@ jobs:
         java-version: ${{ matrix.extra_java }}
         distribution: ${{ matrix.vendor }}
         architecture: ${{ matrix.arch }}
+        set-default: false
 
     # Setup runtime java
     - if: matrix.java_arch
@@ -133,7 +130,7 @@ jobs:
             arch: riscv64
             linux_arch: riscv64
             packages: gcc-riscv64-linux-gnu libc6-dev-riscv64-cross g++-riscv64-linux-gnu
-            extra_java: 21
+            extra_java: 17
             vendor: temurin
             args: -DtargetJavaHome="$JAVA_HOME_21_RISCV64" -DtargetArch=riscv64
     continue-on-error: true
@@ -149,6 +146,11 @@ jobs:
           dpkg --add-architecture ${{ matrix.linux_arch }} && apt-get clean && apt-get update
           apt-get -yq -f --allow-unauthenticated --no-install-suggests --no-install-recommends install ${{ matrix.packages }} libx11-dev:${{ matrix.linux_arch }} libxrandr-dev:${{ matrix.linux_arch }} libxext-dev:${{ matrix.linux_arch }} libxcursor-dev:${{ matrix.linux_arch }} libxxf86vm-dev:${{ matrix.linux_arch }}
 
+      - name: Set up runtime java
+        uses: actions/setup-java@v6
+        with:
+          java-version: 17
+          distribution: zulu
       # Setup target java
       - if: matrix.extra_java
         name: Set up ${{ matrix.arch }} ${{ matrix.vendor }} JDK ${{ matrix.extra_java }}
@@ -157,14 +159,7 @@ jobs:
           java-version: ${{ matrix.extra_java }}
           distribution: ${{ matrix.vendor }}
           architecture: ${{ matrix.arch }}
-
-      # Setup runtime java
-      - if: matrix.extra_java
-        name: Set up x64 zulu JDK 17
-        uses: actions/setup-java@v6
-        with:
-          java-version: 17
-          distribution: zulu
+          set-default: false
 
       - name: Build natives
         run: ./gradlew compile_native ${{ matrix.args }} --stacktrace --warning-mode=fail
